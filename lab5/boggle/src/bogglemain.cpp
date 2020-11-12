@@ -25,7 +25,6 @@ using namespace std;
 
 int main() {
     intro();
-
     // play games repeatedly until user decides to quit
     Boggle boggle;
     while (true) {

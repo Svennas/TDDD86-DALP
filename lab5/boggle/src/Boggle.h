@@ -9,20 +9,31 @@
 
 #include <iostream>
 #include <string>
-// TODO: include any other header files you need
+#include "grid.h"
 
 using namespace std;
 
 class Boggle {
 public:
     const string DICTIONARY_FILE = "EnglishWords.dat";
+    const string ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
     const int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
-    // TODO: decide the public member functions and declare them
+    /* Part 1 */
+    void printCube (int cube, unsigned int letter);
+
+    void makeRandomBoard();
+    void printBoard();
+    void makeUserBoard(string input);
+    string userBoardInput();
+
+    /* Part 2 */
+
 
 private:
-    // TODO: decide the private member variables/functions and declare them
+    Grid<string> board;
 
 };
 
