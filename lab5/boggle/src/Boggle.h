@@ -23,7 +23,6 @@ public:
 
     /* Part 1 */
     void printCube (int cube, unsigned int letter);
-
     void makeRandomBoard();
     void printBoard();
     void makeUserBoard(string input);
@@ -33,7 +32,8 @@ public:
 
 
 private:
-    Grid<string> board;
+    Grid<string> board;         // Creates a board for the letters
+                                // of the cubes as a Grid of strings.
 
 };
 

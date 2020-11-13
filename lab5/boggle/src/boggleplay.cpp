@@ -11,9 +11,9 @@
 #include "strlib.h"
 // TODO: include any other header files you need
 
-/*
+/***
  * Plays one game of Boggle using the given boggle game state object.
- */
+ ***/
 void playOneGame(Boggle& boggle) {
     if (yesOrNo("Do you want to generate a random board? ")) {
         clearConsole();
@@ -27,9 +27,9 @@ void playOneGame(Boggle& boggle) {
     }
 }
 
-/*
+/***
  * Erases all currently visible text from the output console.
- */
+ ***/
 void clearConsole() {
 #if defined(_WIN32) || defined(_WIN64)
     std::system("CLS");

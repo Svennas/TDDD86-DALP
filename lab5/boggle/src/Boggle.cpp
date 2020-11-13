@@ -1,4 +1,4 @@
-//This file contains (comment header)
+//This file contains (comment header to be added)
 
 #include <sstream>
 #include "Boggle.h"
@@ -8,9 +8,9 @@
 #include "foreach.h"
 
 
-static const int NUM_CUBES = 16;   // the number of cubes in the game
-static const int CUBE_SIDES = 6;   // the number of sides on each cube
-static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every cube
+static const int NUM_CUBES = 16;        // the number of cubes in the game
+static const int CUBE_SIDES = 6;        // the number of sides on each cube
+static string CUBES[NUM_CUBES] = {      // the letters on all 6 sides of every cube
    "AAEEGN", "ABBJOO", "ACHOPS", "AFFKPS",
    "AOOTTW", "CIMOTU", "DEILRX", "DELRVY",
    "DISTTY", "EEGHNW", "EEINSU", "EHRTVW",
@@ -19,22 +19,29 @@ static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every
 
 /*-------------- Part 1 --------------*/
 
+/***
+ * This function is used for testing and prints the letter from a cube
+ * given from the integers from the inputs.
+ ***/
 void Boggle::printCube (int cube, unsigned int letter) {
     cout << CUBES[cube][letter] << endl;
 }
 
 /***
- * This class shuffles the order of all cubes and then takes a random letter
+ * This function shuffles the order of all cubes and then takes a random letter
  * from each cube and places in the already defined Grid board.
  ***/
 void Boggle::makeRandomBoard() {
-    shuffle(CUBES, NUM_CUBES);
-    int cubeNum = 0;
+    shuffle(CUBES, NUM_CUBES);              // Uses the shuffle() function from
+    int cubeNum = 0;                        // shuffle.h
+
     board.resize(BOARD_SIZE, BOARD_SIZE);    //Empties the grid
+
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
+            /* Creates a random integer */
             int random = randomInteger(0, CUBE_SIDES - 1);
-            //Make each char a string
+            /* Makes a randomly chosen letter from the cube to a char */
             string cube(1, CUBES[cubeNum][static_cast<unsigned int>(random)]);
             board[r][c] = cube;
             cubeNum += 1;
@@ -43,14 +50,14 @@ void Boggle::makeRandomBoard() {
 }
 
 /***
- * Prints the board to the console using using Grid function toString.
+ * This function prints the board to the console using the Grid function toString.
  ***/
 void Boggle::printBoard() {
     string grid = board.toString();
     string output;
     int counter = 0;
     for (unsigned int i = 0; i < grid.size(); i++) {
-        // Uses foreach() to make sure that only letters are printed.
+        /* Uses foreach() to make sure that only letters are printed. */
         foreach (char c in ALPHABET) {
             if (tolower(grid[i]) == c) {
                 counter += 1;
@@ -61,20 +68,11 @@ void Boggle::printBoard() {
     }
 }
 
-void Boggle::makeUserBoard(string input) {
-    board.resize(BOARD_SIZE, BOARD_SIZE);    //Empties the grid
-    unsigned int letterNum = 0;
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            //Make each char a string
-            string cube(1, input[letterNum]);
-            board[r][c] = cube;
-            letterNum += 1;
-        }
-    }
-
-}
-
+/***
+ * This function makes it possible for the user to input their own board
+ * for the game. Checks if the input is the correct lenght.
+ * Returns a string to be used with makeUserBoard().
+ ***/
 string Boggle::userBoardInput() {
     string input;
     while (true) {
@@ -88,5 +86,26 @@ string Boggle::userBoardInput() {
     }
     return input;
 }
+
+
+/***
+ * This function takes the string input and creates a board out of it.
+ * The function is used with userBoardInput() which ensures
+ * that the input string is correct.
+ ***/
+void Boggle::makeUserBoard(string input) {
+    board.resize(BOARD_SIZE, BOARD_SIZE);    //Empties the grid
+    unsigned int letterNum = 0;
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            /* Make each char a string */
+            string cube(1, input[letterNum]);
+            board[r][c] = cube;
+            letterNum += 1;
+        }
+    }
+
+}
+
 
 /*-------------- Part 2 --------------*/
