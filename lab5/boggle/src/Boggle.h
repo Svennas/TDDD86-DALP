@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include "grid.h"
+#include "vector.h"
 
 using namespace std;
 
@@ -22,18 +23,24 @@ public:
     const int BOARD_SIZE = 4;
 
     /* Part 1 */
-    void printCube (int cube, unsigned int letter);
+    void printCube(int cube, unsigned int letter);
     void makeRandomBoard();
     void printBoard();
     void makeUserBoard(string input);
     string userBoardInput();
 
     /* Part 2 */
-
+    void playerTurn();
+    void printUsedWords();
+    bool endPlayerTurn(string input);
+    bool wordChecker(string word);
 
 private:
     Grid<string> board;         // Creates a board for the letters
                                 // of the cubes as a Grid of strings.
+
+    vector<string> usedWords;   // A vector of strings that contains
+                                // all user words that has been used.
 
 };
 

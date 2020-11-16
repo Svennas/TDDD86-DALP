@@ -6,6 +6,7 @@
 #include "shuffle.h"
 #include "strlib.h"
 #include "foreach.h"
+#include "lexicon.h"
 
 
 static const int NUM_CUBES = 16;        // the number of cubes in the game
@@ -107,5 +108,95 @@ void Boggle::makeUserBoard(string input) {
 
 }
 
-
 /*-------------- Part 2 --------------*/
+
+/***
+ * This function
+ ***/
+void Boggle::playerTurn() {
+    cout << "" << endl;
+    cout << "It's your turn!" << endl;
+
+    string userInput = " ";
+    while (!endPlayerTurn(userInput)) {
+        cout << "" << endl;
+        printBoard();
+        printUsedWords();
+        cout << "Type a word (or press Enter to end your turn): ";
+        getline(cin, userInput);
+
+        if (wordChecker(userInput)) {
+            cout << "You found a new word! ";
+            cout << '"' + toUpperCase(userInput) + '"' << endl;
+            usedWords.push_back(userInput);
+        }
+    }
+}
+
+/***
+ * This function
+ ***/
+void Boggle::printUsedWords() {
+    cout << "Your words (";
+    cout << usedWords.size();
+    cout << "): {";
+
+    int n = 0;
+    foreach(string used in usedWords) {
+        if ((n > 0) && (n < usedWords.size())) {
+            cout << ", ";
+        }
+        cout << '"' + toUpperCase(used) + '"';
+        n++;
+    }
+    cout << "}" << endl;
+}
+
+/***
+ * This function
+ ***/
+bool Boggle::endPlayerTurn(string input) {
+    if (input == "") return true;
+    return false;
+}
+
+/***
+ * This function
+ ***/
+bool Boggle::wordChecker(string word) {
+    Lexicon dict(DICTIONARY_FILE);
+
+    if (word.length() < 4) {
+        cout << "That word is not long enough." << endl;
+        return false;
+    }
+
+    if (!dict.contains(word)) {
+        cout << "That word is not in the dictionary." << endl;
+        return false;
+    }
+
+    foreach (string used in usedWords) {
+        if (word == used) {
+            cout << "You have already guessed that word." << endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/*-------------- Part 3 --------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+

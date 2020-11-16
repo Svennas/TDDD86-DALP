@@ -15,16 +15,15 @@
  * Plays one game of Boggle using the given boggle game state object.
  ***/
 void playOneGame(Boggle& boggle) {
+    cout << "" << endl;
     if (yesOrNo("Do you want to generate a random board? ")) {
-        clearConsole();
         boggle.makeRandomBoard();
-        boggle.printBoard();
     }
     else {
         string userInput = boggle.userBoardInput();
         boggle.makeUserBoard(userInput);
-        boggle.printBoard();
     }
+    boggle.playerTurn();
 }
 
 /***
