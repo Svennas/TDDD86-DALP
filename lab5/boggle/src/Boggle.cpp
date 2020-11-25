@@ -111,7 +111,11 @@ void Boggle::makeUserBoard(string input) {
 /*-------------- Part 2 --------------*/
 
 /***
- * This function
+ * This function starts the loop for the player to guess words from
+ * the board. The loop keeps going until the player press Enter after
+ * not writing any letters. The function uses the help functions for
+ * printing text and the function wordChecker() to see if the typed
+ * word is correct.
  ***/
 void Boggle::playerTurn() {
     cout << "" << endl;
@@ -134,7 +138,8 @@ void Boggle::playerTurn() {
 }
 
 /***
- * This function
+ * This function the words that the player has
+ * already used.
  ***/
 void Boggle::printUsedWords() {
     cout << "Your words (";
@@ -153,7 +158,8 @@ void Boggle::printUsedWords() {
 }
 
 /***
- * This function
+ * This function takes an input from the function
+ * playerTurn() and checks if it's empty (Enter).
  ***/
 bool Boggle::endPlayerTurn(string input) {
     if (input == "") return true;
@@ -161,7 +167,10 @@ bool Boggle::endPlayerTurn(string input) {
 }
 
 /***
- * This function
+ * This function checkes if the input from the player
+ * is a correct word according to the game's rules.
+ * Uses the function wordSearch() to check if the
+ * word exists on the board (not finished).
  ***/
 bool Boggle::wordChecker(string word) {
     Lexicon dict(DICTIONARY_FILE);
@@ -183,12 +192,89 @@ bool Boggle::wordChecker(string word) {
         }
     }
 
+    if (!wordSearch(word)) {
+            cout << "That word can't be formed on this board." << endl;
+            return false;
+    }
+
     return true;
 }
 
 /*-------------- Part 3 --------------*/
 
+/***
+ * This function
+ ***/
+bool Boggle::wordSearch(string word) {
+    word = toUpperCase(word);
+    unsigned int counter = 0;
+    string first(1, word[counter]);
 
+    if (!(lettersOnBoard(word))) {
+        cout << "Not all letters exist on the board..." << endl;
+        return false;
+    }
+    cout << "All letters exist on the board!" << endl;
+
+    vector<vector<vector<int>>> allLetters;
+    vector<vector<int>> firstLetter = firstLetterPos(first);
+
+    vector<vector<int>> prevLetter = firstLetter;
+    vector<vector<int>> nextLetter;
+
+    counter++;
+
+    cout << "First letter: ";
+    cout << first << endl;
+
+    while(counter > 0) {
+        // Get the current letter
+        string letter(1, word[counter]);
+
+        cout << "Next letter: ";
+        cout << letter << endl;
+
+        nextLetter = searchBoard(letter, prevLetter.back());
+
+        if (nextLetter.size() == 0) {
+            prevLetter.pop_back();
+            if (prevLetter.size() == 0) {
+                prevLetter = allLetters.back();
+                prevLetter.pop_back();
+                counter--;
+            }
+        }
+        // If neighbour/s is/are found
+        else {
+            allLetters.push_back(prevLetter);
+            prevLetter = nextLetter;
+            counter++;
+        }
+        cout << "Counter: ";
+        cout << counter << endl;
+        if (counter == word.size()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/***
+ * This function
+ ***/
+bool Boggle::lettersOnBoard(string word) {
+    unsigned int counter = 0;
+    foreach(char c in word) {
+        string letter(1, c);
+        foreach(string l in board) {
+            if (letter == l) {
+                counter++;
+                break;
+            }
+        }
+    }
+    return (counter >= word.size());
+}
 
 
 

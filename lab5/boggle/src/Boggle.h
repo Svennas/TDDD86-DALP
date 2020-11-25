@@ -35,6 +35,10 @@ public:
     bool endPlayerTurn(string input);
     bool wordChecker(string word);
 
+    /* Part 3 */
+    bool wordSearch(string word);
+    bool lettersOnBoard(string word);
+
 private:
     Grid<string> board;         // Creates a board for the letters
                                 // of the cubes as a Grid of strings.
