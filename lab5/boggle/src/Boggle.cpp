@@ -7,6 +7,7 @@
 #include "strlib.h"
 #include "foreach.h"
 #include "lexicon.h"
+#include "vector.h"
 
 
 static const int NUM_CUBES = 16;        // the number of cubes in the game
@@ -177,6 +178,9 @@ bool Boggle::wordChecker(string word) {
 
     if (word.length() < 4) {
         cout << "That word is not long enough." << endl;
+        cout << board.get(1, 2) << endl;
+        cout << word[1] << endl;
+        cout << board.numCols() << endl;
         return false;
     }
 
@@ -191,24 +195,101 @@ bool Boggle::wordChecker(string word) {
             return false;
         }
     }
-
+/*
     if (!wordSearch(word)) {
             cout << "That word can't be formed on this board." << endl;
             return false;
     }
 
     return true;
-}
+*/}
 
 /*-------------- Part 3 --------------*/
 
 /***
  * This function
  ***/
+
 bool Boggle::wordSearch(string word) {
-    word = toUpperCase(word);
+
+    word = toUpperCase(word);           // Make given word uppercase
+
+    /* Start with checking if the letters even exists on the board */
+    if (!(lettersOnBoard(word))) {
+        cout << "Not all letters exist on the board..." << endl;
+        return false;
+    }
+    cout << "All letters exist on the board!" << endl;
+
     unsigned int counter = 0;
-    string first(1, word[counter]);
+    string first(1, word[counter]);     // Get first letter in given word
+
+    Vector<Vector<int>> wordVector;
+    Map<char, Vector<int>> visited;
+    Vector<int> newPos;
+
+    while(wordVector.size() != word.size())
+    {
+        char cletter = word[counter]
+        if (wordVector.isEmpty()) visited.clear();
+        newPos = getLetterPos(cletter);
+        if (!visited.containsKey(cletter))
+        {
+            wordVector.push_back(newPos);
+            visited.put(cletter, newPos);
+        }
+
+
+
+        //wordVector.push_back(getLetterPos(word[counter]));
+    }
+}
+
+/***
+ * This function
+ ***/
+bool Boggle::lettersOnBoard(string word) {
+    unsigned int counter = 0;
+    foreach(char c in word) {
+        string letter(1, c);
+        foreach(string l in board) {
+            if (letter == l) {  // Adds +1 to counter if letter
+                counter++;      // is found on board, then
+                break;          // breaks the foreach-loop.
+            }
+        }
+    }
+    return (counter >= word.size());
+}
+
+vector<int> Boggle::getLetterPos(char letter) {
+    string sletter(1, letter);     // Get first letter in given word
+    Vector<int> letterPos;
+    for (int r = 0; r < board.numRows(); r++)
+    {
+        for (int c = 0; c < board.numCols(); c++)
+        {
+            if (sletter == board.get(r, c))
+            {
+                letterPos.push_back(r);
+                letterPos.push_back(c);
+                return letterPos;
+            }
+        }
+    }
+    letterPos.push_back(-1);
+    return letterPos;
+}
+
+
+
+
+
+/*bool Boggle::wordSearch(string word) {
+
+    word = toUpperCase(word);           // Make given word uppercase
+    unsigned int counter = 0;
+    string first(1, word[counter]);     // Get first letter in given word
 
     if (!(lettersOnBoard(word))) {
         cout << "Not all letters exist on the board..." << endl;
@@ -257,29 +338,7 @@ bool Boggle::wordSearch(string word) {
         }
     }
     return false;
-}
-
-/***
- * This function
- ***/
-bool Boggle::lettersOnBoard(string word) {
-    unsigned int counter = 0;
-    foreach(char c in word) {
-        string letter(1, c);
-        foreach(string l in board) {
-            if (letter == l) {
-                counter++;
-                break;
-            }
-        }
-    }
-    return (counter >= word.size());
-}
-
-
-
-
-
+}*/
 
 
 

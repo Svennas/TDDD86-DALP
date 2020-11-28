@@ -38,6 +38,7 @@ public:
     /* Part 3 */
     bool wordSearch(string word);
     bool lettersOnBoard(string word);
+    vector<int> getLetterPos(char letter);
 
 private:
     Grid<string> board;         // Creates a board for the letters
