@@ -19,94 +19,74 @@ static string CUBES[NUM_CUBES] = {      // the letters on all 6 sides of every c
    "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 };
 
+Boggle::Boggle() {
+    board.resize(BOARD_SIZE, BOARD_SIZE);
+}
+
 /*-------------- Part 1 --------------*/
 
-/***
- * This function is used for testing and prints the letter from a cube
- * given from the integers from the inputs.
- ***/
-void Boggle::printCube (int cube, unsigned int letter) {
-    cout << CUBES[cube][letter] << endl;
-}
-
-/***
- * This function shuffles the order of all cubes and then takes a random letter
- * from each cube and places in the already defined Grid board.
- ***/
+/*
+ * This function creates a random from the already defined cubes
+ * and creates a board out of them.
+ */
 void Boggle::makeRandomBoard() {
-    shuffle(CUBES, NUM_CUBES);              // Uses the shuffle() function from
-    int cubeNum = 0;                        // shuffle.h
-
-    board.resize(BOARD_SIZE, BOARD_SIZE);    //Empties the grid
-
+    // Uses the shuffle() function from shuffle.h
+    shuffle(CUBES, NUM_CUBES);
+    int cubeNum = 0;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            /* Creates a random integer */
-            int random = randomInteger(0, CUBE_SIDES - 1);
-            /* Makes a randomly chosen letter from the cube to a char */
-            string cube(1, CUBES[cubeNum][static_cast<unsigned int>(random)]);
-            board[r][c] = cube;
-            cubeNum += 1;
+            string cube = CUBES[cubeNum];
+            // Uses the randomInteger() function from random.h
+            board[r][c] = cube[randomInteger(0, CUBE_SIDES - 1)];
+            cubeNum++;
         }
     }
 }
 
-/***
- * This function prints the board to the console using the Grid function toString.
- ***/
-void Boggle::printBoard() {
-    string grid = board.toString();
-    string output;
-    int counter = 0;
-    for (unsigned int i = 0; i < grid.size(); i++) {
-        /* Uses foreach() to make sure that only letters are printed. */
-        foreach (char c in ALPHABET) {
-            if (tolower(grid[i]) == c) {
-                counter += 1;
-                cout << grid[i];
-                if (counter % 4 == 0) cout << "" << endl;
-            }
-        }
+/*
+ * This function checks if the input String is of the correct
+ * lenght and only contains letters from the english alphabet.
+ * Gives the function makeUserBoard() the string if correct.
+ */
+bool Boggle::userBoardInput(string input) {
+    // Check lenght
+    if (!(input.length() == static_cast<unsigned int>(NUM_CUBES))) {
+        return false;
     }
+    // Check if letters are in the alphabet
+    input = toUpperCase(input);
+    for (unsigned int i = 0; i < input.length(); i++) {
+        if (ALPHABET.find(input[i]) == string::npos) return false;
+    }
+    // Create the board if the input is correct
+    makeUserBoard(input);
+    return true;
 }
 
-/***
- * This function makes it possible for the user to input their own board
- * for the game. Checks if the input is the correct lenght.
- * Returns a string to be used with makeUserBoard().
- ***/
-string Boggle::userBoardInput() {
-    string input;
-    while (true) {
-        cout << "Create your own board by inputting 16 letters: " << endl;
-        getline(cin, input);
-        input = toUpperCase(input);
-        if (input.length() == static_cast<unsigned int>(NUM_CUBES)) {
-            break;
-        }
-        cout << "Input does not have the correct length!" << endl;
-    }
-    return input;
-}
-
-
-/***
+/*
  * This function takes the string input and creates a board out of it.
- * The function is used with userBoardInput() which ensures
- * that the input string is correct.
- ***/
+ * The function is called from userBoardInput(), which ensures correct input.
+ */
 void Boggle::makeUserBoard(string input) {
-    board.resize(BOARD_SIZE, BOARD_SIZE);    //Empties the grid
-    unsigned int letterNum = 0;
+    int i = 0;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            /* Make each char a string */
-            string cube(1, input[letterNum]);
-            board[r][c] = cube;
-            letterNum += 1;
+            board[r][c] = input[i];
+            i++;
         }
     }
+}
 
+/*
+ * This function prints the board to the console.
+ */
+void Boggle::printBoard() {
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            cout << board[r][c];
+        }
+        cout << "" << endl;
+    }
 }
 
 /*-------------- Part 2 --------------*/
@@ -118,6 +98,8 @@ void Boggle::makeUserBoard(string input) {
  * printing text and the function wordChecker() to see if the typed
  * word is correct.
  ***/
+
+/*
 void Boggle::playerTurn() {
     cout << "" << endl;
     cout << "It's your turn!" << endl;
@@ -142,6 +124,7 @@ void Boggle::playerTurn() {
  * This function the words that the player has
  * already used.
  ***/
+/*
 void Boggle::printUsedWords() {
     cout << "Your words (";
     cout << usedWords.size();
@@ -162,6 +145,7 @@ void Boggle::printUsedWords() {
  * This function takes an input from the function
  * playerTurn() and checks if it's empty (Enter).
  ***/
+/*
 bool Boggle::endPlayerTurn(string input) {
     if (input == "") return true;
     return false;
@@ -173,6 +157,7 @@ bool Boggle::endPlayerTurn(string input) {
  * Uses the function wordSearch() to check if the
  * word exists on the board (not finished).
  ***/
+/*
 bool Boggle::wordChecker(string word) {
     Lexicon dict(DICTIONARY_FILE);
 
@@ -202,19 +187,21 @@ bool Boggle::wordChecker(string word) {
     }
 
     return true;
-*/}
+}*/
+
+
 
 /*-------------- Part 3 --------------*/
 
 /***
  * This function
  ***/
-
+/*
 bool Boggle::wordSearch(string word) {
 
     word = toUpperCase(word);           // Make given word uppercase
 
-    /* Start with checking if the letters even exists on the board */
+    // Start with checking if the letters even exists on the board
     if (!(lettersOnBoard(word))) {
         cout << "Not all letters exist on the board..." << endl;
         return false;
@@ -230,7 +217,7 @@ bool Boggle::wordSearch(string word) {
 
     while(wordVector.size() != word.size())
     {
-        char cletter = word[counter]
+        char cletter = word[counter];
         if (wordVector.isEmpty()) visited.clear();
         newPos = getLetterPos(cletter);
         if (!visited.containsKey(cletter))
@@ -248,6 +235,7 @@ bool Boggle::wordSearch(string word) {
 /***
  * This function
  ***/
+/*
 bool Boggle::lettersOnBoard(string word) {
     unsigned int counter = 0;
     foreach(char c in word) {
@@ -262,7 +250,7 @@ bool Boggle::lettersOnBoard(string word) {
     return (counter >= word.size());
 }
 
-vector<int> Boggle::getLetterPos(char letter) {
+Vector<int> Boggle::getLetterPos(char letter) {
     string sletter(1, letter);     // Get first letter in given word
     Vector<int> letterPos;
     for (int r = 0; r < board.numRows(); r++)

@@ -17,17 +17,17 @@ using namespace std;
 class Boggle {
 public:
     const string DICTIONARY_FILE = "EnglishWords.dat";
-    const string ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-
+    const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
+    Boggle();
+
     /* Part 1 */
-    void printCube(int cube, unsigned int letter);
-    void makeRandomBoard();
-    void printBoard();
+    void makeRandomBoard();  
+    bool userBoardInput(string input);
     void makeUserBoard(string input);
-    string userBoardInput();
+    void printBoard();
 
     /* Part 2 */
     void playerTurn();
@@ -38,10 +38,10 @@ public:
     /* Part 3 */
     bool wordSearch(string word);
     bool lettersOnBoard(string word);
-    vector<int> getLetterPos(char letter);
+    Vector<int> getLetterPos(char letter);
 
 private:
-    Grid<string> board;         // Creates a board for the letters
+    Grid<char> board;         // Creates a board for the letters
                                 // of the cubes as a Grid of strings.
 
     vector<string> usedWords;   // A vector of strings that contains

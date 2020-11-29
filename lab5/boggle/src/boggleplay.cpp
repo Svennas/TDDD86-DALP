@@ -11,19 +11,27 @@
 #include "strlib.h"
 // TODO: include any other header files you need
 
+
 /***
  * Plays one game of Boggle using the given boggle game state object.
  ***/
 void playOneGame(Boggle& boggle) {
+    string userInput;
     cout << "" << endl;
     if (yesOrNo("Do you want to generate a random board? ")) {
         boggle.makeRandomBoard();
     }
     else {
-        string userInput = boggle.userBoardInput();
-        boggle.makeUserBoard(userInput);
+        while(true) {
+            cout << "Type the 16 letters to appear on the board: ";
+            getline(cin, userInput);
+            userInput = toUpperCase(userInput);
+            if (boggle.userBoardInput(userInput)) break;
+            cout << "That is not a valid 16-letter board String. Try again." << endl;
+        }
     }
-    boggle.playerTurn();
+    boggle.printBoard();
+    //boggle.playerTurn();
 }
 
 /***
