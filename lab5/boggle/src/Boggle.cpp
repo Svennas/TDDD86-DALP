@@ -19,14 +19,18 @@ static string CUBES[NUM_CUBES] = {      // the letters on all 6 sides of every c
    "EIOSST", "ELRTTY", "HIMNQU", "HLNNRZ"
 };
 
+/*
+ * Constructor
+ */
 Boggle::Boggle() {
     board.resize(BOARD_SIZE, BOARD_SIZE);
+    dict.addWordsFromFile(DICTIONARY_FILE);
 }
 
 /*-------------- Part 1 --------------*/
 
 /*
- * This function creates a random from the already defined cubes
+ * This function randomieses the already defined cubes
  * and creates a board out of them.
  */
 void Boggle::makeRandomBoard() {
@@ -91,111 +95,65 @@ void Boggle::printBoard() {
 
 /*-------------- Part 2 --------------*/
 
-/***
- * This function starts the loop for the player to guess words from
- * the board. The loop keeps going until the player press Enter after
- * not writing any letters. The function uses the help functions for
- * printing text and the function wordChecker() to see if the typed
- * word is correct.
- ***/
-
 /*
-void Boggle::playerTurn() {
-    cout << "" << endl;
-    cout << "It's your turn!" << endl;
-
-    string userInput = " ";
-    while (!endPlayerTurn(userInput)) {
-        cout << "" << endl;
-        printBoard();
-        printUsedWords();
-        cout << "Type a word (or press Enter to end your turn): ";
-        getline(cin, userInput);
-
-        if (wordChecker(userInput)) {
-            cout << "You found a new word! ";
-            cout << '"' + toUpperCase(userInput) + '"' << endl;
-            usedWords.push_back(userInput);
-        }
-    }
-}
-
-/***
- * This function the words that the player has
- * already used.
- ***/
-/*
-void Boggle::printUsedWords() {
-    cout << "Your words (";
-    cout << usedWords.size();
-    cout << "): {";
-
-    int n = 0;
-    foreach(string used in usedWords) {
-        if ((n > 0) && (n < usedWords.size())) {
-            cout << ", ";
-        }
-        cout << '"' + toUpperCase(used) + '"';
-        n++;
-    }
-    cout << "}" << endl;
-}
-
-/***
- * This function takes an input from the function
- * playerTurn() and checks if it's empty (Enter).
- ***/
-/*
-bool Boggle::endPlayerTurn(string input) {
-    if (input == "") return true;
-    return false;
-}
-
-/***
- * This function checkes if the input from the player
- * is a correct word according to the game's rules.
- * Uses the function wordSearch() to check if the
- * word exists on the board (not finished).
- ***/
-/*
-bool Boggle::wordChecker(string word) {
-    Lexicon dict(DICTIONARY_FILE);
-
-    if (word.length() < 4) {
-        cout << "That word is not long enough." << endl;
-        cout << board.get(1, 2) << endl;
-        cout << word[1] << endl;
-        cout << board.numCols() << endl;
-        return false;
-    }
-
-    if (!dict.contains(word)) {
-        cout << "That word is not in the dictionary." << endl;
-        return false;
-    }
-
-    foreach (string used in usedWords) {
-        if (word == used) {
-            cout << "You have already guessed that word." << endl;
-            return false;
-        }
-    }
-/*
-    if (!wordSearch(word)) {
-            cout << "That word can't be formed on this board." << endl;
-            return false;
-    }
-
+ * This function
+ */
+bool Boggle::checkLength(string input) {
+    if (input.length() < MIN_WORD_LENGTH) return false;
     return true;
-}*/
+}
 
+/*
+ * This function
+ */
+bool Boggle::checkDict(string input) {    
+    if (!dict.contains(toLowerCase(input))) return false;
+    return true;
+}
 
+/*
+ * This function
+ */
+bool Boggle::checkUsed(string input) {
+    if (usedWords.contains(toUpperCase(input))) return false;
+    return true;
+}
 
 /*-------------- Part 3 --------------*/
 
-/***
+/*
  * This function
- ***/
+ */
+bool Boggle::checkBoard(string input) {
+    for (int i = 0; i < input.length(); i++) {
+        for (char letter : board) {
+            if (!(input[i] == letter)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/*
+ * This function
+ */
+bool Boggle::checkForm(string input) {
+    vector<char> word;
+    for (int i = 0; i < input.length(); i++) {
+        word.push_back(input[i]);
+    }
+
+
+
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+
+        }
+    }
+    return true;
+}
+
 /*
 bool Boggle::wordSearch(string word) {
 

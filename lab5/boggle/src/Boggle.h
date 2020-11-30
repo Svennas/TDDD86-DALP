@@ -11,6 +11,8 @@
 #include <string>
 #include "grid.h"
 #include "vector.h"
+#include "lexicon.h"
+#include "set.h"
 
 using namespace std;
 
@@ -21,6 +23,9 @@ public:
     const int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
+    Set<string> usedWords;      // Set of strings for all the words
+                                // that the player has used.
+
     Boggle();
 
     /* Part 1 */
@@ -30,22 +35,21 @@ public:
     void printBoard();
 
     /* Part 2 */
-    void playerTurn();
-    void printUsedWords();
-    bool endPlayerTurn(string input);
-    bool wordChecker(string word);
+    bool checkLength(string input);
+    bool checkDict(string input);
+    bool checkUsed(string input);
 
     /* Part 3 */
-    bool wordSearch(string word);
-    bool lettersOnBoard(string word);
-    Vector<int> getLetterPos(char letter);
+    bool checkBoard(string input);
+    bool checkForm(string input);
 
 private:
-    Grid<char> board;         // Creates a board for the letters
+    Grid<char> board;           // Creates a board for the letters
                                 // of the cubes as a Grid of strings.
 
-    vector<string> usedWords;   // A vector of strings that contains
-                                // all user words that has been used.
+    Lexicon dict;               // Creates a word list (Lexicon) to
+                                // look up real words with EnglishWords.dat
+
 
 };
 
