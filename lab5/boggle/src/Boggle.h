@@ -42,6 +42,8 @@ public:
     /* Part 3 */
     bool checkBoard(string input);
     bool checkForm(string input);
+    bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
+    Set<int> findLetterPos(char letter, Grid<bool> visited);
 
 private:
     Grid<char> board;           // Creates a board for the letters

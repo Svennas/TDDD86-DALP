@@ -8,6 +8,7 @@
 #include "foreach.h"
 #include "lexicon.h"
 #include "vector.h"
+//#include "set.h"
 
 
 static const int NUM_CUBES = 16;        // the number of cubes in the game
@@ -23,7 +24,7 @@ static string CUBES[NUM_CUBES] = {      // the letters on all 6 sides of every c
  * Constructor
  */
 Boggle::Boggle() {
-    board.resize(BOARD_SIZE, BOARD_SIZE);
+    board(BOARD_SIZE, BOARD_SIZE);
     dict.addWordsFromFile(DICTIONARY_FILE);
 }
 
@@ -139,21 +140,83 @@ bool Boggle::checkBoard(string input) {
  * This function
  */
 bool Boggle::checkForm(string input) {
-    vector<char> word;
-    for (int i = 0; i < input.length(); i++) {
-        word.push_back(input[i]);
-    }
 
+    int startY = 0;
+    int startX = 0;
+    char nextLetter = input[1];
+    Grid<bool> visited(BOARD_SIZE, BOARD_SIZE);
+    Set<int> firstSet = findLetterPos(input[0], visited);
+    int startY = firstSet(0);
+    int startX = firstSet(1);
 
+    cout << visited << endl;
 
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-
+            if (board[r][c] == input[0]) {
+                startY = r;
+                startX = c;
+            }
         }
     }
+    visited[startY][startX] = false;
+    string letters = "";
+
+    wordSearch(input, letters, nextLetter, startY, startX, visited);
+
+
     return true;
 }
 
+bool Boggle::wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited) {
+    int index = 0;
+    // If a letter has been visted on the board, that place is marked as false on visited.
+    // Search for next letter in word amongst neighbours
+    for (int r = -1; r <= 1; r++) {
+        for (int c = -1; c <= 1; c++) {
+            if (board[y+r][x+c] == next && visited[y+r][x+c]) {
+                letters.push_back(next);
+                index = letters.size();
+                next = word[index];
+                int nY = y+r;
+                int nX = x+c;
+
+
+                wordSearch(word, letters, next, nY, nX, visited);
+            }
+            else {
+
+            }
+        }
+    }
+    // Go back to previous letter if next letter couldn't be found.
+    index = letters.size() - 2;
+    char prev = word[index];
+    Set<int> prevPos = findLetterPos(prev, visited);
+
+    next = letters[end];
+    visited[y][x] = true;
+    wordSearch(word, letters, next, prevPos[0], prevPos[1], visited);
+}
+
+Set<int> Boggle::findLetterPos(char letter, Grid<bool> visited) {
+    int y = 0;
+    int x = 0;
+    Set<int> letterPos;
+
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            if (board[r][c] == letter) {
+                y = r;
+                x = c;
+                letterPos.add(x);   //x first so it comes last in the Set
+                letterPos.add(y);
+                visited[y][x] = false;
+            }
+        }
+    }
+    return letterPos;
+}
 /*
 bool Boggle::wordSearch(string word) {
 
