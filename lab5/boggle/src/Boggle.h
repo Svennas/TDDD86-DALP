@@ -20,7 +20,7 @@ class Boggle {
 public:
     const string DICTIONARY_FILE = "EnglishWords.dat";
     const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const int MIN_WORD_LENGTH = 4;
+    const unsigned int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
     Set<string> usedWords;      // Set of strings for all the words
@@ -43,7 +43,7 @@ public:
     bool checkBoard(string input);
     bool checkForm(string input);
     bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    Set<int> findLetterPos(char letter, Grid<bool> visited);
+    Vector<int> findLetterPos(char letter, Grid<bool> visited);
 
 private:
     Grid<char> board;           // Creates a board for the letters

@@ -24,7 +24,7 @@ static string CUBES[NUM_CUBES] = {      // the letters on all 6 sides of every c
  * Constructor
  */
 Boggle::Boggle() {
-    board(BOARD_SIZE, BOARD_SIZE);
+    board.resize(BOARD_SIZE, BOARD_SIZE);
     dict.addWordsFromFile(DICTIONARY_FILE);
 }
 
@@ -100,7 +100,7 @@ void Boggle::printBoard() {
  * This function
  */
 bool Boggle::checkLength(string input) {
-    if (input.length() < MIN_WORD_LENGTH) return false;
+    if (input.size() < MIN_WORD_LENGTH) return false;
     return true;
 }
 
@@ -126,7 +126,7 @@ bool Boggle::checkUsed(string input) {
  * This function
  */
 bool Boggle::checkBoard(string input) {
-    for (int i = 0; i < input.length(); i++) {
+    for (unsigned int i = 0; i < input.length(); i++) {
         for (char letter : board) {
             if (!(input[i] == letter)) {
                 return false;
@@ -140,214 +140,89 @@ bool Boggle::checkBoard(string input) {
  * This function
  */
 bool Boggle::checkForm(string input) {
-
-    int startY = 0;
-    int startX = 0;
+    bool hello = true;
+    cout << "the start" << endl;
     char nextLetter = input[1];
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE);
-    Set<int> firstSet = findLetterPos(input[0], visited);
-    int startY = firstSet(0);
-    int startX = firstSet(1);
-
-    cout << visited << endl;
-
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            if (board[r][c] == input[0]) {
-                startY = r;
-                startX = c;
-            }
-        }
-    }
+    Vector<int> firstSet = findLetterPos(input.front(), visited);
+    int startY = firstSet[0];
+    int startX = firstSet[1];
     visited[startY][startX] = false;
     string letters = "";
-
-    wordSearch(input, letters, nextLetter, startY, startX, visited);
-
-
-    return true;
+    letters.push_back(input.front());
+    cout << "test visited: " << visited << endl;
+    return wordSearch(input, letters, nextLetter, startY, startX, visited);
 }
 
 bool Boggle::wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited) {
+    cout << "word " << word << endl;
+    cout << "letters " << letters << endl;
+
+    // End the word search if all letters in the word has been found.
+    if (word == letters) return true;
+
     int index = 0;
     // If a letter has been visted on the board, that place is marked as false on visited.
     // Search for next letter in word amongst neighbours
     for (int r = -1; r <= 1; r++) {
         for (int c = -1; c <= 1; c++) {
+            // Start with checking if in bounds of board.
+            if (!board.inBounds(y+r, x+c)) continue;
+            // Go to next letter if found and not been visited.
             if (board[y+r][x+c] == next && visited[y+r][x+c]) {
                 letters.push_back(next);
                 index = letters.size();
                 next = word[index];
                 int nY = y+r;
                 int nX = x+c;
-
-
                 wordSearch(word, letters, next, nY, nX, visited);
-            }
-            else {
-
             }
         }
     }
-    // Go back to previous letter if next letter couldn't be found.
-    index = letters.size() - 2;
-    char prev = word[index];
-    Set<int> prevPos = findLetterPos(prev, visited);
 
-    next = letters[end];
-    visited[y][x] = true;
-    wordSearch(word, letters, next, prevPos[0], prevPos[1], visited);
+
+    // If couldnt find neighbour to first letter
+    if (letters.front() == word.front()) {
+        Vector<int> newFirst = findLetterPos(letters.front(), visited);
+        // Stop the word search if no more first letters can be found.
+        if (newFirst.isEmpty()) return false;
+
+        visited[y][x] = true;
+        wordSearch(word, letters, next, newFirst[0], newFirst[1], visited);
+    }
+    else {
+        // Go back to previous letter if next letter couldn't be found.
+        index = letters.size() - 2;
+        char prev = word[index];
+        Vector<int> prevPos = findLetterPos(prev, visited);
+
+        next = letters.back();
+        visited[y][x] = true;
+        wordSearch(word, letters, next, prevPos[0], prevPos[1], visited);
+
+    }
+    return true;
 }
 
-Set<int> Boggle::findLetterPos(char letter, Grid<bool> visited) {
-    int y = 0;
-    int x = 0;
-    Set<int> letterPos;
+Vector<int> Boggle::findLetterPos(char letter, Grid<bool> visited) {
+    cout << "in findletter" << endl;
+
+    Vector<int> letterPos;
 
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            if (board[r][c] == letter) {
-                y = r;
-                x = c;
-                letterPos.add(x);   //x first so it comes last in the Set
-                letterPos.add(y);
-                visited[y][x] = false;
-            }
-        }
-    }
-    return letterPos;
-}
-/*
-bool Boggle::wordSearch(string word) {
-
-    word = toUpperCase(word);           // Make given word uppercase
-
-    // Start with checking if the letters even exists on the board
-    if (!(lettersOnBoard(word))) {
-        cout << "Not all letters exist on the board..." << endl;
-        return false;
-    }
-    cout << "All letters exist on the board!" << endl;
-
-    unsigned int counter = 0;
-    string first(1, word[counter]);     // Get first letter in given word
-
-    Vector<Vector<int>> wordVector;
-    Map<char, Vector<int>> visited;
-    Vector<int> newPos;
-
-    while(wordVector.size() != word.size())
-    {
-        char cletter = word[counter];
-        if (wordVector.isEmpty()) visited.clear();
-        newPos = getLetterPos(cletter);
-        if (!visited.containsKey(cletter))
-        {
-            wordVector.push_back(newPos);
-            visited.put(cletter, newPos);
-        }
-
-
-
-        //wordVector.push_back(getLetterPos(word[counter]));
-    }
-}
-
-/***
- * This function
- ***/
-/*
-bool Boggle::lettersOnBoard(string word) {
-    unsigned int counter = 0;
-    foreach(char c in word) {
-        string letter(1, c);
-        foreach(string l in board) {
-            if (letter == l) {  // Adds +1 to counter if letter
-                counter++;      // is found on board, then
-                break;          // breaks the foreach-loop.
-            }
-        }
-    }
-    return (counter >= word.size());
-}
-
-Vector<int> Boggle::getLetterPos(char letter) {
-    string sletter(1, letter);     // Get first letter in given word
-    Vector<int> letterPos;
-    for (int r = 0; r < board.numRows(); r++)
-    {
-        for (int c = 0; c < board.numCols(); c++)
-        {
-            if (sletter == board.get(r, c))
-            {
+            cout << visited[r][c] << endl;
+            if (board[r][c] == letter && visited[r][c]) {
                 letterPos.push_back(r);
                 letterPos.push_back(c);
-                return letterPos;
+                visited[r][c] = false;
             }
         }
     }
-    letterPos.push_back(-1);
+    cout << "pos " << letterPos << endl;
     return letterPos;
 }
 
-
-
-
-
-/*bool Boggle::wordSearch(string word) {
-
-    word = toUpperCase(word);           // Make given word uppercase
-    unsigned int counter = 0;
-    string first(1, word[counter]);     // Get first letter in given word
-
-    if (!(lettersOnBoard(word))) {
-        cout << "Not all letters exist on the board..." << endl;
-        return false;
-    }
-    cout << "All letters exist on the board!" << endl;
-
-    vector<vector<vector<int>>> allLetters;
-    vector<vector<int>> firstLetter = firstLetterPos(first);
-
-    vector<vector<int>> prevLetter = firstLetter;
-    vector<vector<int>> nextLetter;
-
-    counter++;
-
-    cout << "First letter: ";
-    cout << first << endl;
-
-    while(counter > 0) {
-        // Get the current letter
-        string letter(1, word[counter]);
-
-        cout << "Next letter: ";
-        cout << letter << endl;
-
-        nextLetter = searchBoard(letter, prevLetter.back());
-
-        if (nextLetter.size() == 0) {
-            prevLetter.pop_back();
-            if (prevLetter.size() == 0) {
-                prevLetter = allLetters.back();
-                prevLetter.pop_back();
-                counter--;
-            }
-        }
-        // If neighbour/s is/are found
-        else {
-            allLetters.push_back(prevLetter);
-            prevLetter = nextLetter;
-            counter++;
-        }
-        cout << "Counter: ";
-        cout << counter << endl;
-        if (counter == word.size()) {
-            return true;
-        }
-    }
-    return false;
-}*/
 
 
 
