@@ -59,7 +59,7 @@ bool playerTurn(Boggle& boggle) {
     if (userWord == "") return false;
 
     // Check if all rules for a word is fulfilled
-    if (playerInput(boggle, userWord)) {
+    if (playerInput(boggle, toUpperCase(userWord))) {
         boggle.usedWords.add(toUpperCase(userWord));
     }
     return true;
