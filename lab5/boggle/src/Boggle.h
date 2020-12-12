@@ -43,9 +43,9 @@ public:
     bool checkBoard(string input);
     bool checkForm(string input);
     //bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    bool wordSearch(string word, string letters, char next, Map<Vector<int>, char> visited);
+    bool wordSearch(string word, string letters, char next, int y, int x, Map<Vector<int>, char>& visited);
 
-    Vector<int> findLetterPos(char letter, Grid<bool>& visited);
+    Vector<int> findLetterPos(char letter, Map<Vector<int>, char> visited);
 
 private:
     Grid<char> board;           // Creates a board for the letters
