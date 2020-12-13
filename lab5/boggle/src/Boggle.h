@@ -32,7 +32,7 @@ public:
     void makeRandomBoard();  
     bool userBoardInput(string input);
     void makeUserBoard(string input);
-    void printBoard();
+    void printBoard() const;
 
     /* Part 2 */
     bool checkLength(string input);
@@ -40,12 +40,13 @@ public:
     bool checkUsed(string input);
 
     /* Part 3 */
-    bool checkBoard(string input);
-    bool checkForm(string input);
+    bool checkBoard(const string& input);
+    bool checkForm(const string& input);
     //bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    bool wordSearch(string word, string letters, char next, int y, int x, Map<Vector<int>, char>& visited);
+    void wordSearch(const string& word, char& next, const int& y,
+                    const int& x, Grid<bool>& visited);
 
-    Vector<int> findLetterPos(char letter, Map<Vector<int>, char> visited);
+    Vector<int> findLetterPos(const char& letter, Grid<bool>& visited);
 
 private:
     Grid<char> board;           // Creates a board for the letters
@@ -53,6 +54,9 @@ private:
 
     Lexicon dict;               // Creates a word list (Lexicon) to
                                 // look up real words with EnglishWords.dat
+
+    string foundLetters;        // Keeps check of the letters that has been found
+                                // in the function wordSearch().
 
 
 };

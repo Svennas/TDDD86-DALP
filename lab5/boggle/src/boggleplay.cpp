@@ -26,7 +26,8 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            userInput = "HELLELSJLOHARATW";
+            //userInput = "HELLELSJLOHARATW"; DAGS ATT BÖRJA TESTA
+            userInput = "FYCLIOMGORILHJHU";
             //cout << "Type the 16 letters to appear on the board: ";
             //getline(cin, userInput);
             //userInput = toUpperCase(userInput);
