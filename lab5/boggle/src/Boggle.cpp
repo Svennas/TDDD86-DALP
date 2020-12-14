@@ -9,6 +9,7 @@
 #include "lexicon.h"
 #include "vector.h"
 #include "map.h"
+#include "stack.h"
 //#include "set.h"
 
 
@@ -126,29 +127,40 @@ bool Boggle::checkUsed(string input) {
 /*
  * This function
  */
-bool Boggle::checkBoard(const string& input) {
+bool Boggle::checkBoard(string& input) {
+    unsigned int counter = 0;
     for (unsigned int i = 0; i < input.length(); i++) {
         for (char letter : board) {
-            if (!(input[i] == letter)) {
-                return false;
+            if (input[i] == letter) {
+                counter += 1;
             }
         }
     }
-    return true;
+    if (counter >= input.size()) {
+        cout << "true" << endl;
+        return true;
+    }
+    else {
+        cout << "false" << endl;
+        return false;
+    }
 }
 
 /*
  * This function
  */
 bool Boggle::checkForm(const string& input) {
+    foundLetters.clear();
     char first = input.front();
     foundLetters.push_back(first);
     char next = input[foundLetters.size()];
 
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
     Vector<int> firstPos = findLetterPos(first, visited);
+    Vector<Vector<int>> allPos;
+    allPos.push_back(firstPos);
 
-    wordSearch(input, next, firstPos.get(0), firstPos.get(1), visited);
+    wordSearch(input, next, allPos, visited);
 
     if (foundLetters == input) return true;
     else return false;
@@ -157,7 +169,7 @@ bool Boggle::checkForm(const string& input) {
 /*
  * This function
  */
-void Boggle::wordSearch(const string& word, char& next, const int& y, const int& x, Grid<bool>& visited) {
+void Boggle::wordSearch(const string& word, char& next, Vector<Vector<int>>& pos, Grid<bool>& visited) {
 
     cout << "foundletters at start " << foundLetters << endl;
     if (foundLetters != word || !foundLetters.size() == 0) {
@@ -165,7 +177,11 @@ void Boggle::wordSearch(const string& word, char& next, const int& y, const int&
         cout << "word " << word << endl;
         cout << "next " << next << endl;
 
-        visited.set(y, x, true);
+        int y = pos.get(foundLetters.size() - 1).get(0);    // Get the first int in the last Vector
+        int x = pos.get(foundLetters.size() - 1).get(1);    // Get the last int in the last Vector
+
+        visited.set(y, x, true);    // Set this letters position as visited
+
         for (int r = -1; r <= 1; r++) {
             for (int c = -1; c <= 1; c++) {
                 // Start with checking if in bounds of board and that it isnt letter next pos.
@@ -177,13 +193,15 @@ void Boggle::wordSearch(const string& word, char& next, const int& y, const int&
                 if (board[y+r][x+c] == next) {
                     foundLetters.push_back(next);            // Add next to letters
 
+                    Vector<int> newPos;
+                    newPos.push_back(y+r);    newPos.push_back(x+c);
+                    pos.push_back(newPos);
+
                     cout << "foundletters: " << foundLetters << endl;
                     cout << "found next letter" << endl;
 
                     next = word[foundLetters.size()];                 // Get the next letter
-                    wordSearch(word, next, y+r, x+c, visited);
-
-
+                    wordSearch(word, next, pos, visited);
                 }
             }
         }
@@ -191,10 +209,11 @@ void Boggle::wordSearch(const string& word, char& next, const int& y, const int&
         if (foundLetters.length() == 1) {
             cout << "couldnt find neighbour to first letter" << endl;
             Vector<int> newFirst = findLetterPos(foundLetters.front(), visited);
+            pos.set(0, newFirst);       // Change the position of the first letter
             cout << "hejsan" << endl;
             // Stop the word search if no more first letters can be found.
             if (!newFirst.isEmpty()) {
-                wordSearch(word, next, newFirst.get(0), newFirst.get(1), visited);
+                wordSearch(word, next, pos, visited);
                 cout << "hejsa1n" << endl;
 
             }
@@ -203,15 +222,19 @@ void Boggle::wordSearch(const string& word, char& next, const int& y, const int&
             // Go back to previous letter if next letter couldn't be found.
             cout << "go back a step" << endl;
 
-            foundLetters.pop_back();         // Remove the last letter
             next = foundLetters.back();      // Set next to the last in letters
+            foundLetters.pop_back();         // Remove the last letter
 
-            Vector<int> prevPos = findLetterPos(foundLetters.back(), visited);
 
-            if (!prevPos.isEmpty()) {
-                cout << "hejs4an" << endl;
-                wordSearch(word, next, prevPos.get(0), prevPos.get(1), visited);
-            }
+            //Vector<int> prevPos = findLetterPos(foundLetters.back(), visited);
+
+            pos.remove(foundLetters.size());    // Remove the last Vector
+            wordSearch(word, next, pos, visited);
+
+            //if (!prevPos.isEmpty()) {
+              //  cout << "hejs4an" << endl;
+                //wordSearch(word, next, pos, visited);
+            //}
         }
     }
 

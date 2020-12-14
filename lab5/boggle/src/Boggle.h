@@ -13,6 +13,7 @@
 #include "vector.h"
 #include "lexicon.h"
 #include "set.h"
+#include "stack.h"
 
 using namespace std;
 
@@ -40,11 +41,10 @@ public:
     bool checkUsed(string input);
 
     /* Part 3 */
-    bool checkBoard(const string& input);
+    bool checkBoard(string& input);
     bool checkForm(const string& input);
     //bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    void wordSearch(const string& word, char& next, const int& y,
-                    const int& x, Grid<bool>& visited);
+    void wordSearch(const string& word, char& next, Vector<Vector<int>>& pos, Grid<bool>& visited);
 
     Vector<int> findLetterPos(const char& letter, Grid<bool>& visited);
 

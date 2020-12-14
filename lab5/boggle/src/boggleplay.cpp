@@ -47,11 +47,12 @@ void playOneGame(Boggle& boggle) {
  */
 bool playerTurn(Boggle& boggle) {
     string userWord;
-    cout << "\n(press Enter to continue ...)";
-    while (true) {
+    cout << "\n(Press Enter to continue ...)";
+    while (true) {    // Wait for player to press Enter to continue
         getline(cin, userWord);
         if (userWord == "") break;
     }
+
     clearConsole();
     playerStats(boggle);
     cout << "Type a word (or press Enter to end your turn): ";
@@ -82,7 +83,7 @@ bool playerInput(Boggle& boggle, string userInput) {
         cout << "You have already guessed that word." << endl;
         return false;
     }
-    if (!boggle.checkBoard(userInput) && !boggle.checkForm(userInput)) {
+    if ((!boggle.checkBoard(userInput)) || (!boggle.checkForm(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
     }
