@@ -44,9 +44,9 @@ public:
     bool checkBoard(string& input);
     bool checkForm(const string& input);
     //bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    void wordSearch(const string& word, char& next, Vector<Vector<int>>& pos, Grid<bool>& visited);
+    void wordSearch(const string& word, char& next, Stack<Stack<int>>& pos, Grid<bool>& visited);
 
-    Vector<int> findLetterPos(const char& letter, Grid<bool>& visited);
+    Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
 
 private:
     Grid<char> board;           // Creates a board for the letters

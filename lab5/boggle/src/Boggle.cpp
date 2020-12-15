@@ -150,27 +150,153 @@ bool Boggle::checkBoard(string& input) {
  * This function
  */
 bool Boggle::checkForm(const string& input) {
-    foundLetters.clear();
     char first = input.front();
-    foundLetters.push_back(first);
-    char next = input[foundLetters.size()];
-
+    Stack<Stack<int>> allPos;
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
-    Vector<int> firstPos = findLetterPos(first, visited);
-    Vector<Vector<int>> allPos;
-    allPos.push_back(firstPos);
+    Stack<Stack<int>> firstPos = findLetterPos(first, visited);
 
-    wordSearch(input, next, allPos, visited);
+    while (!firstPos.isEmpty()) {       // Start a new wordSearch for every first letter
+        foundLetters.clear();
+        foundLetters.push_back(first);
+        char next = input[foundLetters.size()];
 
-    if (foundLetters == input) return true;
-    else return false;
+        allPos.push(firstPos.pop());    // Go through all first letter positions
+
+        wordSearch(input, next, allPos, visited);
+        if (foundLetters == input) {    // End as soon as the word has been found
+            return true;
+        }
+    }
+    return false;
 }
 
 /*
  * This function
  */
+void Boggle::wordSearch(const string& word, char& next, Stack<Stack<int>>& pos, Grid<bool>& visited) {
+
+    cout << "foundletters at start " << foundLetters << endl;
+    if (foundLetters != word || foundLetters.size() != 0) {
+        cout << "word " << word << endl;
+        cout << "next " << next << endl;
+
+        int x = pos.peek().pop();     // Get the first int in the top Stack
+        int y = pos.peek().pop();     // Get the last int in the top Stack
+
+        visited.set(y, x, true);    // Set this letters position as visited
+
+        Stack<Stack<int>> temp;
+
+        for (int r = -1; r <= 1; r++) {
+            for (int c = -1; c <= 1; c++) {
+                int nRow = y + r;
+                int nCol = x + c;
+
+                // Start with checking if in bounds of board and that it isnt letter next pos.
+                if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
+
+                cout << "r = " << nRow << " c = " << nCol << endl;
+
+                // Go to next letter if found and not been visited.
+                if (board[nRow][nCol] == next) {
+                    cout << "found a neighbour" << endl;
+
+                    Stack<int> newPos;
+                    newPos.push(nRow);    newPos.push(nCol);    // x is top in Stack
+
+                    temp.push(newPos);
+                }
+            }
+        }
+
+        while (!temp.isEmpty()) {
+            cout << "found next letter" << endl;
+
+            foundLetters.push_back(next);               // Add next to letters
+            next = word[foundLetters.size()];           // Get the next letter
+
+            wordSearch(word, next, temp, visited);
+
+            temp.pop();
+        }
+        if (foundLetters != word) foundLetters.pop_back();
+
+        /*
+        if
+
+        //visited.set(y, x, false);
+
+        // If couldnt find neighbour to first letter
+        if (foundLetters.length() == 1) {
+            cout << "couldnt find neighbour to first letter" << endl;
+            Vector<int> newFirst = findLetterPos(foundLetters.front(), visited);
+            pos.set(0, newFirst);       // Change the position of the first letter
+            cout << "hejsan" << endl;
+            // Stop the word search if no more first letters can be found.
+            if (!newFirst.isEmpty()) {
+                wordSearch(word, next, pos, visited);
+                cout << "hejsa1n" << endl;
+
+            }
+        }
+        else if (foundLetters != word) {
+            // Go back to previous letter if next letter couldn't be found.
+            cout << "go back a step" << endl;
+
+            next = foundLetters.back();      // Set next to the last in letters
+            foundLetters.pop_back();         // Remove the last letter
+
+
+            //Vector<int> prevPos = findLetterPos(foundLetters.back(), visited);
+
+            pos.remove(foundLetters.size());    // Remove the last Vector
+            //if (!prevPos.isEmpty()) {
+            wordSearch(word, next, pos, visited);
+
+              //  cout << "hejs4an" << endl;
+                //wordSearch(word, next, pos, visited);
+            //}
+        }*/
+    }
+
+}
+
+/*
+ * This function adds all postions of certain letter that hasnt been visited
+ * yet to a vector vector
+ */
+Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited) {
+    cout << "in findletter ";
+    cout << letter << endl;
+
+    Stack<Stack<int>> allPos;
+    Stack<int> letterPos;
+    //Vector<int> temp;
+
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            cout << board[r][c] << endl;
+            //temp.push_back(r);    temp.push_back(c);    // Temp adds the positions
+            if (board[r][c] == letter && !visited.get(r, c)) { //&& !visited.containsKey(temp)) {
+                cout << "found letter in board" << endl;
+                //visited.put(temp, letter);
+                letterPos.push(r); letterPos.push(c);
+                allPos.push(letterPos);
+            }
+            //temp.clear();       // Clears the added positions
+        }
+    }
+    //letterPos.push_back(0);
+    //cout << "Couldnt find the pos " << letterPos << endl;
+    return allPos;
+}
+
+/*
+/*
 void Boggle::wordSearch(const string& word, char& next, Vector<Vector<int>>& pos, Grid<bool>& visited) {
 
+ * This function
+ *
     cout << "foundletters at start " << foundLetters << endl;
     if (foundLetters != word || !foundLetters.size() == 0) {
 
@@ -184,17 +310,19 @@ void Boggle::wordSearch(const string& word, char& next, Vector<Vector<int>>& pos
 
         for (int r = -1; r <= 1; r++) {
             for (int c = -1; c <= 1; c++) {
+                int nRow = y + r;
+                int nCol = x + c;
                 // Start with checking if in bounds of board and that it isnt letter next pos.
-                if (!board.inBounds(y+r, x+c) || visited.get(y+r, x+c)) continue;
+                if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
 
-                cout << "r = " << y+r << " c = " << x+c << endl;
+                cout << "r = " << nRow << " c = " << nCol << endl;
 
                 // Go to next letter if found and not been visited.
-                if (board[y+r][x+c] == next) {
+                if (board[nRow][nCol] == next) {
                     foundLetters.push_back(next);            // Add next to letters
 
                     Vector<int> newPos;
-                    newPos.push_back(y+r);    newPos.push_back(x+c);
+                    newPos.push_back(nRow);    newPos.push_back(nCol);
                     pos.push_back(newPos);
 
                     cout << "foundletters: " << foundLetters << endl;
@@ -202,6 +330,7 @@ void Boggle::wordSearch(const string& word, char& next, Vector<Vector<int>>& pos
 
                     next = word[foundLetters.size()];                 // Get the next letter
                     wordSearch(word, next, pos, visited);
+                    visited.set(y, x, false);
                 }
             }
         }
@@ -229,43 +358,16 @@ void Boggle::wordSearch(const string& word, char& next, Vector<Vector<int>>& pos
             //Vector<int> prevPos = findLetterPos(foundLetters.back(), visited);
 
             pos.remove(foundLetters.size());    // Remove the last Vector
+            //if (!prevPos.isEmpty()) {
             wordSearch(word, next, pos, visited);
 
-            //if (!prevPos.isEmpty()) {
               //  cout << "hejs4an" << endl;
                 //wordSearch(word, next, pos, visited);
             //}
         }
     }
 
-}
-
-Vector<int> Boggle::findLetterPos(const char& letter, Grid<bool>& visited) {
-    cout << "in findletter ";
-    cout << letter << endl;
-
-    Vector<int> letterPos;
-    //Vector<int> temp;
-
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            cout << board[r][c] << endl;
-            //temp.push_back(r);    temp.push_back(c);    // Temp adds the positions
-            if (board[r][c] == letter && !visited.get(r, c)) { //&& !visited.containsKey(temp)) {
-                cout << "found letter in board" << endl;
-                //visited.put(temp, letter);
-                letterPos.push_back(r); letterPos.push_back(c);
-                return letterPos;
-            }
-            //temp.clear();       // Clears the added positions
-        }
-    }
-    //letterPos.push_back(0);
-    cout << "Couldnt find the pos " << letterPos << endl;
-    return letterPos;
-}
-
-
+}*/
 
 
 
