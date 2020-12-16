@@ -26,11 +26,11 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            //userInput = "HELLELSJLOHARATW"; DAGS ATT BÖRJA TESTA
-            userInput = "FYCLIOMGORILHJHU";
-            //cout << "Type the 16 letters to appear on the board: ";
-            //getline(cin, userInput);
-            //userInput = toUpperCase(userInput);
+            //userInput = "HELLELSJLOHARATW";   // Eget test
+            //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
+            cout << "Type the 16 letters to appear on the board: ";
+            getline(cin, userInput);
+            userInput = toUpperCase(userInput);
             if (boggle.userBoardInput(userInput)) break;
             cout << "That is not a valid 16-letter board String. Try again." << endl;
         }
@@ -62,7 +62,7 @@ bool playerTurn(Boggle& boggle) {
 
     // Check if all rules for a word is fulfilled
     if (playerInput(boggle, toUpperCase(userWord))) {
-        boggle.usedWords.add(toUpperCase(userWord));
+        boggle.userWords.add(toUpperCase(userWord));
     }
     return true;
 }
@@ -87,20 +87,29 @@ bool playerInput(Boggle& boggle, string userInput) {
         cout << "That word can't be formed on this board." << endl;
         return false;
     }
-    cout << "You found a new word! " << '"' << toUpperCase(userInput) << '"' << endl;
+    cout << "You found a new word! " << '"' << userInput << '"' << endl;
     return true;
 }
 
 void playerStats(Boggle& boggle) {
     boggle.printBoard();
-    cout << "Your words (" << boggle.usedWords.size() << "): {";
+    cout << "Your words (" << boggle.userWords.size() << "): {";
     int n = 0;
-    for (string word: boggle.usedWords) {
+    for (string word: boggle.userWords) {
         if (n > 0) cout << ", ";
         cout << '"' + word + '"';
         n++;
     }
     cout << "}" << endl;
+
+    cout << "Your score: ";
+    int score = 0;
+    if (boggle.userWords.size() > 0) {
+        for (string word : boggle.userWords) {
+            score += word.size() - 3;
+        }
+    }
+    cout << score << endl;
 }
 
 /***

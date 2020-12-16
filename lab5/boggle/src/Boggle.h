@@ -24,8 +24,10 @@ public:
     const unsigned int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
-    Set<string> usedWords;      // Set of strings for all the words
+    Set<string> userWords;      // Set of strings for all the words
                                 // that the player has used.
+    Set<string> compWords;      // Set of strings for all possible words
+                                // on the board.
 
     Boggle();
 
@@ -43,10 +45,12 @@ public:
     /* Part 3 */
     bool checkBoard(string& input);
     bool checkForm(const string& input);
-    //bool wordSearch(string word, string letters, char next, int y, int x, Grid<bool> visited);
-    void wordSearch(const string& word, char& next, Stack<Stack<int>>& pos, Grid<bool>& visited);
-
+    void wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited);
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
+
+    /* Part 4 */
+    void findAllWords(string &word, Grid<bool> &visited);
+    void startCompTurn();
 
 private:
     Grid<char> board;           // Creates a board for the letters
