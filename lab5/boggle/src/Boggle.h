@@ -49,8 +49,9 @@ public:
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
 
     /* Part 4 */
-    void findAllWords(string &word, Grid<bool> &visited);
+    void findAllWords(string &word, Grid<bool> &visited, int& y, int& x);
     void startCompTurn();
+    void resetGame();
 
 private:
     Grid<char> board;           // Creates a board for the letters
@@ -61,8 +62,6 @@ private:
 
     string foundLetters;        // Keeps check of the letters that has been found
                                 // in the function wordSearch().
-
-
 };
 
 #endif

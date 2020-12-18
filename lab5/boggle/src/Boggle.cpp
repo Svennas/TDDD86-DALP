@@ -135,14 +135,8 @@ bool Boggle::checkBoard(string& input) {
             }
         }
     }
-    if (counter >= input.size()) {
-        cout << "true" << endl;
-        return true;
-    }
-    else {
-        cout << "false" << endl;
-        return false;
-    }
+    if (counter >= input.size()) return true;
+    else return false;
 }
 
 /*
@@ -172,55 +166,30 @@ bool Boggle::checkForm(const string& input) {
  * This function
  */
 void Boggle::wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited) {
-
-    cout << pos.toString() << endl;
-    cout << pos.peek() << endl;
-
-    cout << "foundletters at start " << foundLetters << endl;
     if (foundLetters != word || foundLetters.size() != 0) {
-        cout << "word " << word << endl;
-        cout << "next " << next << endl;
-
         int x = pos.pop();     // Get the first int in the top Stack
-        cout << pos.toString() << endl;
         int y = pos.pop();     // Get the last int in the top Stack
-        cout << pos.toString() << endl;
-        cout << "x " << x << " y " << y << endl;
-
         visited.set(y, x, true);    // Set this letters position as visited
-
         Stack<Stack<int>> allPos;
 
         for (int r = -1; r <= 1; r++) {
             for (int c = -1; c <= 1; c++) {
                 int nRow = y + r;
                 int nCol = x + c;
-
                 // Start with checking if in bounds of board and that it isnt letter next pos.
                 if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
-
-                cout << "r = " << nRow << " c = " << nCol << endl;
-
                 // Go to next letter if found and not been visited.
                 if (board[nRow][nCol] == next) {
-                    cout << "found a neighbour" << endl;
-                    cout << "r = " << nRow << " c = " << nCol << endl;
-
                     Stack<int> newPos;
                     newPos.push(nRow);    newPos.push(nCol);    // x is top in Stack
-
                     allPos.push(newPos);
                 }
             }
         }
-
         while (!allPos.isEmpty()) {
             Stack<int> temp = allPos.pop();
-            cout << "in while" << endl;
-
             foundLetters.push_back(next);               // Add next to letters
             next = word[foundLetters.size()];           // Get the next letter
-
             wordSearch(word, next, temp, visited);
         }
         if (foundLetters != word) foundLetters.pop_back();
@@ -240,9 +209,7 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited)
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
             cout << board[r][c] << endl;
-            if (board[r][c] == letter && !visited.get(r, c)) { //&& !visited.containsKey(temp)) {
-                cout << "r " << r << " c " << c << endl;
-                cout << "found letter in board" << endl;
+            if (board[r][c] == letter && !visited.get(r, c)) {
                 letterPos.push(r); letterPos.push(c);   // c (x) is at the top of the Stack
                 allPos.push(letterPos);
             }
@@ -261,20 +228,28 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited)
 void Boggle::startCompTurn() {
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE);
     string word;
-
+    // Goes through every position on the board for a starting position for a new word.
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            visited.set(r, c, true);
-            string.push_back(board.get(r, c));
-            findAllWords(word, visited);
+
+            word = board.get(r, c);
+            findAllWords(word, visited, r, c);
         }
     }
 }
 
 /*
  * This function finds all possible words on the board and adds them to compWords
+ * by, with the help of startCompTurn(), going through every possible combination
+ * of letters on the board.
  */
-void Boggle::findAllWords(string& word, Grid<bool>& visited) {
+void Boggle::findAllWords(string& word, Grid<bool>& visited, int& y, int& x) {
+    visited.set(y, x, true);
+
+    if (word.length() >= MIN_WORD_LENGTH && dict.contains(word)) {
+        compWords.add(word);
+    }
+    // Goes through all the neighbours to continue to build the word.
     for (int r = -1; r <= 1; r++) {
         for (int c = -1; c <= 1; c++) {
             int nRow = y + r;
@@ -282,94 +257,19 @@ void Boggle::findAllWords(string& word, Grid<bool>& visited) {
 
             if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
 
-            word.push_back(board.get(nRow, nCol));
-            if (dict.containsPrefix(word)) {
-                findAllWords(word, visited);
+            string temp = word;
+            temp.push_back(board.get(nRow, nCol));
+
+            if (dict.containsPrefix(temp)) {
+                findAllWords(temp, visited, nRow, nCol);
             }
         }
     }
-    visited.set(r, c, false);
+    // Set to letters position to not visited after going through all the neighbours.
+    visited.set(y, x, false);
 }
 
-/*
-
-
-Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited) {
-    cout << "in findletter ";
-    cout << letter << endl;
-
-    Stack<Stack<int>> allPos;
-    Stack<int> letterPos;
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            cout << board[r][c] << endl;
-            if (board[r][c] == letter && !visited.get(r, c)) { //&& !visited.containsKey(temp)) {
-                cout << "r " << r << " c " << c << endl;
-                cout << "found letter in board" << endl;
-                letterPos.push(r); letterPos.push(c);   // c (x) is at the top of the Stack
-                allPos.push(letterPos);
-            }
-        }
-    }
-    return allPos;
+void Boggle::resetGame() {
+    userWords.clear();
+    compWords.clear();
 }
-void Boggle::wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited) {
-
-    cout << pos.toString() << endl;
-    cout << pos.peek() << endl;
-
-    cout << "foundletters at start " << foundLetters << endl;
-    if (foundLetters != word || foundLetters.size() != 0) {
-        cout << "word " << word << endl;
-        cout << "next " << next << endl;
-
-        int x = pos.pop();     // Get the first int in the top Stack
-        cout << pos.toString() << endl;
-        int y = pos.pop();     // Get the last int in the top Stack
-        cout << pos.toString() << endl;
-        cout << "x " << x << " y " << y << endl;
-
-        visited.set(y, x, true);    // Set this letters position as visited
-
-        Stack<Stack<int>> allPos;
-
-        for (int r = -1; r <= 1; r++) {
-            for (int c = -1; c <= 1; c++) {
-                int nRow = y + r;
-                int nCol = x + c;
-
-                // Start with checking if in bounds of board and that it isnt letter next pos.
-                if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
-
-                cout << "r = " << nRow << " c = " << nCol << endl;
-
-                // Go to next letter if found and not been visited.
-                if (board[nRow][nCol] == next) {
-                    cout << "found a neighbour" << endl;
-                    cout << "r = " << nRow << " c = " << nCol << endl;
-
-                    Stack<int> newPos;
-                    newPos.push(nRow);    newPos.push(nCol);    // x is top in Stack
-
-                    allPos.push(newPos);
-                }
-            }
-        }
-
-        while (!allPos.isEmpty()) {
-            Stack<int> temp = allPos.pop();
-            cout << "in while" << endl;
-
-            foundLetters.push_back(next);               // Add next to letters
-            next = word[foundLetters.size()];           // Get the next letter
-
-            wordSearch(word, next, temp, visited);
-        }
-        if (foundLetters != word) foundLetters.pop_back();
-    }
-}*/
-
-
-
-
-

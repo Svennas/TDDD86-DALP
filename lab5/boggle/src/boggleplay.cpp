@@ -14,6 +14,8 @@
 bool playerTurn(Boggle& boggle);
 bool playerInput(Boggle& boggle, string userInput);
 void playerStats(Boggle& boggle);
+void computerTurn(Boggle& boggle);
+void printStats(Set<string>& words, bool player);
 
 /***
  * Plays one game of Boggle using the given boggle game state object.
@@ -37,9 +39,8 @@ void playOneGame(Boggle& boggle) {
     }
     cout << "It's your turn!" << endl;
     while (playerTurn(boggle));
-
-
-
+    boggle.startCompTurn();
+    computerTurn(boggle);
 }
 
 /*
@@ -93,19 +94,34 @@ bool playerInput(Boggle& boggle, string userInput) {
 
 void playerStats(Boggle& boggle) {
     boggle.printBoard();
-    cout << "Your words (" << boggle.userWords.size() << "): {";
+    printStats(boggle.userWords, true);
+}
+
+void computerTurn(Boggle& boggle) {
+    cout << "It's my turn!" << endl;
+    printStats(boggle.compWords, false);
+    cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
+}
+
+void printStats(Set<string>& words, bool player) {
+    if (player) cout << "Your words ";
+    else cout << "My words ";
+
+    cout << "(" << words.size() << "): {";
     int n = 0;
-    for (string word: boggle.userWords) {
+    for (string word : words) {
         if (n > 0) cout << ", ";
         cout << '"' + word + '"';
         n++;
     }
     cout << "}" << endl;
 
-    cout << "Your score: ";
+    if (player) cout << "Your score: ";
+    else cout << "My score: ";
+
     int score = 0;
-    if (boggle.userWords.size() > 0) {
-        for (string word : boggle.userWords) {
+    if (words.size() > 0) {
+        for (string word : words) {
             score += word.size() - 3;
         }
     }
