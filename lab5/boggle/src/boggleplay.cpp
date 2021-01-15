@@ -84,7 +84,7 @@ bool playerInput(Boggle& boggle, string userInput) {
         cout << "You have already guessed that word." << endl;
         return false;
     }
-    if ((!boggle.checkBoard(userInput)) || (!boggle.checkForm(userInput))) {
+    if ((!boggle.checkBoard(userInput)) || (!boggle.initSearch(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
     }

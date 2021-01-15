@@ -43,14 +43,14 @@ public:
     bool checkUsed(string input);
 
     /* Part 3 */
-    bool checkBoard(string& input);
-    bool checkForm(const string& input);
+    bool checkBoard(string input);
+    bool initSearch(const string input);
     void wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited);
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
 
     /* Part 4 */
-    void findAllWords(string &word, Grid<bool> &visited, int& y, int& x);
     void startCompTurn();
+    void findAllWords(string& word, Grid<bool>& visited, int& y, int& x);
     void resetGame();
 
 private:
