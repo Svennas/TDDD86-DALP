@@ -33,20 +33,21 @@ public:
 
     /* Part 1 */
     void makeRandomBoard();  
-    bool userBoardInput(string input);
-    void makeUserBoard(string input);
+    bool userBoardInput(const string input);
+    void makeUserBoard(const string input);
     void printBoard() const;
 
     /* Part 2 */
-    bool checkLength(string input);
+    bool checkLength(const string input);
     bool checkDict(string input);
-    bool checkUsed(string input);
+    bool checkUsed(const string input);
 
     /* Part 3 */
-    bool checkBoard(string input);
+    bool checkBoard(const string input);
     bool initSearch(const string input);
     void wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited);
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
+    void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
 
     /* Part 4 */
     void startCompTurn();

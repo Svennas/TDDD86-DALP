@@ -17,10 +17,14 @@ void playerStats(Boggle& boggle);
 void computerTurn(Boggle& boggle);
 void printStats(Set<string>& words, bool player);
 
+int PLAYER_POINTS;
+int COMP_POINTS;
+
 /***
  * Plays one game of Boggle using the given boggle game state object.
  ***/
 void playOneGame(Boggle& boggle) {
+    boggle.resetGame();
     string userInput;
     cout << "" << endl;
     if (yesOrNo("Do you want to generate a random board? ")) {
@@ -106,10 +110,13 @@ void playerStats(Boggle& boggle) {
 }
 
 void computerTurn(Boggle& boggle) {
-    cout << "It's my turn!" << endl;
+    cout << "\nIt's my turn!" << endl;
     boggle.startCompTurn();
     printStats(boggle.compWords, false);
-    cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
+    if (COMP_POINTS > PLAYER_POINTS) {
+        cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
+    }
+    else cout << "WOW, you defeated me! Congratulations!" << endl;
 }
 
 void printStats(Set<string>& words, bool player) {
@@ -125,14 +132,19 @@ void printStats(Set<string>& words, bool player) {
     }
     cout << "}" << endl;
 
-    if (player) cout << "Your score: ";
-    else cout << "My score: ";
-
     int score = 0;
     if (words.size() > 0) {
         for (string word : words) {
             score += word.size() - 3;
         }
+    }
+    if (player) {
+        cout << "Your score: ";
+        PLAYER_POINTS = score;
+    }
+    else {
+        cout << "My score: ";
+        COMP_POINTS = score;
     }
     cout << score << endl;
 }

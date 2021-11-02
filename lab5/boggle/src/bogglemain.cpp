@@ -24,10 +24,13 @@
 using namespace std;
 
 int main() {
-    intro();
+
     /* Play games repeatedly until user decides to quit */
     Boggle boggle;
+
     while (true) {
+        clearConsole();
+        intro();
         playOneGame(boggle);
         cout << endl;
         if (!yesOrNo("Play again (Y/N)? ")) {
