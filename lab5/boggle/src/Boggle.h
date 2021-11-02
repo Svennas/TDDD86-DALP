@@ -54,11 +54,11 @@ public:
     void resetGame();
 
 private:
-    Grid<char> board;           // Creates a board for the letters
+    Grid<char> board;           // Used to create a board for the letters
                                 // of the cubes as a Grid of strings.
 
-    Lexicon dict;               // Creates a word list (Lexicon) to
-                                // look up real words with EnglishWords.dat
+    Lexicon dict;               // Used to create a word list (Lexicon) to
+                                // look up real words from EnglishWords.dat
 
     string foundLetters;        // Keeps check of the letters that has been found
                                 // in the function wordSearch().

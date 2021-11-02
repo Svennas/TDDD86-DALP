@@ -23,6 +23,8 @@ static string CUBES[NUM_CUBES] = {          // the letters on all 6 sides of eve
 Boggle::Boggle() {
     board.resize(BOARD_SIZE, BOARD_SIZE);
     dict.addWordsFromFile(DICTIONARY_FILE);
+    userWords.clear();
+    compWords.clear();
 }
 
 /*-------------- Part 1 --------------*/
@@ -91,7 +93,7 @@ void Boggle::printBoard() const {
 /*-------------- Part 2 --------------*/
 
 /*
- * This function
+ * This function checks if the given word has the correct length.
  */
 bool Boggle::checkLength(string input) {
     if (input.size() < MIN_WORD_LENGTH) return false;
@@ -99,7 +101,7 @@ bool Boggle::checkLength(string input) {
 }
 
 /*
- * This function
+ * This function checks if the given word is in the dictionary.
  */
 bool Boggle::checkDict(string input) {    
     if (!dict.contains(toLowerCase(input))) return false;
@@ -107,7 +109,8 @@ bool Boggle::checkDict(string input) {
 }
 
 /*
- * This function
+ * This function checks if the given word has been used or not
+ * by looking through the Set of Strings in userWords.
  */
 bool Boggle::checkUsed(string input) {
     if (userWords.contains(input)) return false;
@@ -117,7 +120,14 @@ bool Boggle::checkUsed(string input) {
 /*-------------- Part 3 --------------*/
 
 /*
- * This function
+ * This function goes through every letter of the board and
+ * compares it to every letter in the given input.
+ * Every time one of the letters from the input appears on the
+ * board, 1 is added to the counter.
+ * If the counter in the end is the same size or bigger
+ * than the input length the function returns true.
+ * This is to check as early as possible if all the letters
+ * in the word can be found on the board.
  */
 bool Boggle::checkBoard(string input) {
     unsigned int counter = 0;
@@ -129,7 +139,8 @@ bool Boggle::checkBoard(string input) {
         }
     }
     if (counter >= input.size()) return true;
-    else return false;
+    cout << "Not all letters can be found on the board!" << endl;
+    return false;
 }
 
 /*

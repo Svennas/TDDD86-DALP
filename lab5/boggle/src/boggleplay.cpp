@@ -39,7 +39,6 @@ void playOneGame(Boggle& boggle) {
     }
     cout << "It's your turn!" << endl;
     while (playerTurn(boggle));
-    boggle.startCompTurn();
     computerTurn(boggle);
 }
 
@@ -69,7 +68,15 @@ bool playerTurn(Boggle& boggle) {
 }
 
 /*
- * This function
+ * This function goes through all the conditions required for a
+ * word to be considered correct. It needs to be:
+ *  - 4 letters or more
+ *  - Be in the given English dictionary
+ *  - Not been used before in this instance of the game
+ *  - Be able to be formed on the given board of letters
+ * The written user word is checked in the order of the conditions above.
+ * This function uses help functions from Boggle.cpp.
+ * If all the conditions are met this function returns true.
  */
 bool playerInput(Boggle& boggle, string userInput) {
     if (!boggle.checkLength(userInput)) {
@@ -84,6 +91,7 @@ bool playerInput(Boggle& boggle, string userInput) {
         cout << "You have already guessed that word." << endl;
         return false;
     }
+    // If either checkBoard() or initSearch returns false the condition can't be met.
     if ((!boggle.checkBoard(userInput)) || (!boggle.initSearch(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
@@ -99,6 +107,7 @@ void playerStats(Boggle& boggle) {
 
 void computerTurn(Boggle& boggle) {
     cout << "It's my turn!" << endl;
+    boggle.startCompTurn();
     printStats(boggle.compWords, false);
     cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
 }
