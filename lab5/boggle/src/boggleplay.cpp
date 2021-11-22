@@ -1,7 +1,11 @@
-// You will edit and turn in this CPP file.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header and replace with your own
-
+/*
+ * File: boggleplay.cpp
+ * -----------------
+ * This file contains all the functions used for rules and creation to play
+ * the game Boggle. In this file the game board is created, the search algorithms
+ * for finding words that the user typed in and finding all possible words for
+ * the computer player.
+ */
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>

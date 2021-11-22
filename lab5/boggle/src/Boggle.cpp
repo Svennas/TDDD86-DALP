@@ -1,4 +1,11 @@
-//This file contains (comment header to be added)
+/*
+ * File: Boggle.cpp
+ * -----------------
+ * This file contains all the functions used for rules and creation to play
+ * the game Boggle. In this file the game board is created, the search algorithms
+ * for finding words that the user typed in and finding all possible words for
+ * the computer player.
+ */
 
 #include <sstream>
 #include "Boggle.h"
@@ -23,14 +30,12 @@ static string CUBES[NUM_CUBES] = {          // the letters on all 6 sides of eve
 Boggle::Boggle() {
     board.resize(BOARD_SIZE, BOARD_SIZE);
     dict.addWordsFromFile(DICTIONARY_FILE);
-    userWords.clear();
-    compWords.clear();
 }
 
 /*-------------- Part 1 --------------*/
 
 /*
- * This function creates a random using the given "cubes"
+ * This function creates a random playing board using the given "cubes"
  */
 void Boggle::makeRandomBoard() {
     // Uses the shuffle() function from shuffle.h to randomies the cubes order.
