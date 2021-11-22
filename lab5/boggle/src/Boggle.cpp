@@ -84,7 +84,7 @@ void Boggle::makeUserBoard(const string input) {
 }
 
 /*
- * This function prints the board to the console.
+ * This function prints the current board to the console.
  */
 void Boggle::printBoard() const {
     for (int r = 0; r < BOARD_SIZE; r++) {
@@ -149,17 +149,26 @@ bool Boggle::checkBoard(const string input) {
 }
 
 /*
- * This function
+ * This function initiates the search function to find a word that the player has
+ * given. It starts with creating a Grid the same size as the playing board to
+ * keep track of which positions on the board that has been visited (true if visited).
+ * The function starts of with getting the first letter from the word and gets all the
+ * positions of that letter via the function findLetterPos().
  */
 bool Boggle::initSearch(const string input) {
     char first = input.front();
+
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
+
     Stack<Stack<int>> allPos = findLetterPos(first, visited);
 
-    // Loop ends when all positions for the first letter has been gone through
+    /* Loop ends when all positions for the first letter has been gone through or
+     * the word has been found */
     while (!allPos.isEmpty()) {
+
         foundLetters.clear();
         foundLetters.push_back(first);
+        cout << "foundletters: " << foundLetters << endl;
         char next = input[foundLetters.size()];
 
         Stack<int> pos = allPos.pop(); // Go through all first letter positions
@@ -185,7 +194,7 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited)
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
             if (board[r][c] == letter && !visited.get(r, c)) {
-                cout << board[r][c] << endl;
+                cout << "at pos: " << r << " " << c << endl;
                 letterPos.push(r); letterPos.push(c);   // c (x) is at the top of the Stack
                 allPos.push(letterPos);
             }
