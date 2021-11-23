@@ -45,7 +45,7 @@ public:
     /* Part 3 */
     bool checkBoard(const string input);
     bool initSearch(const string input);
-    void wordSearch(const string& word, char& next, Stack<int>& pos, Grid<bool>& visited);
+    void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
     void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
 

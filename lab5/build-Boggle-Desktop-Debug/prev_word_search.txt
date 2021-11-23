@@ -1,0 +1,131 @@
+/*
+bool Boggle::wordSearch(string word) {
+
+    word = toUpperCase(word);           // Make given word uppercase
+
+    // Start with checking if the letters even exists on the board
+    if (!(lettersOnBoard(word))) {
+        cout << "Not all letters exist on the board..." << endl;
+        return false;
+    }
+    cout << "All letters exist on the board!" << endl;
+
+    unsigned int counter = 0;
+    string first(1, word[counter]);     // Get first letter in given word
+
+    Vector<Vector<int>> wordVector;
+    Map<char, Vector<int>> visited;
+    Vector<int> newPos;
+
+    while(wordVector.size() != word.size())
+    {
+        char cletter = word[counter];
+        if (wordVector.isEmpty()) visited.clear();
+        newPos = getLetterPos(cletter);
+        if (!visited.containsKey(cletter))
+        {
+            wordVector.push_back(newPos);
+            visited.put(cletter, newPos);
+        }
+
+
+
+        //wordVector.push_back(getLetterPos(word[counter]));
+    }
+}
+
+/***
+ * This function
+ ***/
+/*
+bool Boggle::lettersOnBoard(string word) {
+    unsigned int counter = 0;
+    foreach(char c in word) {
+        string letter(1, c);
+        foreach(string l in board) {
+            if (letter == l) {  // Adds +1 to counter if letter
+                counter++;      // is found on board, then
+                break;          // breaks the foreach-loop.
+            }
+        }
+    }
+    return (counter >= word.size());
+}
+
+Vector<int> Boggle::getLetterPos(char letter) {
+    string sletter(1, letter);     // Get first letter in given word
+    Vector<int> letterPos;
+    for (int r = 0; r < board.numRows(); r++)
+    {
+        for (int c = 0; c < board.numCols(); c++)
+        {
+            if (sletter == board.get(r, c))
+            {
+                letterPos.push_back(r);
+                letterPos.push_back(c);
+                return letterPos;
+            }
+        }
+    }
+    letterPos.push_back(-1);
+    return letterPos;
+}
+
+
+
+
+
+/*bool Boggle::wordSearch(string word) {
+
+    word = toUpperCase(word);           // Make given word uppercase
+    unsigned int counter = 0;
+    string first(1, word[counter]);     // Get first letter in given word
+
+    if (!(lettersOnBoard(word))) {
+        cout << "Not all letters exist on the board..." << endl;
+        return false;
+    }
+    cout << "All letters exist on the board!" << endl;
+
+    vector<vector<vector<int>>> allLetters;
+    vector<vector<int>> firstLetter = firstLetterPos(first);
+
+    vector<vector<int>> prevLetter = firstLetter;
+    vector<vector<int>> nextLetter;
+
+    counter++;
+
+    cout << "First letter: ";
+    cout << first << endl;
+
+    while(counter > 0) {
+        // Get the current letter
+        string letter(1, word[counter]);
+
+        cout << "Next letter: ";
+        cout << letter << endl;
+
+        nextLetter = searchBoard(letter, prevLetter.back());
+
+        if (nextLetter.size() == 0) {
+            prevLetter.pop_back();
+            if (prevLetter.size() == 0) {
+                prevLetter = allLetters.back();
+                prevLetter.pop_back();
+                counter--;
+            }
+        }
+        // If neighbour/s is/are found
+        else {
+            allLetters.push_back(prevLetter);
+            prevLetter = nextLetter;
+            counter++;
+        }
+        cout << "Counter: ";
+        cout << counter << endl;
+        if (counter == word.size()) {
+            return true;
+        }
+    }
+    return false;
+}*/
