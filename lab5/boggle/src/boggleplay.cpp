@@ -36,11 +36,10 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            //userInput = "HELLELSJLOHARATW";   // Eget test
             //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
-            userInput = "teeemlbailudatte";
-            //cout << "Type the 16 letters to appear on the board: ";
-            //getline(cin, userInput);
+            //userInput = "teeemlbailudatte";   // Own test, tests cases with many of the same letter
+            cout << "Type the 16 letters to appear on the board: ";
+            getline(cin, userInput);
             userInput = toUpperCase(userInput);
             if (boggle.userBoardInput(userInput)) break;
             cout << "That is not a valid 16-letter board String. Try again." << endl;

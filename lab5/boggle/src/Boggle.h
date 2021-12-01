@@ -1,8 +1,12 @@
-// This is the .h file you will edit and turn in.
-// We have provided a minimal skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header and replace it with your own
+/*
+ * File: Boggle.h
+ * -----------------
+ * This file defines all the functions used in Boggle.cpp.
+ * The function also creates private variables to be used in Boggle.cpp
+ * to create the board, a word list of all words from the dicionary and
+ * to keep check of all the words that the player has found during the
+ * game.
+ */
 
 #ifndef _boggle_h
 #define _boggle_h
