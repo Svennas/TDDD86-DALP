@@ -11,6 +11,7 @@
 #define _encoding_h
 
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <map>
 #include "bitstream.h"

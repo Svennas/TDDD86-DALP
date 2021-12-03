@@ -6,16 +6,48 @@
 #include "encoding.h"
 // TODO: include any other headers you need
 
+/*
+ * This function counts all the different types of characters from a
+ * given file or input and returns a frequency table (map<int, int>)
+ * for how many times a character appears.
+ */
 map<int, int> buildFrequencyTable(istream& input) {
-    // TODO: implement this function
     map<int, int> freqTable;
+    int eof = 256;
+    while(input.peek() != -1) {
+        int temp = input.get();
+        if(freqTable.count(temp) > 0) {
+            freqTable[temp] += 1;
+        }
+        else {
+            pair<int, int> tablePair;
+            tablePair.first = temp;
+            tablePair.second = 1;
+            freqTable.insert(tablePair);
+        }
+    }
+    pair<int, int> eofPair;
+    eofPair.first = eof;
+    eofPair.second = 1;
+    freqTable.insert(eofPair);
     return freqTable;
 }
 
 HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
     // TODO: implement this function
+
+    for (unsigned int i = 0; i < freqTable.size(); i++) {
+
+    }
+
     return nullptr;
 }
+
+
+
+
+
+
 
 map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
     // TODO: implement this function
@@ -42,3 +74,4 @@ void decompress(ibitstream& input, ostream& output) {
 void freeTree(HuffmanNode* node) {
     // TODO: implement this function
 }
+
