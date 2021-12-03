@@ -11,9 +11,10 @@
 #define _encoding_h
 
 #include <iostream>
-#include <ostream>
 #include <string>
 #include <map>
+#include <queue>
+#include <vector>
 #include "bitstream.h"
 #include "HuffmanNode.h"
 using namespace std;
@@ -24,6 +25,9 @@ using namespace std;
  */
 map<int, int> buildFrequencyTable(istream& input);
 HuffmanNode* buildEncodingTree(const map<int, int>& freqTable);
+
+HuffmanNode combineNodes(HuffmanNode *left, HuffmanNode *right);
+
 map<int, string> buildEncodingMap(HuffmanNode* encodingTree);
 void encodeData(istream& input, const map<int, string>& encodingMap, obitstream& output);
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output);

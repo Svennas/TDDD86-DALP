@@ -6,6 +6,8 @@
 #include "encoding.h"
 // TODO: include any other headers you need
 
+using namespace std;
+
 /*
  * This function counts all the different types of characters from a
  * given file or input and returns a frequency table (map<int, int>)
@@ -34,17 +36,42 @@ map<int, int> buildFrequencyTable(istream& input) {
 }
 
 HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
-    // TODO: implement this function
+    cout << "hi";
+    priority_queue<HuffmanNode*> nodeQueue;
+    HuffmanNode* node;
 
-    for (unsigned int i = 0; i < freqTable.size(); i++) {
 
+    /* In this for-loop the priority queue with nodes is created. The pairs from the given
+     * freqTable are sorted after the value, not the key. For-loop taken from huffmanmain.cpp. */
+    for (auto const & freq : freqTable) {
+        int key = freq.first;
+        int value = freq.second;
+        node->count = value;     // Needs to sort by value, which is why it's added first
+        node->character = key;
+        node->one = nullptr;
+        node->zero = nullptr;
+        nodeQueue.push(node);
+        cout << "hello ";
+    }
+    /*cout << "out of for-loop" << endl;
+    while (!nodeQueue.empty()) {
+        cout << nodeQueue.top()->toString() << endl;
+        nodeQueue.pop();
     }
 
+
+    //while (nodeOrder.size() != 1) { // End loop when only node is left
+
+    //}*/
     return nullptr;
 }
 
-
-
+HuffmanNode combineNodes(HuffmanNode *left, HuffmanNode *right) {
+    HuffmanNode parent;
+    parent.zero = left;
+    parent.one = right;
+    return parent;
+}
 
 
 
