@@ -25,10 +25,8 @@ using namespace std;
  */
 map<int, int> buildFrequencyTable(istream& input);
 HuffmanNode* buildEncodingTree(const map<int, int>& freqTable);
-
-HuffmanNode combineNodes(HuffmanNode *left, HuffmanNode *right);
-
 map<int, string> buildEncodingMap(HuffmanNode* encodingTree);
+map<int, string> findNodeCodes(HuffmanNode* currentNode, map<int, string>& currentMap, string code);
 void encodeData(istream& input, const map<int, string>& encodingMap, obitstream& output);
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output);
 void compress(istream& input, obitstream& output);
