@@ -20,7 +20,7 @@
 #include "huffmanutil.h"
 using namespace std;
 
-const bool SHOW_TREE_ADDRESSES = false;   // set to true to debug tree pointer issues
+const bool SHOW_TREE_ADDRESSES = true;   // set to true to debug tree pointer issues
 const string DEFAULT_COMPRESSED_FILE_EXTENSION = ".huf";
 const string DEFAULT_DECOMPRESSED_FILE_EXTENSION = ".txt";
 
