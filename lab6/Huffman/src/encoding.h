@@ -29,6 +29,7 @@ map<int, string> buildEncodingMap(HuffmanNode* encodingTree);
 map<int, string> findNodeCodes(HuffmanNode* currentNode, map<int, string>& currentMap, string code);
 void encodeData(istream& input, const map<int, string>& encodingMap, obitstream& output);
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output);
+char getLeaf(ibitstream& input, HuffmanNode* node);
 void compress(istream& input, obitstream& output);
 void decompress(ibitstream& input, ostream& output);
 void freeTree(HuffmanNode* node);

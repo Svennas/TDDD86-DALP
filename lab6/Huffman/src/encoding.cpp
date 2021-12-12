@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/*
+/* --- STEP 1 ---
  * This function counts all the different types of characters from a
  * given file or input and returns a frequency table (map<int, int>)
  * for how many times a character appears.
@@ -28,7 +28,7 @@ map<int, int> buildFrequencyTable(istream& input) {
     return freqTable;
 }
 
-/*
+/* --- STEP 2 ---
  * This function builds a sort of tree that can be later encoded. It does this by first
  * inserting all of the characters from the given frequency table into a priority queue
  * where the nodes are sorted after how many times a character appears. The nodes are then
@@ -63,7 +63,7 @@ HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
     return root;
 }
 
-/*
+/* --- STEP 3 ---
  * This function creates an map with new codes for every character. The new codes
  * represent were in the given encodingTree the character appears. The actual codes
  * and the map are created in the funciton findNodeCodes(). This function returns the
@@ -76,8 +76,7 @@ map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
     if (encodingTree != nullptr) return findNodeCodes(encodingTree, encodingMap, init);
     else return encodingMap;
 }
-/*
- * This is a help function to buildEncodingMap(). This function creates a map with
+/* This is a help function to buildEncodingMap(). This function creates a map with
  * <int, string> pairs containing the int for a character in the given encodingTree
  * and a string with the code for that character. The code is created by traversing
  * the tree and adding 0 or 1 to the code depending of which way the tree is
@@ -96,7 +95,7 @@ map<int, string> findNodeCodes(HuffmanNode* currentNode, map<int, string>& curre
     return currentMap;
 }
 
-/*
+/* --- STEP 4 ---
  * This function takes an input, decodes it with the given encodingMap and writes the
  * encoded input to the "output data bit stream". One byte at a time is taken from
  * the input, is then compared with characters from the map, and then writes the code
@@ -120,10 +119,47 @@ void encodeData(istream& input, const map<int, string> &encodingMap, obitstream&
     }
 }
 
-
+/* --- STEP 5 ---
+ * This function
+ */
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output) {
-    // TODO: implement this function
+    HuffmanNode* tempTree = encodingTree;
+    while(input.peek() != -1) {
+        int bit = input.readBit();
+        if (tempTree->isLeaf()) {
+            output.put(tempTree->character);
+            tempTree = encodingTree;   // Go back to the root
+        }
+        else if (bit == 1) tempTree = tempTree->one;
+        else tempTree = tempTree->zero;
+    }
+
+
+
+
+   /* while(input.peek() != -1) {
+    //for (int i = 0; i < 5; i++) {
+        output.put(getLeaf(input, encodingTree));
+        cout << "peek: " << input.peek() << endl;
+    }*/
 }
+/* This function
+ */
+char getLeaf(ibitstream& input, HuffmanNode* node) {
+
+    if (!node->isLeaf()) {
+        int bit = input.readBit();
+        cout << "bit in getleaf: " << bit << endl;
+        if (bit == 1) getLeaf(input, node->one);
+        else getLeaf(input, node->zero);
+    }
+    cout << "returning " << node->character << endl;
+    return node->character;
+}
+
+
+
+
 
 void compress(istream& input, obitstream& output) {
     // TODO: implement this function
