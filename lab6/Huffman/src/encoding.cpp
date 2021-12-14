@@ -124,24 +124,26 @@ void encodeData(istream& input, const map<int, string> &encodingMap, obitstream&
  */
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output) {
     HuffmanNode* tempTree = encodingTree;
-    while(input.peek() != -1) {
-        int bit = input.readBit();
+    int bit = 0;
+    while (bit != -1) {
+    //while (tempTree->character != PSEUDO_EOF) {
+        cout << tempTree->character << endl;
+        bit = input.readBit();
+        //cout << bit << endl;
+        if (bit == 1) {
+            tempTree = tempTree->one;
+          //  cout << "one" << endl;
+        }
+        else {
+            tempTree = tempTree->zero;
+            //cout << "zero" << endl;
+        }
         if (tempTree->isLeaf()) {
             output.put(tempTree->character);
+            cout << "found leaf with character: " << tempTree->character << endl;
             tempTree = encodingTree;   // Go back to the root
         }
-        else if (bit == 1) tempTree = tempTree->one;
-        else tempTree = tempTree->zero;
     }
-
-
-
-
-   /* while(input.peek() != -1) {
-    //for (int i = 0; i < 5; i++) {
-        output.put(getLeaf(input, encodingTree));
-        cout << "peek: " << input.peek() << endl;
-    }*/
 }
 /* This function
  */
