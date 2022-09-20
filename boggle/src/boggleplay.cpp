@@ -1,7 +1,11 @@
-// You will edit and turn in this CPP file.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header and replace with your own
-
+/*
+ * File: boggleplay.cpp
+ * -----------------
+ * This file contains all the functions used for rules and creation to play
+ * the game Boggle. In this file the game board is created, the search algorithms
+ * for finding words that the user typed in and finding all possible words for
+ * the computer player.
+ */
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
@@ -13,11 +17,18 @@
 
 bool playerTurn(Boggle& boggle);
 bool playerInput(Boggle& boggle, string userInput);
+void playerStats(Boggle& boggle);
+void computerTurn(Boggle& boggle);
+void printStats(Set<string>& words, bool player);
 
-/*
+int PLAYER_POINTS;
+int COMP_POINTS;
+
+/***
  * Plays one game of Boggle using the given boggle game state object.
- */
+ ***/
 void playOneGame(Boggle& boggle) {
+    boggle.resetGame();
     string userInput;
     cout << "" << endl;
     if (yesOrNo("Do you want to generate a random board? ")) {
@@ -34,9 +45,9 @@ void playOneGame(Boggle& boggle) {
             cout << "That is not a valid 16-letter board String. Try again." << endl;
         }
     }
-    boggle.printBoard();
     cout << "It's your turn!" << endl;
     while (playerTurn(boggle));
+    computerTurn(boggle);
 }
 
 /*
@@ -51,7 +62,7 @@ bool playerTurn(Boggle& boggle) {
     }
 
     clearConsole();
-    //playerStats(boggle);
+    playerStats(boggle);
     cout << "Type a word (or press Enter to end your turn): ";
 
     getline(cin, userWord);
@@ -87,21 +98,64 @@ bool playerInput(Boggle& boggle, string userInput) {
     if (!boggle.checkUsed(userInput)) {
         cout << "You have already guessed that word." << endl;
         return false;
-    }/*
+    }
     // If either checkBoard() or initSearch returns false the condition can't be met.
     if ((!boggle.checkBoard(userInput)) || (!boggle.initSearch(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
-    }*/
+    }
     cout << "You found a new word! " << '"' << userInput << '"' << endl;
     return true;
 }
 
+void playerStats(Boggle& boggle) {
+    boggle.printBoard();
+    printStats(boggle.userWords, true);
+}
 
+void computerTurn(Boggle& boggle) {
+    cout << "\nIt's my turn!" << endl;
+    boggle.startCompTurn();
+    printStats(boggle.compWords, false);
+    if (COMP_POINTS > PLAYER_POINTS) {
+        cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
+    }
+    else cout << "WOW, you defeated me! Congratulations!" << endl;
+}
 
-/*
+void printStats(Set<string>& words, bool player) {
+    if (player) cout << "Your words ";
+    else cout << "My words ";
+
+    cout << "(" << words.size() << "): {";
+    int n = 0;
+    for (string word : words) {
+        if (n > 0) cout << ", ";
+        cout << '"' + word + '"';
+        n++;
+    }
+    cout << "}" << endl;
+
+    int score = 0;
+    if (words.size() > 0) {
+        for (string word : words) {
+            score += word.size() - 3;
+        }
+    }
+    if (player) {
+        cout << "Your score: ";
+        PLAYER_POINTS = score;
+    }
+    else {
+        cout << "My score: ";
+        COMP_POINTS = score;
+    }
+    cout << score << endl;
+}
+
+/***
  * Erases all currently visible text from the output console.
- */
+ ***/
 void clearConsole() {
 #if defined(_WIN32) || defined(_WIN64)
     std::system("CLS");

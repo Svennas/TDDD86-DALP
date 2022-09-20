@@ -1,16 +1,12 @@
 /*
  * TDDD86 Boggle
- * This file contains the main program and user interface for running your
- * Boggle game.  We provide you a skeleton of this file that contains a shell
- * of the overall logic, but you must complete the playOneGame function.
+ * This file contains the main program and user interface for running the
+ * Boggle game.
  *
- * The playOneGame function talks to the Boggle class that you will write.
- * This file should contain all user interaction (cout / cin), while the Boggle
- * class should contain ALL game state such as the 16 letter cubes, the set of
+ * The playOneGame function talks to the Boggle class.
+ * This file contains all user interaction (cout / cin), while the Boggle
+ * class contains ALL game state such as the 16 letter cubes, the set of
  * words that have been formed, the algorithms for searching for words, etc.
- *
- * Please do not modify this provided file. Your turned-in files should work
- * with an unmodified version of all provided code files.
  */
 
 #include <fstream>
@@ -24,17 +20,18 @@
 using namespace std;
 
 int main() {
-    intro();
 
-    // play games repeatedly until user decides to quit
+    /* Play games repeatedly until user decides to quit */
     Boggle boggle;
+
     while (true) {
+        clearConsole();
+        intro();
         playOneGame(boggle);
         cout << endl;
         if (!yesOrNo("Play again (Y/N)? ")) {
             break;
         }
-
     }
 
     cout << "Have a nice day." << endl;
