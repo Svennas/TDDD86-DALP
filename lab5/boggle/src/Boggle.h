@@ -21,8 +21,10 @@ class Boggle {
 public:
     const string DICTIONARY_FILE = "EnglishWords.dat";
     const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const int MIN_WORD_LENGTH = 4;
+    const unsigned int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
+
+
 
     Boggle();
 
@@ -36,12 +38,24 @@ public:
     bool checkLength(const string input);
     bool checkDict(string input);
     bool checkUsed(const string input);
-    /* Set of strings for all the words that the player has used. */
-    Set<string> userWords;
 
+    Set<string> userWords;      // Set of strings for all the words that the player has used.
 
-    //Set<string> compWords;      // Set of strings for all possible words
-                                // on the board.
+    /* Part 3 */
+    bool checkBoard(const string input);
+    void initSearch(const string input);
+    //bool initSearch(const string input);
+    void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
+    Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
+    void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
+
+    /* Part 4 */
+    void startCompTurn();
+    void findAllWords(string& word, Grid<bool>& visited, int& y, int& x);
+    void resetGame();
+
+    Set<string> compWords;      // Set of strings for all possible words on the board.
+
 private:  
     /* Used to create a board for the letters of the cubes as a Grid of strings. */
     Grid<char> board;
@@ -51,6 +65,18 @@ private:
 
     /* Keeps check of the letters that has been found in the function wordSearch(). */
     string foundLetters;
+
+    /* Make a struct for every letter in the Grid that is the same as the first letter in the word?
+     *
+     */
+    struct status {
+        string currentWord;
+        Grid<bool> visitedPos;
+        bool otherLetters;      // Check if the are other same letters on the board
+        int prevY;
+        int prevX;
+        struct prev;
+    };
 
 };
 

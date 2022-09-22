@@ -13,10 +13,16 @@
 
 bool playerTurn(Boggle& boggle);
 bool playerInput(Boggle& boggle, string userInput);
+void playerStats(Boggle& boggle);
+void computerTurn(Boggle& boggle);
+void printStats(Set<string>& words, bool player);
 
-/*
+int PLAYER_POINTS;
+int COMP_POINTS;
+
+/***
  * Plays one game of Boggle using the given boggle game state object.
- */
+ ***/
 void playOneGame(Boggle& boggle) {
     string userInput;
     cout << "" << endl;
@@ -25,10 +31,10 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
+            userInput = "FYCLIOMGORILHJHU";   // From test-file-1
             //userInput = "teeemlbailudatte";   // Own test, tests cases with many of the same letter
             cout << "Type the 16 letters to appear on the board: ";
-            getline(cin, userInput);
+            //getline(cin, userInput);
             userInput = toUpperCase(userInput);
             if (boggle.userBoardInput(userInput)) break;
             cout << "That is not a valid 16-letter board String. Try again." << endl;
@@ -51,9 +57,8 @@ bool playerTurn(Boggle& boggle) {
     }
 
     clearConsole();
-    //playerStats(boggle);
+    playerStats(boggle);
     cout << "Type a word (or press Enter to end your turn): ";
-
     getline(cin, userWord);
     if (userWord == "") return false;
 
@@ -87,21 +92,64 @@ bool playerInput(Boggle& boggle, string userInput) {
     if (!boggle.checkUsed(userInput)) {
         cout << "You have already guessed that word." << endl;
         return false;
-    }/*
+    }
     // If either checkBoard() or initSearch returns false the condition can't be met.
     if ((!boggle.checkBoard(userInput)) || (!boggle.initSearch(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
-    }*/
+    }
     cout << "You found a new word! " << '"' << userInput << '"' << endl;
     return true;
 }
 
+void playerStats(Boggle& boggle) {
+    boggle.printBoard();
+    printStats(boggle.userWords, true);
+}
 
+void computerTurn(Boggle& boggle) {
+    cout << "\nIt's my turn!" << endl;
+    boggle.startCompTurn();
+    printStats(boggle.compWords, false);
+    if (COMP_POINTS > PLAYER_POINTS) {
+        cout << "Ha ha ha, I destroyed you. Better luck next time, puny human!" << endl;
+    }
+    else cout << "WOW, you defeated me! Congratulations!" << endl;
+}
 
-/*
+void printStats(Set<string>& words, bool player) {
+    if (player) cout << "Your words ";
+    else cout << "My words ";
+
+    cout << "(" << words.size() << "): {";
+    int n = 0;
+    for (string word : words) {
+        if (n > 0) cout << ", ";
+        cout << '"' + word + '"';
+        n++;
+    }
+    cout << "}" << endl;
+
+    int score = 0;
+    if (words.size() > 0) {
+        for (string word : words) {
+            score += word.size() - 3;
+        }
+    }
+    if (player) {
+        cout << "Your score: ";
+        PLAYER_POINTS = score;
+    }
+    else {
+        cout << "My score: ";
+        COMP_POINTS = score;
+    }
+    cout << score << endl;
+}
+
+/***
  * Erases all currently visible text from the output console.
- */
+ ***/
 void clearConsole() {
 #if defined(_WIN32) || defined(_WIN64)
     std::system("CLS");

@@ -24,19 +24,19 @@
 using namespace std;
 
 int main() {
-    intro();
 
-    // play games repeatedly until user decides to quit
+    /* Play games repeatedly until user decides to quit */
     Boggle boggle;
+
     while (true) {
+        clearConsole();
+        intro();
         playOneGame(boggle);
         cout << endl;
         if (!yesOrNo("Play again (Y/N)? ")) {
             break;
         }
-
     }
-
     cout << "Have a nice day." << endl;
     return 0;
 }
