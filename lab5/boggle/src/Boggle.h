@@ -24,6 +24,21 @@ public:
     const unsigned int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
+    /* Make a struct for every letter in the Grid that is the same as the first letter in the word?
+     *
+     */
+    struct status {
+        string word;
+        string currentWord;
+        int nextLetter;
+        Grid<bool> visited;
+        int currPosY;
+        int currPosX;
+        // Save all the positions that this letter can visit. Remove when visited.
+        Stack<Stack<int>> lettersToVisit;
+        // When lettersToVisit is empty, go back to previous letter
+        // When a letter is removed ^, set its position to false in visitedPos
+    };
 
 
     Boggle();
@@ -44,10 +59,13 @@ public:
     /* Part 3 */
     bool checkBoard(const string input);
     void initSearch(const string input);
+    void wordSearch(status *status);
+    void firstLetterSearch(status *first);
     //bool initSearch(const string input);
-    void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
+    //void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
     Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
-    void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
+    //void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
+    Stack<Stack<int>> findNeighbours(const int& y, const int& x, const char& next, Grid<bool>& visited)
 
     /* Part 4 */
     void startCompTurn();
@@ -66,17 +84,8 @@ private:
     /* Keeps check of the letters that has been found in the function wordSearch(). */
     string foundLetters;
 
-    /* Make a struct for every letter in the Grid that is the same as the first letter in the word?
-     *
-     */
-    struct status {
-        string currentWord;
-        Grid<bool> visitedPos;
-        bool otherLetters;      // Check if the are other same letters on the board
-        int prevY;
-        int prevX;
-        struct prev;
-    };
+    bool wordFound;
+
 
 };
 

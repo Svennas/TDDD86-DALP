@@ -31,8 +31,8 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            userInput = "FYCLIOMGORILHJHU";   // From test-file-1
-            //userInput = "teeemlbailudatte";   // Own test, tests cases with many of the same letter
+            //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
+            userInput = "tegemlbaieudatte";   // Own test, tests cases with many of the same letter
             cout << "Type the 16 letters to appear on the board: ";
             //getline(cin, userInput);
             userInput = toUpperCase(userInput);

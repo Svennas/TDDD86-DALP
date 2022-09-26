@@ -144,16 +144,70 @@ bool Boggle::checkBoard(const string input) {
 }
 
 void Boggle::initSearch(const string input) {
-    status stat;
-    Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
-    stat.visitedPos = visited;
-    stat.currentWord = input;
-    stat.otherLetters = false;
+    wordFound = false;
+
+    status start;
+    Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
+    start.visited = initGrid;
+    start.currentWord = input;
+    start.nextLetter = 1;
 
     char first = input.front();
-    Stack<Stack<int>> allPos = findLetterPos(first, stat.visitedPos);
+    Stack<Stack<int>> allPos = findLetterPos(first, start.visited);
 
 
+
+
+
+
+
+    if (wordFound) {
+        cout << "Word has been found on the board!" << endl;
+    }
+    else {
+        cout << "This word can't be created on the board!" << endl;
+    }
+
+}
+
+void Boggle::firstLetterSearch(status *first) {
+    char nextLetter = first->word[first->nextLetter];
+
+    if (!first->lettersToVisit.isEmpty()) {
+    findNeighbours(first->currPosY, first->currPosX, nextLetter, first->visited);
+
+    }
+
+
+        wordSearch(first);
+
+
+    status start;
+    Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
+    start.visited = visited;
+    //start.currentWord = input;
+    start.nextLetter = 1;
+}
+
+void Boggle::wordSearch(status *curr) {
+
+    if (curr->currentWord == curr->word) wordFound = true;
+
+    if (wordFound) { //Empty all the structs
+        while (!curr->lettersToVisit.isEmpty()) { //Empty the Stack-Stack
+            curr->lettersToVisit.pop();
+        }
+    }
+
+    else if (!curr->lettersToVisit.isEmpty()) {
+        //findNeighbours()
+
+
+        struct status next;
+        next.currentWord = curr->currentWord + curr->word[curr->nextLetter];
+        next.nextLetter = curr->nextLetter + 1;
+
+    }
 }
 
 Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited) {
@@ -170,7 +224,12 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited)
     return allPos;
 }
 
-void Boggle::findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next,
+Stack<Stack<int>> Boggle::findNeighbours(const int& y, const int& x,
+                                         const char& next, Grid<bool>& visited) {
+
+}
+
+/*void Boggle::findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next,
                             Grid<bool>& visited) {
     for (int r = -1; r <= 1; r++) {
         for (int c = -1; c <= 1; c++) { // Loop through all the neighbours
@@ -186,7 +245,7 @@ void Boggle::findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPo
             }
         }
     }
-}
+}*/
 
 /*
  * This function initiates the search function to find a word that the player has
