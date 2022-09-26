@@ -28,18 +28,17 @@ public:
      *
      */
     struct status {
-        string word;
-        string currentWord;
+        //string word;
+        string letters;
         int nextLetter;
-        Grid<bool> visited;
         int currPosY;
         int currPosX;
+        Grid<bool> visited;
         // Save all the positions that this letter can visit. Remove when visited.
         Stack<Stack<int>> lettersToVisit;
         // When lettersToVisit is empty, go back to previous letter
         // When a letter is removed ^, set its position to false in visitedPos
     };
-
 
     Boggle();
 
@@ -60,12 +59,13 @@ public:
     bool checkBoard(const string input);
     void initSearch(const string input);
     void wordSearch(status *status);
-    void firstLetterSearch(status *first);
+    void firstLetterSearch(Stack<Stack<int>> firstVisits);
     //bool initSearch(const string input);
     //void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
-    Stack<Stack<int>> findLetterPos(const char& letter, Grid<bool>& visited);
+    Stack<Stack<int>> findLetterPos(const char& letter;
     //void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
-    Stack<Stack<int>> findNeighbours(const int& y, const int& x, const char& next, Grid<bool>& visited)
+    Stack<Stack<int>> findNeighbours(const int& y, const int& x, const char& next,
+                                        Grid<bool>& visited);
 
     /* Part 4 */
     void startCompTurn();
@@ -85,6 +85,8 @@ private:
     string foundLetters;
 
     bool wordFound;
+
+    string playerWord;
 
 
 };

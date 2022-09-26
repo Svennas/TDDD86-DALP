@@ -144,22 +144,12 @@ bool Boggle::checkBoard(const string input) {
 }
 
 void Boggle::initSearch(const string input) {
+    playerWord = input;
     wordFound = false;
 
-    status start;
-    Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
-    start.visited = initGrid;
-    start.currentWord = input;
-    start.nextLetter = 1;
+    Stack<Stack<int>> firstPositions = findLetterPos(input.front());
 
-    char first = input.front();
-    Stack<Stack<int>> allPos = findLetterPos(first, start.visited);
-
-
-
-
-
-
+    firstLetterSearch(firstPositions);
 
     if (wordFound) {
         cout << "Word has been found on the board!" << endl;
@@ -170,28 +160,35 @@ void Boggle::initSearch(const string input) {
 
 }
 
-void Boggle::firstLetterSearch(status *first) {
-    char nextLetter = first->word[first->nextLetter];
+void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
 
-    if (!first->lettersToVisit.isEmpty()) {
-    findNeighbours(first->currPosY, first->currPosX, nextLetter, first->visited);
+    if (!firstVisits.isEmpty()) {
 
+        status start;
+        start.letters = playerWord.front();
+        start.nextLetter = 1;
+
+        start.currPosY = firstVisits.top().pop();
+        start.currPosX = firstVisits.top().pop();
+        firstVisits.pop();
+
+        Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
+        start.visited = initGrid;
+
+        start.lettersToVisit = findNeighbours(start.currPosY, start.currPosX,
+                                playerWord.at(start.nextLetter), start.visited);
+
+        if (!start.lettersToVisit.isEmpty()) {
+            cout << "found granne to " << start.letters << endl;
+            wordSearch(&start);
+        }
+        firstLetterSearch(firstVisits);
     }
-
-
-        wordSearch(first);
-
-
-    status start;
-    Grid<bool> visited(BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
-    start.visited = visited;
-    //start.currentWord = input;
-    start.nextLetter = 1;
 }
 
 void Boggle::wordSearch(status *curr) {
 
-    if (curr->currentWord == curr->word) wordFound = true;
+    if (curr->letters == playerWord) wordFound = true;
 
     if (wordFound) { //Empty all the structs
         while (!curr->lettersToVisit.isEmpty()) { //Empty the Stack-Stack
@@ -200,22 +197,30 @@ void Boggle::wordSearch(status *curr) {
     }
 
     else if (!curr->lettersToVisit.isEmpty()) {
-        //findNeighbours()
 
-
-        struct status next;
-        next.currentWord = curr->currentWord + curr->word[curr->nextLetter];
+        status next;
+        next.letters = curr->letters + playerWord.at(curr->nextLetter);
         next.nextLetter = curr->nextLetter + 1;
 
+        next.currPosY = curr->lettersToVisit.top().pop();
+        next.currPosX = curr->lettersToVisit.top().pop();
+
+        next.visited = curr->visited;
+        next.visited[next.currPosY][next.currPosX];
+
+        if (!next.lettersToVisit.isEmpty()) {
+            cout << "found granne to " << next.letters << endl;
+            wordSearch(&next);
+        }
     }
 }
 
-Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited) {
+Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
  Stack<Stack<int>> allPos;
     Stack<int> letterPos;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            if (board[r][c] == letter && !visited.get(r, c)) {
+            if (board[r][c] == letter) {
                 letterPos.push(r); letterPos.push(c);   // c (x) is at the top of the Stack
                 allPos.push(letterPos);
             }
@@ -226,7 +231,22 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter, Grid<bool>& visited)
 
 Stack<Stack<int>> Boggle::findNeighbours(const int& y, const int& x,
                                          const char& next, Grid<bool>& visited) {
-
+    Stack<Stack<int>> allPos;
+    for (int r = -1; r <= 1; r++) {
+        for (int c = -1; c <= 1; c++) { // Loop through all the neighbours
+            int nRow = y + r;       // Actual row of the neighbour
+            int nCol = x + c;       // Actual coloumn of the neighbour
+            // Start with checking if in bounds and that it hasn't been visited already
+            if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
+            // Go to next letter if found
+            if (board[nRow][nCol] == next) {
+                Stack<int> newPos;
+                newPos.push(nRow);    newPos.push(nCol);    // Put the new letter on top
+                allPos.push(newPos);
+            }
+        }
+    }
+    return allPos;
 }
 
 /*void Boggle::findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next,
