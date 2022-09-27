@@ -146,18 +146,6 @@ bool Boggle::checkBoard(const string input) {
     if (counter >= input.size()) return true;
     cout << "Not all letters can be found on the board!" << endl;
     return false;
-
-    /*
-    for (unsigned int i = 0; i < input.length(); i++) {
-        for (char letter : board) {
-            if (input[i] == letter) {
-                counter += 1;
-            }
-        }
-    }
-    if (counter >= input.size()) return true;
-    cout << "Not all letters can be found on the board!" << endl;
-    return false;*/
 }
 
 bool Boggle::playerSearch(const string input) {
@@ -229,8 +217,6 @@ void Boggle::wordSearch(status *prev) {
     cout << "int nextLetter = " << prev->nextLetter << endl;
     cout << "previous letter: " << board[prev->posX][prev->posY] << endl;
     cout << "currently found letters: " << prev->letters << endl;
-
-    //for (int i = 0; i < prev->lettersToVisit.size(); i++)
     /*------------------------*/
 
 
