@@ -131,6 +131,23 @@ bool Boggle::checkUsed(const string input) {
  */
 bool Boggle::checkBoard(const string input) {
     unsigned int counter = 0;
+    Grid<bool> visited (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
+
+    for (unsigned int i = 0; i < input.length(); i++) {
+        for (int r = 0; r < BOARD_SIZE; r++) {
+            for (int c = 0; c < BOARD_SIZE; c++) {
+                if (board[r][c] == input[i] && !visited[r][c]) {
+                    visited[r][c] = true;
+                    counter += 1;
+                }
+            }
+        }
+    }
+    if (counter >= input.size()) return true;
+    cout << "Not all letters can be found on the board!" << endl;
+    return false;
+
+    /*
     for (unsigned int i = 0; i < input.length(); i++) {
         for (char letter : board) {
             if (input[i] == letter) {
@@ -140,10 +157,10 @@ bool Boggle::checkBoard(const string input) {
     }
     if (counter >= input.size()) return true;
     cout << "Not all letters can be found on the board!" << endl;
-    return false;
+    return false;*/
 }
 
-bool Boggle::initSearch(const string input) {
+bool Boggle::playerSearch(const string input) {
     playerWord = input;
     wordFound = false;
 
@@ -163,63 +180,111 @@ bool Boggle::initSearch(const string input) {
 }
 
 void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
-
+    cout << "" << endl;
+    cout << "in firstLetterSearch()" << endl;
     if (!firstVisits.isEmpty()) {
-
+        cout << "" << endl;
+        cout << "firstVisits-list is not empty" << endl;
         status start;
         start.letters = playerWord.front();
         start.nextLetter = 1;
 
-        start.currPosY = firstVisits.top().pop();
-        start.currPosX = firstVisits.top().pop();
+        start.posY = firstVisits.top().pop();
+        start.posX = firstVisits.top().pop();
         firstVisits.pop();
 
         Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
         start.visited = initGrid;
-        start.visited[start.currPosX][start.currPosY] = true;
+        start.visited[start.posX][start.posY] = true;
 
-        start.lettersToVisit = findNeighbours(start.currPosX, start.currPosY,
+        start.lettersToVisit = findNeighbours(start.posX, start.posY,
                                 playerWord.at(start.nextLetter), start.visited);
 
         if (!start.lettersToVisit.isEmpty()) {
             cout << "found granne to " << start.letters << endl;
+            start.letters = start.letters + playerWord.at(start.nextLetter);
+
             wordSearch(&start);
         }
-        firstLetterSearch(firstVisits);
+
+        if (wordFound) {
+            while (!firstVisits.isEmpty()) { //Empty the Stack-Stack
+                cout << "emptying" << endl;
+                firstVisits.pop();
+            }
+        }
+        else {  //Try a different starting position (if it exist) to try to find the word
+            cout << "" << endl;
+            cout << "word couldn't be created with " << board[start.posX][start.posY] << " start pos x: "
+                            << start.posX << " y: " << start.posY << endl;
+            firstLetterSearch(firstVisits);
+        }
     }
 }
 
-void Boggle::wordSearch(status *curr) {
+void Boggle::wordSearch(status *prev) {
     /* Prints to check status */
-    cout << "letter: " << board[curr->currPosX][curr->currPosY] << endl;
-    cout << "current letters: " << curr->letters << endl;
+    cout << "" << endl;
+    cout << "in wordSearch()" << endl;
+    cout << "int nextLetter = " << prev->nextLetter << endl;
+    cout << "previous letter: " << board[prev->posX][prev->posY] << endl;
+    cout << "currently found letters: " << prev->letters << endl;
+
+    //for (int i = 0; i < prev->lettersToVisit.size(); i++)
     /*------------------------*/
 
-    if (curr->letters == playerWord) wordFound = true;
+
+
+
+
+    while (!prev->lettersToVisit.isEmpty() && !wordFound) {
+        cout << "in while" << endl;
+        cout << "lettersToVisit size; " << prev->lettersToVisit.size() << endl;
+        status curr;
+
+        curr.nextLetter = prev->nextLetter + 1;
+        //cout << "error search" << endl;
+        // Pops the last found neighbour
+        curr.posY = prev->lettersToVisit.top().pop();
+        cout << "popped: " << curr.posY << endl;
+        curr.posX = prev->lettersToVisit.top().pop();
+        cout << "popped: " << curr.posX << endl;
+        prev->lettersToVisit.pop();
+
+        cout << "current letter: " << board[curr.posX][curr.posY] << endl;
+
+        curr.visited = prev->visited;
+        curr.visited[curr.posX][curr.posY] = true;
+
+        curr.lettersToVisit = findNeighbours(curr.posX, curr.posY,
+                                playerWord.at(curr.nextLetter), curr.visited);
+
+        cout << "panda" << endl;
+        if (!curr.lettersToVisit.isEmpty()) {
+            cout << "found granne to " << prev->letters << endl;
+            // Add letter string of letters if the letter was found among neighbours
+            curr.letters = prev->letters + playerWord.at(curr.nextLetter);
+            cout << "current letters after neighbour search: " << curr.letters << endl;
+
+            if (curr.letters == playerWord) {
+                wordFound = true;
+                while (!curr.lettersToVisit.isEmpty()) { //Empty the Stack-Stack
+                    cout << "emptying" << endl;
+                    curr.lettersToVisit.pop();
+                }
+            }
+
+            else wordSearch(&curr);
+        }
+        cout << "empty? " << curr.lettersToVisit.isEmpty() << endl;
+    }
+    cout << "out of while" << endl;
 
     if (wordFound) { //Empty all the structs
-        while (!curr->lettersToVisit.isEmpty()) { //Empty the Stack-Stack
-            curr->lettersToVisit.pop();
-        }
-    }
-
-    else if (!curr->lettersToVisit.isEmpty()) {
-
-        status next;
-        next.letters = curr->letters + playerWord.at(curr->nextLetter);
-        next.nextLetter = curr->nextLetter + 1;
-
-        next.currPosY = curr->lettersToVisit.top().pop();
-        cout << "popped: " << next.currPosY << endl;
-        next.currPosX = curr->lettersToVisit.top().pop();
-        cout << "popped: " << next.currPosX << endl;
-
-        next.visited = curr->visited;
-        next.visited[next.currPosY][next.currPosX];
-
-        if (!next.lettersToVisit.isEmpty()) {
-            cout << "found granne to " << next.letters << endl;
-            wordSearch(&next);
+        cout << "WORD FOUND!" << endl;
+        while (!prev->lettersToVisit.isEmpty()) { //Empty the Stack-Stack
+            cout << "emptying" << endl;
+            prev->lettersToVisit.pop();
         }
     }
 }
@@ -230,7 +295,7 @@ void Boggle::wordSearch(status *curr) {
  */
 Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
     cout << "first letter position/s: ";
- Stack<Stack<int>> allPos;
+    Stack<Stack<int>> allPos;
     Stack<int> letterPos;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
@@ -246,7 +311,9 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
 
 Stack<Stack<int>> Boggle::findNeighbours(const int& x, const int& y,
                                          const char& next, Grid<bool>& visited) {
-    cout << "searching for neighbours for " << next << " at x (row) " << x << " y (col) " << y << endl;
+    cout << "" << endl;
+    cout << "searching for " << next << " that neighbours " << board[x][y]
+            << " at x (row) " << x << " y (col) " << y << endl;
     cout << "visited" << endl;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {

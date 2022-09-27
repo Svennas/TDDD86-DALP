@@ -31,8 +31,8 @@ void playOneGame(Boggle& boggle) {
     }
     else {
         while(true) {
-            //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
-            userInput = "tegemlbaieudatte";   // Own test, tests cases with many of the same letter
+            userInput = "FYCLIOMGORILHJHU";   // From test-file-1
+            //userInput = "ataeiuebblxateae";   // Own test, tests cases with many of the same letter
             cout << "Type the 16 letters to appear on the board: ";
             //getline(cin, userInput);
             userInput = toUpperCase(userInput);
@@ -94,7 +94,7 @@ bool playerInput(Boggle& boggle, string userInput) {
         return false;
     }
     // If either checkBoard() or initSearch returns false the condition can't be met.
-    if ((!boggle.checkBoard(userInput)) || (!boggle.initSearch(userInput))) {
+    if ((!boggle.checkBoard(userInput)) || (!boggle.playerSearch(userInput))) {
         cout << "That word can't be formed on this board." << endl;
         return false;
     }
