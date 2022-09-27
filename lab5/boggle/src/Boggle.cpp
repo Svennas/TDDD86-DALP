@@ -143,7 +143,7 @@ bool Boggle::checkBoard(const string input) {
     return false;
 }
 
-void Boggle::initSearch(const string input) {
+bool Boggle::initSearch(const string input) {
     playerWord = input;
     wordFound = false;
 
@@ -153,9 +153,11 @@ void Boggle::initSearch(const string input) {
 
     if (wordFound) {
         cout << "Word has been found on the board!" << endl;
+        return true;
     }
     else {
         cout << "This word can't be created on the board!" << endl;
+        return false;
     }
 
 }
@@ -174,8 +176,9 @@ void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
 
         Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
         start.visited = initGrid;
+        start.visited[start.currPosX][start.currPosY] = true;
 
-        start.lettersToVisit = findNeighbours(start.currPosY, start.currPosX,
+        start.lettersToVisit = findNeighbours(start.currPosX, start.currPosY,
                                 playerWord.at(start.nextLetter), start.visited);
 
         if (!start.lettersToVisit.isEmpty()) {
@@ -187,6 +190,10 @@ void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
 }
 
 void Boggle::wordSearch(status *curr) {
+    /* Prints to check status */
+    cout << "letter: " << board[curr->currPosX][curr->currPosY] << endl;
+    cout << "current letters: " << curr->letters << endl;
+    /*------------------------*/
 
     if (curr->letters == playerWord) wordFound = true;
 
@@ -203,7 +210,9 @@ void Boggle::wordSearch(status *curr) {
         next.nextLetter = curr->nextLetter + 1;
 
         next.currPosY = curr->lettersToVisit.top().pop();
+        cout << "popped: " << next.currPosY << endl;
         next.currPosX = curr->lettersToVisit.top().pop();
+        cout << "popped: " << next.currPosX << endl;
 
         next.visited = curr->visited;
         next.visited[next.currPosY][next.currPosX];
@@ -215,13 +224,19 @@ void Boggle::wordSearch(status *curr) {
     }
 }
 
+/*
+ * This function finds the position or positions for the given letter on the board.
+ * Returns the positions in a Stack<Stack<int>>, where yPos (the Col) is at the top.
+ */
 Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
+    cout << "first letter position/s: ";
  Stack<Stack<int>> allPos;
     Stack<int> letterPos;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
             if (board[r][c] == letter) {
-                letterPos.push(r); letterPos.push(c);   // c (x) is at the top of the Stack
+                cout << "r " << r << " c " << c << endl;
+                letterPos.push(r); letterPos.push(c);   // c (y) is at the top of the Stack
                 allPos.push(letterPos);
             }
         }
@@ -229,17 +244,27 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
     return allPos;
 }
 
-Stack<Stack<int>> Boggle::findNeighbours(const int& y, const int& x,
+Stack<Stack<int>> Boggle::findNeighbours(const int& x, const int& y,
                                          const char& next, Grid<bool>& visited) {
+    cout << "searching for neighbours for " << next << " at x (row) " << x << " y (col) " << y << endl;
+    cout << "visited" << endl;
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            cout << visited[r][c];
+        }
+        cout << "" << endl;
+    }
     Stack<Stack<int>> allPos;
     for (int r = -1; r <= 1; r++) {
         for (int c = -1; c <= 1; c++) { // Loop through all the neighbours
-            int nRow = y + r;       // Actual row of the neighbour
-            int nCol = x + c;       // Actual coloumn of the neighbour
+            int nRow = x + r;       // Actual row of the neighbour
+            int nCol = y + c;       // Actual coloumn of the neighbour
             // Start with checking if in bounds and that it hasn't been visited already
             if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
             // Go to next letter if found
             if (board[nRow][nCol] == next) {
+                cout << "found neighbour-letter " << next << " at row: " << nRow
+                     << " col: " << nCol << endl;
                 Stack<int> newPos;
                 newPos.push(nRow);    newPos.push(nCol);    // Put the new letter on top
                 allPos.push(newPos);

@@ -31,8 +31,8 @@ public:
         //string word;
         string letters;
         int nextLetter;
-        int currPosY;
         int currPosX;
+        int currPosY;
         Grid<bool> visited;
         // Save all the positions that this letter can visit. Remove when visited.
         Stack<Stack<int>> lettersToVisit;
@@ -57,12 +57,12 @@ public:
 
     /* Part 3 */
     bool checkBoard(const string input);
-    void initSearch(const string input);
+    bool initSearch(const string input);
     void wordSearch(status *status);
     void firstLetterSearch(Stack<Stack<int>> firstVisits);
     //bool initSearch(const string input);
     //void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
-    Stack<Stack<int>> findLetterPos(const char& letter;
+    Stack<Stack<int>> findLetterPos(const char& letter);
     //void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
     Stack<Stack<int>> findNeighbours(const int& y, const int& x, const char& next,
                                         Grid<bool>& visited);
