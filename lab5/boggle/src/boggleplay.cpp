@@ -43,6 +43,7 @@ void playOneGame(Boggle& boggle) {
     boggle.printBoard();
     cout << "It's your turn!" << endl;
     while (playerTurn(boggle));
+    computerTurn(boggle);
 }
 
 /*
