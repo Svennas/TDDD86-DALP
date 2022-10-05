@@ -6,3 +6,6 @@ CONFIG -= qt
 SOURCES = Event.cpp Fish.cpp main.cpp Simulation.cpp
 
 HEADERS = $$files(*.h,true)
+
+DISTFILES += \
+    answers.txt

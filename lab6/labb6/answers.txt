@@ -1,0 +1,28 @@
+1. Vilken funktion har eventQueue och allTheFish?
+    a) eventQueue är en event-kö (opererar efter FIFO) där olika händelser läggs
+    för att sedan behandlas när det är dags. Dessa event kan spawnEvent,
+    hatchEvent, matureEvent, harvestEvent och deathEvent (även printEvent för
+    att skriva till konsolen).
+    b) allTheFish är en vektor som innehåller alla fiskar som är i omlopp.
+    Fiskar som är döda tas bort i harvestTonnageNow-funktionen. En fisk kan vara
+    i ett av 4 stadier: JuvenilePhase, AdultPhase, CaughtPhase och DeadPhase. När
+    fisk kläcks är den i JuvenilePhase och den tas bort vid DeadPhase.
+
+2. Par av (LANDING, MIN_CATCHABLE_AGE) där fiskbeståndet inte kollapsar:
+    - MCA = 260 och LANDING = 70 000.
+    Dessa värden leder till att beståndet ibland kollapsar. När det väl kollapsar
+    händer det tidigt.
+    - MCA = 550 och LANDING = 100 000.
+    Dessa värden leder till att beståndet ibland kollapsar.
+    - MCA = 350 och LANDING = 90 000.
+    Dessa värden leder till att beståndet ibland kollapsar.
+    - Beståndet påverkas väldigt mycket av dessa värden. När det väl kollapsar
+    händer det tidigt. Är åldern för infångad fisk (MCA) för låg blir det för få
+    fiskar för att skapa nya och beståndet kollapsar.
+    Är LANDING för hög fångas det in alldeles för mycket fisk
+    och beståndet kollapsar.
+
+3. Ett Fish-objekt allokeras dynamiskt i hatchEvent() i Event.cpp.
+Ett Event-objekt allokeras dynamiskt i och med deathEvent, matureEvent,
+hatchEvent, printEvent och spawnEvent. new används i kombination med dessa i både
+Event.cpp och i main.cpp.
