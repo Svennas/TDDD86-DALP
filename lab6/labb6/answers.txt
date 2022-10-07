@@ -8,6 +8,7 @@
     i ett av 4 stadier: JuvenilePhase, AdultPhase, CaughtPhase och DeadPhase. När
     fisk kläcks är den i JuvenilePhase och den tas bort vid DeadPhase.
 
+
 2. Par av (LANDING, MIN_CATCHABLE_AGE) där fiskbeståndet inte kollapsar:
     - MCA = 260 och LANDING = 70 000.
     Dessa värden leder till att beståndet ibland kollapsar. När det väl kollapsar
@@ -22,7 +23,27 @@
     Är LANDING för hög fångas det in alldeles för mycket fisk
     och beståndet kollapsar.
 
-3. Ett Fish-objekt allokeras dynamiskt i hatchEvent() i Event.cpp.
+
+3. Ett Fish-objekt allokeras dynamiskt i hatchEvent() i Event.cpp. 
+Minnet för Fish-objekt befrias sedan i båda spawnEvent() (processEvent och
+withdrawEvent), båda matureEvent() samt båda deathEvent() i Event.cpp genom
+att köra:
+delete afish;
+afish= nullptr;
+vilket tar bort objektet och befriar det från minnet samt gör pekaren till en
+nullptr för att undvika att det krashar.
+
 Ett Event-objekt allokeras dynamiskt i och med deathEvent, matureEvent,
 hatchEvent, printEvent och spawnEvent. new används i kombination med dessa i både
-Event.cpp och i main.cpp.
+Event.cpp och i main.cpp. I Event.cpp kan de hittas i hatchEvent(), spawnEvent(),
+matureEvent(), harvestEvent() samt printEvent() (alla dessa av typen processEvent).
+I main.cpp kan de hittas i main().
+Minnet för Event-objekt befrias sedan i Simulation.cpp i funktionen run() genom
+att köra:
+delete nextEvent;
+vilket tar bort objektet och befriar det från minnet. Ingen nullptr behöver
+tilldelas här då nextEvent har isolerats.
+
+Valgrind kördes med de nya värderna och inga minnesläckor identifierades. Vad jag
+kan se befrias allt allokerat minne för objektet på korrekt sätt och inget verkar
+förbises i koden.

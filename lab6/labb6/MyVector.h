@@ -44,12 +44,18 @@ public:
 private:
 
     // private members?
+    int capacity;
+    T element;
 
 };
 
 template<typename T>
 MyVector<T>::MyVector(){
     // TODO: replace the code below with your code for this member
+
+    capacity = 1;
+
+
     MYEXCEPTION("unimplemented method");
 }
 
