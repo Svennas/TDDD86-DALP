@@ -171,15 +171,16 @@ int main() {
     startText();
 
     string filename = "";
+    // Takes input from standard input stream
     cin >> filename;
 
     ifstream ifstrm;
     ifstrm.open(filename);
     string line;
     getline(ifstrm, line);
-    const int rows = atoi(line.c_str());
+    const int rows = atoi(line.c_str());    // Convert to int
     getline(ifstrm, line);
-    const int cols = atoi(line.c_str());
+    const int cols = atoi(line.c_str());    // Convert to int
 
     Grid<char> grid;
     Grid<char> tempGrid;
