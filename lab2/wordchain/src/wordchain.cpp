@@ -71,19 +71,22 @@ void wordChain(string w1, string w2, set<string>& possibleWords) {
         }
 
         else {
+            //Go through every letter of the word
            for (int i = 0; i < w1.length(); ++i) {
-               temp_letter = wordNext[i];
+               temp_letter = wordNext[i]; //Save the letter to be able to reset
+               //Change the letter in the word to every letter in the alphabet
                for (char c : ALPHABET) {
                    wordNext[i] = c;
-
+                   //Check if the newly changed wordNext actually exists and if has been used already
                    if (checkIfNeighbor(wordNext, possibleWords) && usedWords.count(wordNext) == 0) {
+                       // If it is a good word, save it in wordContainer and usedWords
                        stack<string> branchNew = wordBranch;
                        branchNew.push(wordNext);
                        wordContainer.push(branchNew);
                        usedWords.insert(wordNext);
                    }
                }
-               wordNext[i] = temp_letter;
+               wordNext[i] = temp_letter; //Reset the letter
            }
         }
 
