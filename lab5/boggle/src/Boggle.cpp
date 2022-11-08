@@ -161,7 +161,7 @@ bool Boggle::playerSearch(const string input) {
     }
 
 }
-
+//Creates the first struct
 void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
     if (!firstVisits.isEmpty()) {
         status start;
@@ -240,7 +240,7 @@ Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
             if (board[r][c] == letter) {
-                cout << "r " << r << " c " << c << endl;
+                //cout << "r " << r << " c " << c << endl;
                 letterPos.push(r); letterPos.push(c);   // c (y) is at the top of the Stack
                 allPos.push(letterPos);
             }

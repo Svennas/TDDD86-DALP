@@ -72,7 +72,7 @@ void wordChain(string w1, string w2, set<string>& possibleWords) {
 
         else {
             //Go through every letter of the word
-           for (int i = 0; i < w1.length(); ++i) {
+           for (unsigned int i = 0; i < w1.length(); ++i) {
                temp_letter = wordNext[i]; //Save the letter to be able to reset
                //Change the letter in the word to every letter in the alphabet
                for (char c : ALPHABET) {

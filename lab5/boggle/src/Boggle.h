@@ -28,7 +28,6 @@ public:
      *
      */
     struct status {
-        //string word;
         string letters;
         int nextLetter;
         int posX;

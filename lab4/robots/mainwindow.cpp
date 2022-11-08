@@ -79,40 +79,40 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         bool actionTaken = false;
         bool waiting = false;
 
-        if (e->modifiers() == Qt::KeypadModifier) {
+        //if (e->modifiers() == Qt::KeypadModifier) {
             switch (e->key()) {
-            case Qt::Key_1:
+            case Qt::Key_B:
                 actionTaken = tryMove(hero, Point{pt.x - 1, pt.y + 1});
                 break;
-            case Qt::Key_2:
+            case Qt::Key_N:
                 actionTaken = tryMove(hero, Point{pt.x, pt.y + 1});
                 break;
-            case Qt::Key_3:
+            case Qt::Key_M:
                 actionTaken = tryMove(hero, Point{pt.x + 1, pt.y + 1});
                 break;
-            case Qt::Key_4:
+            case Qt::Key_H:
                 actionTaken = tryMove(hero, Point{pt.x - 1, pt.y});
                 break;
-            case Qt::Key_6:
+            case Qt::Key_K:
                 actionTaken = tryMove(hero, Point{pt.x + 1, pt.y});
                 break;
-            case Qt::Key_7:
+            case Qt::Key_Y:
                 actionTaken = tryMove(hero, Point{pt.x - 1, pt.y - 1});
                 break;
-            case Qt::Key_8:
+            case Qt::Key_U:
                 actionTaken = tryMove(hero, Point{pt.x, pt.y - 1});
                 break;
-            case Qt::Key_9:
+            case Qt::Key_I:
                 actionTaken = tryMove(hero, Point{pt.x + 1, pt.y - 1});
                 break;
-            case Qt::Key_5:
+            case Qt::Key_J:
                 actionTaken = true;
                 waiting = true;
                 break;
             default:
                 QWidget::keyPressEvent(e);
             }
-        } else {
+        //} else {
             switch (e->key()) {
             case Qt::Key_T:
                 gameState.teleportHero();
@@ -121,7 +121,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             default:
                 QWidget::keyPressEvent(e);
             }
-        }
+        //}
 
         if (actionTaken) { // process results of viable move
             processMove(waiting);
