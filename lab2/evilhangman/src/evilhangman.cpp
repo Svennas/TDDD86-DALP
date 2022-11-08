@@ -144,7 +144,7 @@ bool letterAlreadyGuessed(vector<string> letters, string letter) {
  * Prompts the user to guess a letter;
  * returns the letter and inserts it in
  * the used letters list if a legit letter
- * that has not alreadu been guessed is
+ * that has not already been guessed is the
  * input.
  */
 char enterGuess(vector<string>& letters) {
@@ -209,7 +209,7 @@ bool isLegitWord(string& wordSoFar) {
  */
 void createFamilies(map<string, vector<string>>& familyList, vector<string>& possibleWords, int wordLength, char letter){
     string keyName = "";
-
+    //Go through every possible remaining word
     for(int i = 0; i < possibleWords.size(); ++i){
         string currentWord = possibleWords.at(i);
 
@@ -222,6 +222,7 @@ void createFamilies(map<string, vector<string>>& familyList, vector<string>& pos
                 keyName.at(k) = letter;
             }
         }
+        //Adds the current word to the key.
         familyList[keyName].push_back(currentWord);
 
         keyName = "";
@@ -236,6 +237,7 @@ void compareFamilies(vector<string>& biggest_vector, map<string,vector<string>> 
     for (auto v : familyList)
     {
         vector<string> value = v.second;
+        //Compares all the sizes of the families
         if (value.size() > biggest_vector.size())
         {
             biggest_vector = value;
@@ -279,10 +281,10 @@ int main() {
     for (int i = 0; i < wordLength; ++i) {
         wordSoFar = wordSoFar + "-";
     }
-
+    //Loops until no more guesses
     while (guesses_int > 0) {
         printStuff(guesses_int, letters, wordsOn, possibleWords, wordSoFar);
-
+        //Checks if the word contains any "-". If not, the player wins
         if (isLegitWord(wordSoFar)) {
             yesOrNoQuestion(answer, "Congratz, wanna play this again?");
             if (answer == "yes") {
@@ -299,7 +301,7 @@ int main() {
             }
             break;
         }
-
+        //Gets a not guessed letter and puts it in the vector-string
         letter = enterGuess(letters);
         guesses_int -= 1;
 
@@ -308,9 +310,11 @@ int main() {
 
         vector<string> biggestFamily;
         compareFamilies(biggestFamily, familyList);
+        //Save the biggest family, which in turn deletes the other words
         possibleWords = biggestFamily;
 
         string tempWordSoFar = wordSoFar;
+        //If a guessed letter is in the biggest family, reveal it
         wordSoFar = increaseWordSoFar(biggestFamily, letter, wordSoFar);
 
         if (tempWordSoFar != wordSoFar) {
