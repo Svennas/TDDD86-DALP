@@ -32,165 +32,131 @@ void startText() {
 }
 
 /*
- * Takes the cell count of neighboring cells and
- * decides whether the cell gets live or not depending
- * on said cell count.
+ * Creates the first colony grid through the input text file.
  */
-void determineCellAction(Grid<char> &tempGrid, int cellCount, const int &r, const int &c) {
-    if (cellCount <= 1 || cellCount >= 4) {
-        tempGrid.set(r, c, '-');
-    }
-    else if (cellCount == 3) {
-        tempGrid.set(r, c, 'X');
-    }
-}
-
-/*
- * Checks the neighboring elements of an element and
- * checks how many of them contain cells; then sends
- * this information to the function determineCellAction
- * that decides the outcome of the amount of neighboring
- * cells.
- */
-void checkNeighborCells(Grid<char> &grid, Grid<char> &tempGrid, const int &r, const int &c) {
-    int cellCount = 0;
-    for (int width = -1; width < 2; ++width) {
-        for (int height = -1; height < 2; ++height) {
-            if (grid.inBounds(r+width, c+height) && grid.get(r+width, c+height) == 'X') {
-                cellCount = cellCount + 1;
-
-                if (width == 0 && height == 0) {
-                    cellCount = cellCount - 1;
-                }
-            }
-        }
-    }
-    determineCellAction(tempGrid, cellCount, r, c);
-
-}
-
-/*
- * Checks every element of the grid, and then
- * proceeds to the function checkNeighborCells
- * that counts the amount of neighboring cells
- * to an element.
- */
-void nextStep(Grid<char> &grid, Grid<char> &tempGrid) {
-    for (int r = 0; r < grid.numRows(); ++r) {
-        for (int c = 0; c < grid.numCols(); ++c) {
-            checkNeighborCells(grid, tempGrid, r, c);
-        }
-    }
-}
-
-/*
- * Goes to the next generation of the colony through a
- * series of other functions; then proceeds to print a
- * grid representation of the colony.
- */
-void tick(Grid<char> &grid, Grid<char> &tempGrid, const int &rows, const int &cols) {
-    nextStep(grid, tempGrid);
-    grid = tempGrid;
-
-    string newGrid = "";
-    for (int r = 0; r < rows; ++r) {
-        for (int c = 0; c < cols; ++c) {
-            newGrid = newGrid + grid.get(r, c);
-        }
-        newGrid = newGrid + "\n";
-    }
-
-    cout << newGrid << endl;
-}
-
-/*
- * Uses the tick function to go through multiple
- * generations of the colony (endlessly in this case);
- * simulating an animation of the colony development.
- */
-void animate(Grid<char> &grid, Grid<char> &tempGrid, const int &rows, const int &cols) {
-    bool quit = false;
-    while (!quit) {
-        clearConsole();
-        tick(grid, tempGrid, rows, cols);
-        pause(100);
-    }
-}
-
-/*
- * Defines the grid of the colony through
- * the input text file; also prints the first
- * unchanged generation of the colony.
- */
-void setGrid(ifstream &ifstrm, string line, Grid<char> &grid, Grid<char> &tempGrid, const int &rows, const int &cols) {
+void firstColony(ifstream& ifstrm, Grid<char> &grid, const int &rows, const int &cols) {
+    string line;
     for (int r = 0; r < rows; ++r) {
         getline(ifstrm, line);
-        cout << line << endl;
-
         for (int c = 0; c < cols; ++c) {
             grid.set(r, c, line[c]);
-            tempGrid.set(r, c, line[c]);
         }
+    }
+}
+
+/*
+ * Prints the the current generation of the colony
+ */
+void printColony(Grid<char>& colony) {
+    for (int r = 0; r < colony.numRows(); ++r) {
+        for (int c = 0; c < colony.numCols(); ++c) {
+            cout << colony.get(r, c);
+        }
+        cout << "" << endl;
     }
     cout << "" << endl;
 }
 
 /*
- * Prompts the user to decide whether to animate
- * the whole lifespan of the colony, "tick" to the
- * next generation of the colony, or to quit the
- * simulation via a keyboard input.
+ * Counts the number of living neighbors for the given cell in the colony.
  */
-void chooseCommand(Grid<char> &grid, Grid<char> &tempGrid, const int &rows, const int &cols) {
+int countNeighbors(Grid<char>& colony, int row, int col) {
+    int cellCount = 0;
+    for (int w = -1; w < 2; ++w) {
+        for (int h = -1; h < 2; ++h) {
+            if (colony.inBounds(row+w, col+h) && colony.get(row+w, col+h) == 'X') {
+                cellCount = cellCount + 1;
+                if (w == 0 && h == 0) {
+                    cellCount = cellCount - 1;
+                }
+            }
+        }
+    }
+    return cellCount;
+}
+
+/*
+ * Creates the next generation for the colony.
+ * Goes through every cell of the current colony and with countNeighbors()
+ * gets the number of living neighbors, which in turn determines if the cell
+ * lives or not.
+ */
+void nextGeneration(Grid<char>& colony) {
+    Grid<char> nextG = colony;
+    int cellCount;
+    for (int r = 0; r < colony.numRows(); ++r) {
+        for (int c = 0; c < colony.numCols(); ++c) {
+            /* Always counts the current colony */
+            cellCount = countNeighbors(colony, r, c);
+            if (cellCount <= 1 || cellCount >= 4) {
+                nextG.set(r, c, '-');
+            }
+            else if (cellCount == 3) {
+                nextG.set(r, c, 'X');
+            }
+        }
+    }
+    colony = nextG;
+}
+
+/*
+ * Animates the life of the colony through multiple generations for approximately 10 seconds.
+ */
+void animate(Grid<char> &colony) {
+    int counter = 100;
+    /* Will loop for 10 seconds. */
+    while (counter != 0) {
+        clearConsole();
+        nextGeneration(colony);
+        printColony(colony);
+        pause(100);
+        counter--;
+    }
+}
+
+/*
+ * Starts the whole simulation of the colony lifespan by reading off the information
+ * of an input text file, and then calls upon all the functions that makes up
+ * the simulation in question.
+ */
+int main() {
+    startText();
+
+    Grid<char> colony;
+
+    string filename = "";
+    cin >> filename;
+
+    ifstream ifstrm;
+    ifstrm.open(filename);
+    string number;
+    getline(ifstrm, number);
+    const int rows = atoi(number.c_str());
+    getline(ifstrm, number);
+    const int cols = atoi(number.c_str());
+
+    colony.resize(rows, cols);
+    firstColony(ifstrm, colony, rows, cols);
+
     bool quit = false;
     while (!quit) {
+        clearConsole();
+        printColony(colony);
         cout << "a)nimate, t)ick, q)uit? ";
         string input = "";
         cin >> input;
         if (input == "a") {
-            animate(grid, tempGrid, rows, cols);
+            animate(colony);
         }
         else if (input == "t") {
-            tick(grid, tempGrid, rows, cols);
+            nextGeneration(colony);
+            printColony(colony);
         }
         else if (input == "q") {
             cout << "Have a nice Life!" << endl;
             quit = true;
         }
     }
-}
-
-/*
- * Starts the whole simulation of the colony
- * lifespan by reading off the information
- * of an input text file, and then transitively
- * calls upon all the functions that makes up
- * the simulation in question.
- */
-int main() {
-    startText();
-
-    string filename = "";
-    // Takes input from standard input stream
-    cin >> filename;
-
-    ifstream ifstrm;
-    ifstrm.open(filename);
-    string line;
-    getline(ifstrm, line);
-    const int rows = atoi(line.c_str());    // Convert to int
-    getline(ifstrm, line);
-    const int cols = atoi(line.c_str());    // Convert to int
-
-    Grid<char> grid;
-    Grid<char> tempGrid;
-
-    grid.resize(rows, cols);
-    tempGrid.resize(rows, cols);
-
-    setGrid(ifstrm, line, grid, tempGrid, rows, cols);
-    chooseCommand(grid, tempGrid, rows, cols);
-
     return 0;
 }
 
