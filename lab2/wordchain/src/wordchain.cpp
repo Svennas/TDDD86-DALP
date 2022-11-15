@@ -22,28 +22,24 @@ const string ALPHABET  = "abcdefghijklmnopqrstuvwxyz";
  * Goes through the list of possible words, and
  * checks if any of them matches with the "test word".
  */
-bool checkIfNeighbor(string testWord, set<string>& possibleWords) {
+bool checkIfNeighbor(const string testWord, const set<string>& possibleWords) {
     if (possibleWords.count(testWord)) {
           return true;
     }
     return false;
-
 }
 
 /*
- * Creates a queue with stacks with strings to store
- * all the possible "neighbor paths"; also creates two
- * sets to store possible neighbor words and words that
- * are confirmed neighbors. Uses two for loops to create
- * possible neighbor words; if the neighbor word exists,
- * a stack with the new word is created and stored in the
- * queue. This is done repeatedly until the destination word
- * is found, and the word chain with the destination word is
- * printed.
+ * Creates a queue with stacks with strings to store all the possible "neighbor paths"; also creates two
+ * sets to store possible neighbor words and words that are confirmed neighbors. Uses two for loops to create
+ * possible neighbor words; if the neighbor word exists, a stack with the new word is created and stored in the
+ * queue. This is done repeatedly until the destination word is found, and the word chain with the destination 
+ * word is printed.
  */
-void wordChain(string w1, string w2, set<string>& possibleWords) {
+bool wordChain(const string w1, const string w2, const set<string>& possibleWords,
+               stack<string>& wordBranch)
+{
     queue<stack<string>> wordContainer;
-    stack<string> wordBranch;
     string wordNext;
     set<string> usedWords;
 
@@ -57,25 +53,16 @@ void wordChain(string w1, string w2, set<string>& possibleWords) {
         wordNext = wordBranch.top();
         wordContainer.pop();
 
-        if (wordNext == w2) {
-            cout << "Chain from data back to code:" << endl;
-            int branchSize = wordBranch.size();
-            for(int i = 0; i < branchSize; ++i){
-                cout << wordBranch.top() + " ";
-                wordBranch.pop();
-            }
-            cout << "" << endl;
-            cout << "" << endl;
-            cout << "Have a nice day." << endl;
-            return;
+        if (wordNext == w2) // The word has been found
+        {
+            return true;
         }
-
-        else {
-            //Go through every letter of the word
+        else
+        { //Go through every letter of the word
            for (unsigned int i = 0; i < w1.length(); ++i) {
                temp_letter = wordNext[i]; //Save the letter to be able to reset
                //Change the letter in the word to every letter in the alphabet
-               for (char c : ALPHABET) {
+               for (const char c : ALPHABET) {
                    wordNext[i] = c;
                    //Check if the newly changed wordNext actually exists and if has been used already
                    if (checkIfNeighbor(wordNext, possibleWords) && usedWords.count(wordNext) == 0) {
@@ -91,15 +78,14 @@ void wordChain(string w1, string w2, set<string>& possibleWords) {
         }
 
     }
-
+    return false;
 }
 
 /*
- * Loops through all the words in the dictionary
- * and stores all words with the corresponding
+ * Loops through all the words in the dictionary and stores all words with the corresponding
  * length in the set possibleWords.
  */
-void saveDictionary(set<string>& possibleWords, int size) {
+void saveDictionary(set<string>& possibleWords, unsigned int size) {
     ifstream ifstrm;
     string word = "";
     ifstrm.open("dictionary.txt");
@@ -135,7 +121,22 @@ int main() {
     set<string> possibleWords;
     saveDictionary(possibleWords, first_word.size());
 
-    wordChain(first_word, second_word, possibleWords);
-
+    stack<string> wordBranch;
+    if (wordChain(first_word, second_word, possibleWords, wordBranch))
+    {
+        cout << "Chain from data back to code:" << endl;
+        int branchSize = wordBranch.size();
+        for(int i = 0; i < branchSize; ++i){
+            cout << wordBranch.top() + " ";
+            wordBranch.pop();
+        }
+    }
+    else
+    {
+        cout << "No chain between the words could be found!" << endl;
+    }
+    cout << "" << endl;
+    cout << "" << endl;
+    cout << "Have a nice day." << endl;
     return 0;
 }
