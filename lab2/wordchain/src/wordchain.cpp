@@ -62,7 +62,7 @@ bool wordChain(const string w1, const string w2, const set<string>& possibleWord
            for (unsigned int i = 0; i < w1.length(); ++i) {
                temp_letter = wordNext[i]; //Save the letter to be able to reset
                //Change the letter in the word to every letter in the alphabet
-               for (const char c : ALPHABET) {
+               for (const char& c : ALPHABET) {
                    wordNext[i] = c;
                    //Check if the newly changed wordNext actually exists and if has been used already
                    if (checkIfNeighbor(wordNext, possibleWords) && usedWords.count(wordNext) == 0) {

@@ -17,17 +17,53 @@
 #include <list>
 #include <typeinfo>
 #include <map>
+#include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
 string ALPHABET  = "abcdefghijklmnopqrstuvwxyz";
 
 /*
+ * Checks if the given string only contains integers.
+ * If it is and integer, also checks if it is bigger than 0.
+ */
+bool isNumber(const string& str) {
+   for (unsigned int i = 0; i < str.length(); i++) {
+       if (!isdigit(str[i])) return false;
+       else {
+           if (atol(str.c_str()) <= 0) return false;
+       }
+   }
+   return true;
+}
+
+/*
+ * Checks if there exist a word in the dictionary with the
+ * same length as the given word.
+ */
+bool checkDictionary(const string& length)
+{
+    unsigned long int length_int = atol(length.c_str());
+    string word = "";
+    ifstream ifstrm;
+    ifstrm.open("dictionary.txt");
+    for (int i = 0; i < 267751; ++i) {
+        getline(ifstrm, word);
+        if (word.size() == length_int) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
  * Loops through the dictionary and saves all
  * words with the corresponding length to
  * the vector possibleWords.
  */
-vector<string> saveDictionary(long int size) {
+vector<string> saveDictionary(const unsigned long int& size)
+{
     string word = "";
     vector<string> possibleWords;
     ifstream ifstrm;
@@ -39,138 +75,40 @@ vector<string> saveDictionary(long int size) {
         }
     }
     return possibleWords;
-
-}
-/*
- * Prints a string containing a question;
- * followed by a required "yes" or "no"
- * input, that gets stored in a string
- * variable, to leave the function.
- */
-void yesOrNoQuestion(string& answer, string question) {
-    bool leaveLoop = false;
-    while (!leaveLoop) {
-        cout << question << endl;
-        cin >> answer;
-        cout << "" << endl;
-        if (answer == "yes" || answer == "no") {
-            leaveLoop = true;
-        }
-    }
 }
 
 /*
- * Asks the user after the amount of guesses
- * it wants, and returns the number of guesses
- * when a legit positive number is input.
+ * Checks if input is either "yes" or "no".
  */
-int getGuesses(string& guesses) {
-    long int guesses_int = -1;
-    bool leaveLoop = false;
-    while (guesses_int <= 0 && !leaveLoop) {
-        cout << "Write the amount of guesses:" << endl;
-        guesses = "";
-        cin >> guesses;
-        cout << "" << endl;
-        guesses_int = atol(guesses.c_str());
-
-        if (isdigit(guesses_int)) {
-            leaveLoop = true;
-        }
-    }
-    return guesses_int;
-}
-
-/*
- * Asks the user after the length of the word
- * to be used, and returns the number of the
- * length when a legit positive number is input.
- */
-int getLength(vector<string>& possibleWords) {
-    bool isEmpty = true;
-    long int word_length_int;
-    while (isEmpty == true) {
-        cout << "Write the length of the word:" << endl;
-        string word_length = "";
-        cin >> word_length;
-        cout << "" << endl;
-        word_length_int = atol(word_length.c_str());
-        possibleWords = saveDictionary(word_length_int);
-        isEmpty = possibleWords.empty();
-    }
-    return word_length_int;
-}
-
-/*
- * Prints the remaning guesses of the user,
- * the guessed letters so far, the revealed
- * letters of the word so far, and the remain-
- * ing possible words if the user enabled it.
- */
-void printStuff(int guesses, vector<string>& letters, bool wordsOn, vector<string>& possibleWords, string wordSoFar) {
-    cout << "Remaining guesses: " << guesses << endl;
-    guesses = guesses - 1;
-
-    cout << "Guessed letters: ";
-    int size = letters.size();
-    for (int i = 0; i < size; ++i) {
-        cout << letters.at(i) << " ";
-    }
-    cout << "" << endl;
-
-    cout << "Word so far: " << wordSoFar << endl;
-
-    if (wordsOn == true) {
-        cout << "Remaining possible words: " << possibleWords.size() << endl;
-    }
-    cout << "" << endl;
-}
-
-/*
- * Returns true or false depending on
- * whether or not the letter has been
- * guessed already.
- */
-bool letterAlreadyGuessed(vector<string> letters, string letter) {
-    for (string l : letters) {
-        if (l == letter) {
-            return true;
-        }
-     }
+bool yesOrNo(const string& answer)
+{
+    if (answer == "yes" || answer == "no") return true;
     return false;
 }
 
+
 /*
- * Prompts the user to guess a letter;
- * returns the letter and inserts it in
- * the used letters list if a legit letter
- * that has not already been guessed is the
- * input.
+ * Checks if the given input for a letter guess is correct.
  */
-char enterGuess(vector<string>& letters) {
-    bool realLetter = false;
-    string letter;
-    while(!realLetter) {
-        cout << "Make a guess: " << endl;
-        cin >> letter;
-        cout << "" << endl;
-        for (char c : ALPHABET) {
-            string newC(1, c);
-            if (letter == newC) {
-                if (letterAlreadyGuessed(letters, letter)) {
-                    cout << "Letter already guessed." << endl;
-                    cout << "" << endl;
-                }
-                else {
-                    realLetter = true;
+bool checkGuess(const vector<string>& letters, const string& input)
+{
+    if (input.size() > 1) return false;
+
+    for (const char& c : ALPHABET)
+    {
+        string newC(1, c);
+        if (input == newC) // Check that letter is in the alphabet
+        {
+            for (string l : letters)
+            {
+                if (l == input) { // Check if letter has already been used
+                    return false;
                 }
             }
+            return true;
         }
     }
-    letters.push_back(letter);
-    cout << "" << endl;
-    char character = letter.at(0);
-    return character;
+    return false;
 }
 
 /*
@@ -178,14 +116,13 @@ char enterGuess(vector<string>& letters) {
  * been guessed, reveals it/them in the
  * wordSoFar string.
  */
-string increaseWordSoFar(vector<string>& family, char letter, string wordSoFar) {
+void increaseWordSoFar(const vector<string>& family, const char& letter, string& wordSoFar) {
     string word = family.at(0);
-    for (int i = 0; i < word.size(); ++i) {
+    for (unsigned int i = 0; i < word.size(); ++i) {
         if (word.at(i) == letter) {
             wordSoFar.at(i) = letter;
         }
     }
-    return wordSoFar;
 }
 
 /*
@@ -193,8 +130,8 @@ string increaseWordSoFar(vector<string>& family, char letter, string wordSoFar) 
  * word (i.e. that it doesn't contain
  * any "-").
  */
-bool isLegitWord(string& wordSoFar) {
-    for (int i = 0; i < wordSoFar.size(); ++i) {
+bool isLegitWord(const string& wordSoFar) {
+    for (unsigned int i = 0; i < wordSoFar.size(); ++i) {
         if (wordSoFar.at(i) == '-') {
             return false;
         }
@@ -207,10 +144,11 @@ bool isLegitWord(string& wordSoFar) {
  * with a key corresponding the position of the guessed
  * letter in the word.
  */
-void createFamilies(map<string, vector<string>>& familyList, vector<string>& possibleWords, int wordLength, char letter){
+void createFamilies(map<string, vector<string>>& familyList, const vector<string>& possibleWords,
+                    const int& wordLength, const char& letter){
     string keyName = "";
     //Go through every possible remaining word
-    for(int i = 0; i < possibleWords.size(); ++i){
+    for(unsigned int i = 0; i < possibleWords.size(); ++i){
         string currentWord = possibleWords.at(i);
 
         for(int j = 0; j < wordLength; ++j) {
@@ -233,7 +171,7 @@ void createFamilies(map<string, vector<string>>& familyList, vector<string>& pos
  * Looks through the map of "word families",
  * and returns the one with the most members.
  */
-void compareFamilies(vector<string>& biggest_vector, map<string,vector<string>> familyList) {
+void compareFamilies(vector<string>& biggest_vector, const map<string,vector<string>>& familyList) {
     for (auto v : familyList)
     {
         vector<string> value = v.second;
@@ -246,6 +184,16 @@ void compareFamilies(vector<string>& biggest_vector, map<string,vector<string>> 
 }
 
 /*
+ * Returns a random word from the remaining words.
+ */
+string getWord(const vector<string>& remainingWords)
+{
+    srand(time(NULL));
+    int random = rand() % remainingWords.size();
+    return remainingWords.at(random);
+}
+
+/*
  * First asks the user about the length of
  * the word, the amount of guesses, whether
  * or not the number of remaining possible
@@ -255,58 +203,114 @@ void compareFamilies(vector<string>& biggest_vector, map<string,vector<string>> 
  * word is guessed. Otherwise prompts the
  * user to enter a letter.
  */
-int main() {
-    bool wordsOn;
-    vector<string> possibleWords;
-    string guesses;
-    string answer;
-    vector<string> letters;
-    char letter;
-    string wordSoFar;
-
+int main()
+{
     cout << "Welcome to Hangman!" << endl;
+    cout << "You will play a very difficult version of Hangman!" << endl;
+    cout << "Do you think you can beat it?" << endl;
+    cout << "" << endl;
+    cout << "Start by answering some questions to get started:" << endl;
     cout << "" << endl;
 
-    int wordLength = getLength(possibleWords);
-    int guesses_int = getGuesses(guesses);
-    yesOrNoQuestion(answer, "Do you want to see the remaining amount of possible words?:");
+    /*-------------------------------Set up---------------------------------------------*/
 
-    if (answer == "yes") {
-        wordsOn = true;
-    }
-    else if (answer == "no") {
-        wordsOn = false;
-    }
+    bool showWords = false;
+    char letter;
+    string wordSoFar;
+    string input = "";
 
-    for (int i = 0; i < wordLength; ++i) {
+    do // Only leaves loop if input is both an int and the lengt exists in the dictionary
+    {
+        cout << "Write the length of the word:" << endl;
+        cin >> input;
+        cout << "" << endl;
+    }
+    while (!(isNumber(input) && checkDictionary(input)));
+    unsigned long int length = atol(input.c_str());
+
+    do // Only leaves loop if input is a real int bigger than 0.
+    {
+        cout << "Write the amount of guesses:" << endl;
+        cin >> input;
+        cout << "" << endl;
+    }
+    while (!isNumber(input));
+    int guesses = atol(input.c_str());
+
+    do // Only leaves loop if input is yes or no.
+    {
+        cout << "Do you want to see the remaining amount of possible words?:" << endl;
+        cin >> input;
+        cout << "" << endl;
+    }
+    while (!yesOrNo(input));
+    if (input == "yes") showWords = true;
+
+    for (unsigned int i = 0; i < length; ++i) {
         wordSoFar = wordSoFar + "-";
     }
-    //Loops until no more guesses
-    while (guesses_int > 0) {
-        printStuff(guesses_int, letters, wordsOn, possibleWords, wordSoFar);
+
+    vector<string> possibleWords = saveDictionary(length);
+    vector<string> letters;
+    /*----------------------------------------------------------------------------------*/
+
+    /*-----------------------------The games main loop----------------------------------*/
+
+    /* Loops until no more guesses */
+    while (guesses > 0)
+    {
+        cout << "Remaining guesses: " << guesses << endl;
+        cout << "Guessed letters: ";
+        for (unsigned int i = 0; i < letters.size(); ++i)
+        {
+            cout << letters.at(i) << " ";
+        }
+        cout << "" << endl;
+        cout << "Word so far: " << wordSoFar << endl;
+        if (showWords) {
+            cout << "Remaining possible words: " << possibleWords.size() << endl;
+        }
+        cout << "" << endl;
+
         //Checks if the word contains any "-". If not, the player wins
         if (isLegitWord(wordSoFar)) {
-            yesOrNoQuestion(answer, "Congratz, wanna play this again?");
-            if (answer == "yes") {
+            cout << "Congratz, want play again?" << endl;
+            do // Only leaves loop if input is yes or no.
+            {
+                cout << "Do you want play again?" << endl;
+                cin >> input;
+                cout << "" << endl;
+            }
+            while (!yesOrNo(input));
+            if (input == "yes") {
                 cout << "Nice, let's go!" << endl;
-                cout << " " << endl;
+                cout << "" << endl;
                 wordSoFar = "";
                 letters.clear();
                 main();
             }
-            else if (answer == "no") {
+            else {
                 cout << "Well then, bye!" << endl;
-                cout << " " << endl;
-                break;
+                cout << "" << endl;
             }
             break;
         }
         //Gets a not guessed letter and puts it in the vector-string
-        letter = enterGuess(letters);
-        guesses_int -= 1;
+
+        do // Only leaves loop if a correct guess is given
+        {
+            cout << "Make a guess: " << endl;
+            cin >> input;
+            cout << "" << endl;
+        }
+        while (!checkGuess(letters, input));
+        letters.push_back(input);
+        letter = input.at(0);
+
+        guesses -= 1;
 
         map<string, vector<string>> familyList;
-        createFamilies(familyList, possibleWords, wordLength, letter);
+        createFamilies(familyList, possibleWords, length, letter);
 
         vector<string> biggestFamily;
         compareFamilies(biggestFamily, familyList);
@@ -315,17 +319,19 @@ int main() {
 
         string tempWordSoFar = wordSoFar;
         //If a guessed letter is in the biggest family, reveal it
-        wordSoFar = increaseWordSoFar(biggestFamily, letter, wordSoFar);
+        increaseWordSoFar(biggestFamily, letter, wordSoFar);
 
         if (tempWordSoFar != wordSoFar) {
-            guesses_int += 1;
+            guesses += 1;
         }
 
     }
 
-    if (guesses_int == 0)
+    if (guesses == 0)
     {
         cout << "You're out of guesses!" << endl;
+        cout << "The word was: ";
+        cout << getWord(possibleWords) << endl;
         cout << " " << endl;
     }
     return 0;
