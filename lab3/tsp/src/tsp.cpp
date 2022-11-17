@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    string filename = "tsp1000.txt";
+    string filename = "germany15112.txt";
     ifstream input;
     input.open(filename);
 
@@ -43,11 +43,12 @@ int main(int argc, char *argv[]) {
     while (input >> x >> y) {
         Point p(x, y);
         tour.insertNearest(p);
+        //tour.insertSmallest(p);
         //uncomment the 4 lines below to animate
-        /*tour.draw(scene);
-        std::chrono::milliseconds dura(50);
-        std::this_thread::sleep_for(dura);
-        a.processEvents();*/
+        //tour.draw(scene);
+        //std::chrono::milliseconds dura(50);
+        //std::this_thread::sleep_for(dura);
+        //a.processEvents();
     }
     input.close();
 
@@ -60,4 +61,5 @@ int main(int argc, char *argv[]) {
     // draw tour
     tour.draw(scene);
     return a.exec(); // start Qt event loop
+
 }

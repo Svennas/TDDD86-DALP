@@ -40,51 +40,50 @@ public:
     void draw(QGraphicsScene* scene) const;
 
     /*
-     * First checks if our start Node has the negative default
-     * coordinates we initialized it with, in which case no Nodes
-     * have been "added" to list, giving it a size of 0.
-     * Otherwise makes a loop in which size is increased by 1
-     * for each Node until it goes back to our start Node.
+     * Returns the size of the Tour as an int.
+     * The size is the number of Nodes that the Tour consist of.
+     * Used alot as a help function in other Tour member functions.
      */
     int size() const;
 
     /*
-     * Uses the size function to loop through all of our Nodes,
-     * then uses their Point object's distanceTo function to
-     * calculate the distance between the current Node and the
-     * next Node. These distances are added together to form
-     * the total distance we get between all Nodes.
+     * Returns the total distance between all the Nodes in the Tour as a double.
+     * To calculate, uses the member function distanceTo() from the Point class.
      */
     double distance() const;
 
     /*
-     * First checks if our start Node has the negative default
-     * coordinates we initialized it with, in which case we create
-     * the actual start Node with the given Point, then exit.
-     * Otherwise uses the size function to loop through all current
-     * Nodes, checks the distance from the Node to the given Point,
-     * and saves the Node with the shortest distance to the Point.
-     * The saved Node then points to Node of the parameter Point,
-     * which in turn points to the Node the saved Node originally
-     * pointed to.
+     * Insert a new Node at the given Point p.
+     * The new Node is placed in the Tour after the Node that is closest in distance.
+     * To calculate, uses the member function distanceTo() from the Point class.
      */
     void insertNearest(Point p);
 
     /*
-     * First checks if our start Node has the negative default
-     * coordinates we initialized it with, in which case we create
-     * the actual start Node with the given Point, then exit.
-     * Otherwise uses the size function to loop through all current
-     * Nodes, makes a linked list in which the Node of the parameter
-     * Point gets added between two connected Nodes, then checks the
-     * total distance of the linked list. The modified linked list
-     * with the shortest total distance then gets created.
-     *
+     * Insert a new Node at the given Point p.
+     * The new Node is placed in the Tour after the Node where the smallest difference in
+     * distance is created between the new Node, the current Node, and the next Node.
+     * To calculate, uses the member function distanceTo() from the Point class.
      */
     void insertSmallest(Point p);
 
 private:
-    Node* root = nullptr;
+
+    /* Pointer to the first Node (nullptr) in the Tour. */
+    Node* root  = nullptr;
+
+    /*
+     * Help function.
+     * Returns true if the Tour has no Nodes. Otherwise false.
+     * If the Tour is empty, inserts the new Node.
+     */
+    bool isTourEmpty(Point p);
+
+    /*
+     * Help function.
+     * Inserts a new Node in the Tour after the given Node.
+     */
+    void insertNewNode(Point p, Node* node);
 };
 
 #endif // TOUR_H
