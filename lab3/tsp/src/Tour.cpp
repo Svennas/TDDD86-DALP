@@ -1,45 +1,39 @@
-// This is the .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
+/*
+ * Gustav Svennas, gussv907
+ *
+ * Sources to construct code used in this file:
+ * https://cplusplus.com
+ *
+ * This file contains the implementation of the Tour structure.
+ * See Tour.h for comments about each member.
+ */
 
 #include <iostream>
 #include "Tour.h"
 #include "Node.h"
 #include "Point.h"
 
-/*
- * In the constructor we initialize nothing.
- */
+
 Tour::Tour()
 {
 
 }
 
-/*
- * In the destructor we use the size function to loop
- * through all of our Nodes, then we delete them one
- * by one.
- */
 Tour::~Tour()
 {
     Node* currNode = root;
     Node* tempNode;
     const int size = this->size();
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i)
+    {
         tempNode = currNode->next;
         delete currNode;
         currNode = tempNode;
     }
 }
 
-/*
- * Uses the size function to loop through all of our
- * Nodes, then we use their Point object's toString function
- * to print out all of their coordinates.
- */
-void Tour::show()
+
+void Tour::show() const
 {
     Node* currNode = root;
     for (int i = 0; i < size(); ++i) {
@@ -49,12 +43,7 @@ void Tour::show()
 }
 
 /*
- * Uses the size function to loop through all of our
- * Nodes, then uses their Point object's drawTo function
- * to draw a line between the Node and the next Node in
- * the linked list.
- */
-void Tour::draw(QGraphicsScene *scene)
+void Tour::draw(QGraphicsScene *scene) const
 {
     Node* currNode = root;
     for (int i = 0; i < size(); ++i) {
@@ -63,14 +52,7 @@ void Tour::draw(QGraphicsScene *scene)
     }
 }
 
-/*
- * First checks if our start Node has the negative default
- * coordinates we initialized it with, in which case no Nodes
- * have been "added" to list, giving it a size of 0.
- * Otherwise makes a loop in which size is increased by 1
- * for each Node until it goes back to our start Node.
- */
-int Tour::size()
+int Tour::size() const
 {
     int size;
     Node* currNode = root;
@@ -88,14 +70,7 @@ int Tour::size()
     return size;
 }
 
-/*
- * Uses the size function to loop through all of our Nodes,
- * then uses their Point object's distanceTo function to
- * calculate the distance between the current Node and the
- * next Node. These distances are added together to form
- * the total distance we get between all Nodes.
- */
-double Tour::distance()
+double Tour::distance() const
 {
     double totalDistance = 0.0;
     double distance;
@@ -110,17 +85,6 @@ double Tour::distance()
     return totalDistance;
 }
 
-/*
- * First checks if our start Node has the negative default
- * coordinates we initialized it with, in which case we create
- * the actual start Node with the given Point, then exit.
- * Otherwise uses the size function to loop through all current
- * Nodes, checks the distance from the Node to the given Point,
- * and saves the Node with the shortest distance to the Point.
- * The saved Node then points to Node of the parameter Point,
- * which in turn points to the Node the saved Node originally
- * pointed to.
- */
 void Tour::insertNearest(Point p)
 {
     Node* currNode;
@@ -154,17 +118,6 @@ void Tour::insertNearest(Point p)
     closestNode->next = newNode;
 }
 
-/*
- * First checks if our start Node has the negative default
- * coordinates we initialized it with, in which case we create
- * the actual start Node with the given Point, then exit.
- * Otherwise uses the size function to loop through all current
- * Nodes, makes a linked list in which the Node of the parameter
- * Point gets added between two connected Nodes, then checks the
- * total distance of the linked list. The modified linked list
- * with the shortest total distance then gets created.
- *
- */
 void Tour::insertSmallest(Point p)
 {
     Node* currNode;
@@ -199,3 +152,4 @@ void Tour::insertSmallest(Point p)
     newNode->next = bestNode->next;
     bestNode->next = newNode;
 }
+*/
