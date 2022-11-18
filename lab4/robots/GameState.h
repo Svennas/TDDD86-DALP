@@ -19,22 +19,51 @@
 
 class GameState {
 public:
-    GameState();
-    GameState(const int& numberOfRobots);
-
-    ~GameState();
-    GameState(const GameState& obj);
-    GameState& operator=(const GameState& gs);
-
-    void copy(const GameState& gamestate);
 
     /*
-     * Clear and redraw entire playing field
+     * Constructor.
+     */
+    GameState();
+
+    /*
+     * Constructor.
+     * Creates the given number of Robots for the GameState to use.
+     */
+    GameState(const int& numberOfRobots);
+
+    /*
+     * Destructor.
+     * Deletes all Robots to deallocate memory.
+     */
+    ~GameState();
+
+    /*
+     * Copy constructor.
+     * Deallocates memory for pointers in robots vector from current GameState and
+     * then copies over remaining fields from the new GameState to the current one.
+     * ???????????????
+     *
+     */
+    GameState(const GameState& obj);
+
+    /*
+     * Copy assignment operator. Runs everytime a new level is created, as a new
+     * GameState is assigned to the main GameState instance.
+     * ???????????????????
+     * Seems to be used at a new level or when resetting the game as such;
+     * gameState = GameState(numberOfRobots);
+     */
+    GameState& operator=(const GameState& gs);
+
+    //void copy(const GameState& gamestate);
+
+    /*
+     * Draws all instances of Robots, Junks and Hero.
      */
     void draw(QGraphicsScene* scene) const;
 
     /*
-     * Teleport hero to random location
+     * Teleports hero to a random position on the "game board" if position is empty.
      */
     void teleportHero();
 

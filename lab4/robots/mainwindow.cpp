@@ -66,9 +66,9 @@ MainWindow::~MainWindow() {
 /*
  * Listens to key press events from the graphical subsystem,
  * and handles the events appropriately:
- *   - '[n]' moves hero in direction [n],
- *           where n = 1, 2, 3, 4, 6, 7, 8, 9 on the numeric keypad
- *   - '5' on the numeric keypad makes the hero wait one turn
+ *   - '[e]' moves hero in direction [e],
+ *           where e = B, N, M, H, K, Y, U, I
+ *   - 'J' makes the hero wait one turn
  *   - 'T' teleports hero
  */
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -79,8 +79,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         bool actionTaken = false;
         bool waiting = false;
 
-        //if (e->modifiers() == Qt::KeypadModifier) {
-            switch (e->key()) {
+        switch (e->key())
+        {
             case Qt::Key_B:
                 actionTaken = tryMove(hero, Point{pt.x - 1, pt.y + 1});
                 break;
@@ -109,19 +109,15 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
                 actionTaken = true;
                 waiting = true;
                 break;
-            default:
-                QWidget::keyPressEvent(e);
-            }
-        //} else {
-            switch (e->key()) {
+
             case Qt::Key_T:
                 gameState.teleportHero();
                 actionTaken = true;
                 break;
+
             default:
                 QWidget::keyPressEvent(e);
-            }
-        //}
+        }
 
         if (actionTaken) { // process results of viable move
             processMove(waiting);

@@ -15,20 +15,16 @@
 #include "constants.h"
 #include <iostream>
 
-GameState::GameState(){}
+GameState::GameState()
+{
+}
 
-/*
- * Fills a vector with Robot pointers. In the case that a Robot has a position of
- * an already existing Robot, deallocate memory for the newly created Robot and make
- * a new Robot until a Robot with a non-occupied position is made.
- */
 GameState::GameState(const int& numberOfRobots)
 {
     for (int i = 0; i < numberOfRobots; i++)
     {
         Robot* robot_ptr = new Robot();
-        while (!isEmpty (*robot_ptr))
-        /* Makes sure that two robots are not on the same place */
+        while (!isEmpty (*robot_ptr)) //Makes sure that two robots are not on the same place
         {
             delete robot_ptr;
             robot_ptr = new Robot();
@@ -38,31 +34,21 @@ GameState::GameState(const int& numberOfRobots)
     teleportHero();
 }
 
-/*
- * Destructor for GameState. Deletes all Robots to deallocate memory.
- */
-GameState::~GameState() {
+GameState::~GameState()
+{
    for (unsigned int i = 0; i < robots.size(); i++){
        delete robots[i];
        robots[i] = nullptr;
    }
 }
 
-/*
- * Copy constructor.
- *
- * Deallocates memory for pointers in robots vector from current GameState and
- * then copies over remaining fields from the new GameState to the current one.
- */
-GameState::GameState(const GameState& obj) {
+GameState::GameState(const GameState& obj)
+{
     *this = obj;
 }
 
-/*
- * Copy assignment operator. Runs everytime a new level is created, as a new
- * GameState is assigned to the main GameState instance.
- */
-GameState& GameState::operator=(const GameState& gs) {
+GameState& GameState::operator=(const GameState& gs)
+{
     hero = gs.hero;
 
     for (unsigned int i = 0; i < robots.size(); i++) {
@@ -77,11 +63,8 @@ GameState& GameState::operator=(const GameState& gs) {
     return *this;
 }
 
-
-/*
- * Draws instances of Robots, Junks and Hero.
- */
-void GameState::draw(QGraphicsScene *scene) const {
+void GameState::draw(QGraphicsScene *scene) const
+{
     scene->clear();
     for (size_t i = 0; i < robots.size(); ++i) {
         robots[i]->draw(scene);
@@ -89,9 +72,6 @@ void GameState::draw(QGraphicsScene *scene) const {
     hero.draw(scene);
 }
 
-/*
-* Teleports hero to a random position on the "game board" if position is empty.
-*/
 void GameState::teleportHero() {
     do hero.teleport();
     while (!isEmpty(hero));
