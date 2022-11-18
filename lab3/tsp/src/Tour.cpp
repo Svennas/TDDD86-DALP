@@ -33,10 +33,15 @@ Tour::~Tour()
 void Tour::show() const
 {
     Node* currNode = root;
-    for (int i = 0; i < size(); ++i)
-    {
+
+    if (currNode != nullptr) {
         cout << currNode->point.toString() << endl;
         currNode = currNode->next;
+        while(currNode != root)
+        {
+            cout << currNode->point.toString() << endl;
+            currNode = currNode->next;
+        }
     }
 }
 
@@ -44,10 +49,15 @@ void Tour::show() const
 void Tour::draw(QGraphicsScene *scene) const
 {
     Node* currNode = root;
-    for (int i = 0; i < size(); ++i)
-    {
+
+    if (currNode != nullptr) {
         currNode->point.drawTo(currNode->next->point, scene);
         currNode = currNode->next;
+        while(currNode != root)
+        {
+            currNode->point.drawTo(currNode->next->point, scene);
+            currNode = currNode->next;
+        }
     }
 }
 
@@ -71,16 +81,21 @@ int Tour::size() const
 
 double Tour::distance() const
 {
-    double totalDistance = 0.0;
-    double distance;
+    double totalDistance;
     Node* currNode = root;
 
-    for (int i = 0; i < size(); ++i) {
-        distance = currNode->point.distanceTo(currNode->next->point);
-        currNode = currNode->next;
-        totalDistance += distance;
-    }
+    if (currNode == nullptr) totalDistance = 0.0;
 
+    else {
+        totalDistance = currNode->point.distanceTo(currNode->next->point);
+        currNode = currNode->next;
+
+        while(currNode != root)
+        {
+            totalDistance += currNode->point.distanceTo(currNode->next->point);
+            currNode = currNode->next;
+        }
+    }
     return totalDistance;
 }
 
@@ -88,15 +103,15 @@ void Tour::insertNearest(Point p)
 {
     if (isTourEmpty(p)) return;
 
-    Node* currentNode = root;
-    Node* closestNode;
-    double shortestDist;
+    Node* currentNode = root->next;
+    Node* closestNode = root;
+    double shortestDist = closestNode->point.distanceTo(p);
 
-    for (int i = 0; i < size(); ++i) // Loop to find where to insert new Node
+    while (currentNode != root)
     {
         double currentDist = currentNode->point.distanceTo(p);
 
-        if (currentDist < shortestDist || i == 0)
+        if (currentDist < shortestDist)
         {
             shortestDist = currentDist;
             closestNode = currentNode;
@@ -110,19 +125,23 @@ void Tour::insertSmallest(Point p)
 {
     if (isTourEmpty(p)) return;
 
-    Node* currentNode = root;
-    Node* bestNode;
-    double shortestDist, distDiff;
+    Node* currentNode = root->next;
+    Node* bestNode = root;
+    double currNewDist = bestNode->point.distanceTo(p);
+    double newNextDist = p.distanceTo(bestNode->next->point);
+    double currNextDist = bestNode->point.distanceTo(bestNode->next->point);
+    double distDiff = currNewDist + newNextDist - currNextDist;
+    double shortestDist = distDiff;
 
-    for (int i = 0; i < size(); ++i)
+    while (currentNode != root)
     {
         // Calculates distance increase in the Tour if new Node is inserted after current Node
-        double currNewDist = currentNode->point.distanceTo(p);
-        double newNextDist = p.distanceTo(currentNode->next->point);
-        double currNextDist = currentNode->point.distanceTo(currentNode->next->point);
+        currNewDist = currentNode->point.distanceTo(p);
+        newNextDist = p.distanceTo(currentNode->next->point);
+        currNextDist = currentNode->point.distanceTo(currentNode->next->point);
         distDiff = currNewDist + newNextDist - currNextDist;
 
-        if (distDiff < shortestDist || i == 0)
+        if (distDiff < shortestDist)
         {
             shortestDist = distDiff;
             bestNode = currentNode;
@@ -147,7 +166,6 @@ bool Tour::isTourEmpty(Point p)
 void Tour::insertNewNode(Point p, Node* node)
 {
     Node* newNode = new Node(p);
-    Node* temp = node->next;
-    newNode->next = temp;
+    newNode->next = node->next;
     node->next = newNode;
 }

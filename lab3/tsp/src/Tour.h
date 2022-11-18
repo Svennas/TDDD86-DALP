@@ -42,7 +42,6 @@ public:
     /*
      * Returns the size of the Tour as an int.
      * The size is the number of Nodes that the Tour consist of.
-     * Used alot as a help function in other Tour member functions.
      */
     int size() const;
 
