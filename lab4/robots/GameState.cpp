@@ -44,23 +44,28 @@ GameState::~GameState()
 
 GameState::GameState(const GameState& obj)
 {
-    *this = obj;
+    copy(obj);
 }
 
 GameState& GameState::operator=(const GameState& gs)
 {
-    hero = gs.hero;
+    if (this == &gs) return *this;
 
     for (unsigned int i = 0; i < robots.size(); i++) {
         delete robots[i];
         robots[i] = nullptr;
     }
     robots.clear();
-
-    for (unsigned int i = 0; i < gs.robots.size(); i++) {
-         robots.push_back(gs.robots[i]->clone());
-    }
+    copy(gs);
     return *this;
+}
+
+void GameState::copy(const GameState &gamestate)
+{
+    hero = gamestate.hero;
+    for (unsigned int i = 0; i < gamestate.robots.size(); i++) {
+         robots.push_back(gamestate.robots[i]->clone());
+    }
 }
 
 void GameState::draw(QGraphicsScene *scene) const

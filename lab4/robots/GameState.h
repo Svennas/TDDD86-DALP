@@ -39,23 +39,15 @@ public:
 
     /*
      * Copy constructor.
-     * Deallocates memory for pointers in robots vector from current GameState and
-     * then copies over remaining fields from the new GameState to the current one.
-     * ???????????????
-     *
      */
     GameState(const GameState& obj);
 
     /*
-     * Copy assignment operator. Runs everytime a new level is created, as a new
-     * GameState is assigned to the main GameState instance.
-     * ???????????????????
-     * Seems to be used at a new level or when resetting the game as such;
-     * gameState = GameState(numberOfRobots);
+     * Copy assignment operator.
+     * Runs everytime a new level is created, as a new GameState is assigned to
+     * the main GameState instance.
      */
     GameState& operator=(const GameState& gs);
-
-    //void copy(const GameState& gamestate);
 
     /*
      * Draws all instances of Robots, Junks and Hero.
@@ -110,6 +102,11 @@ private:
     // private helpers
     bool isEmpty(const Unit& unit) const;
     int countRobotsAt(const Unit& unit) const;
+    /*
+     * Used by the copy constructor and the copy assignment operator.
+     * Copies all the robots and the hero.
+     */
+    void copy(const GameState& gamestate);
 
 };
 

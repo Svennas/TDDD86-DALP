@@ -72,6 +72,5 @@ void Unit::draw(QGraphicsScene*) const{
 }
 
 Unit* Unit::clone() {
-
+    return new Unit(*this);
 }
-
