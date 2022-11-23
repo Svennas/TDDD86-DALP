@@ -51,7 +51,8 @@ GameState& GameState::operator=(const GameState& gs)
 {
     if (this == &gs) return *this;
 
-    for (unsigned int i = 0; i < robots.size(); i++) {
+    for (unsigned int i = 0; i < robots.size(); i++)
+    {
         delete robots[i];
         robots[i] = nullptr;
     }
@@ -63,7 +64,8 @@ GameState& GameState::operator=(const GameState& gs)
 void GameState::copy(const GameState &gamestate)
 {
     hero = gamestate.hero;
-    for (unsigned int i = 0; i < gamestate.robots.size(); i++) {
+    for (unsigned int i = 0; i < gamestate.robots.size(); i++)
+    {
          robots.push_back(gamestate.robots[i]->clone());
     }
 }
