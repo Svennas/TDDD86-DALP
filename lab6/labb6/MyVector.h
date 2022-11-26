@@ -42,33 +42,42 @@ public:
     unsigned size()const;
 
 private:
-
-    // private members?
-    int capacity;
-    T element;
-
+    T* storage;
+    unsigned capacity;
+    unsigned numberOfElements;
 };
 
+/*
+ * Constructor.
+ * Allocates memory for the Vector.
+ * Creates a new empty Vector with the capacity 1.
+ */
 template<typename T>
-MyVector<T>::MyVector(){
-    // TODO: replace the code below with your code for this member
-
+MyVector<T>::MyVector()
+{
     capacity = 1;
-
-
-    MYEXCEPTION("unimplemented method");
+    storage = new T[capacity];
+    numberOfElements = 0;
 }
 
+/*
+ * Destructor.
+ * Deallocates memory related to the Vector.
+ */
 template<typename T>
-MyVector<T>::~MyVector(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+MyVector<T>::~MyVector()
+{
+    delete[] storage;
 }
 
+/*
+ * Copy constructor.
+ *
+ */
 template<typename T>
-MyVector<T>::MyVector(const MyVector& other){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+MyVector<T>::MyVector(const MyVector& other)
+{
+
 }
 
 template<typename T>
