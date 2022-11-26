@@ -1,6 +1,18 @@
-// You will edit and turn in this CPP file.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header and replace with your own
+/*
+ * Gustav Svennas, gussv907
+ * File: boggleplay.cpp
+ * --------------
+ * This file contains all the functions needed to play one game of Boggle.
+ * Calls on Boggle.h for the logic to the game. I/O related functions are declared and
+ * implemented in this file.
+ *
+ * The player turn is first and checks among a number of rules if the given input is correct
+ * and if it can be created on the board. The player chooses when to end their turn.
+ *
+ * The computer is second and searches the board for all the possible words that are left.
+ * Coparing the words found it is then decided who won.
+ * Prints the stats of the computer and the player.
+ */
 
 #include <cstdlib>
 #include <iostream>
@@ -9,13 +21,13 @@
 #include "Boggle.h"
 #include "bogglemain.h"
 #include "strlib.h"
-// TODO: include any other header files you need
 
 bool playerTurn(Boggle& boggle);
-bool playerInput(Boggle& boggle, string userInput);
+bool playerInput(Boggle& boggle, const string userInput);
 void playerStats(Boggle& boggle);
 void computerTurn(Boggle& boggle);
-void printStats(Set<string>& words, bool player);
+void printStats(const Set<string> &words, const bool player);
+void printBoard(Boggle& boggle);
 
 int PLAYER_POINTS;
 int COMP_POINTS;
@@ -24,30 +36,35 @@ int COMP_POINTS;
  * Plays one game of Boggle using the given boggle game state object.
  ***/
 void playOneGame(Boggle& boggle) {
+    boggle.resetGame();
     string userInput;
     cout << "" << endl;
     if (yesOrNo("Do you want to generate a random board? ")) {
         boggle.makeRandomBoard();
     }
     else {
-        while(true) {
+        do
+        {
             //userInput = "FYCLIOMGORILHJHU";   // From test-file-1
             //userInput = "ataeiuebblxateae";   // Own test, tests cases with many of the same letter
             cout << "Type the 16 letters to appear on the board: ";
             getline(cin, userInput);
             userInput = toUpperCase(userInput);
-            if (boggle.userBoardInput(userInput)) break;
-            cout << "That is not a valid 16-letter board String. Try again." << endl;
-        }
+            if (!boggle.userBoardInput(userInput)) cout << "That is not a valid 16-letter "
+                                                           "board String. Try again." << endl;
+        } while(!boggle.userBoardInput(userInput));
+        boggle.makeUserBoard(userInput);
     }
-    boggle.printBoard();
+    printBoard(boggle);
     cout << "It's your turn!" << endl;
     while (playerTurn(boggle));
     computerTurn(boggle);
 }
 
 /*
- * This function
+ * This function starts the turn for the player.
+ * With other functions it continuously checks the user input and checks if it is a correct word.
+ * The player can choose when to end their turn.
  */
 bool playerTurn(Boggle& boggle) {
     string userWord;
@@ -81,7 +98,7 @@ bool playerTurn(Boggle& boggle) {
  * This function uses help functions from Boggle.cpp.
  * If all the conditions are met this function returns true.
  */
-bool playerInput(Boggle& boggle, string userInput) {
+bool playerInput(Boggle& boggle, const string userInput) {
     if (!boggle.checkLength(userInput)) {
         cout << "That word is not long enough." << endl;
         return false;
@@ -95,7 +112,8 @@ bool playerInput(Boggle& boggle, string userInput) {
         return false;
     }
     // If either checkBoard() or initSearch returns false the condition can't be met.
-    if ((!boggle.checkBoard(userInput)) || (!boggle.playerSearch(userInput))) {
+    boggle.initWordSearch(userInput);
+    if ((!boggle.checkBoard(userInput)) || (!boggle.wordFound)) {
         cout << "That word can't be formed on this board." << endl;
         return false;
     }
@@ -103,11 +121,18 @@ bool playerInput(Boggle& boggle, string userInput) {
     return true;
 }
 
+/*
+ * Prints the points and correctly guessed words of the player
+ */
 void playerStats(Boggle& boggle) {
-    boggle.printBoard();
+    printBoard(boggle);
     printStats(boggle.userWords, true);
 }
 
+/*
+ * Starts the computer's turn.
+ * Prints stats aswell as vicory or defeat message.
+ */
 void computerTurn(Boggle& boggle) {
     cout << "\nIt's my turn!" << endl;
     boggle.startCompTurn();
@@ -118,13 +143,17 @@ void computerTurn(Boggle& boggle) {
     else cout << "WOW, you defeated me! Congratulations!" << endl;
 }
 
-void printStats(Set<string>& words, bool player) {
+/*
+ * Prints the stats and words from the given player.
+ * frue = player, false = computer.
+ */
+void printStats(const Set<string>& words, const bool player) {
     if (player) cout << "Your words ";
     else cout << "My words ";
 
     cout << "(" << words.size() << "): {";
     int n = 0;
-    for (string word : words) {
+    for (const string& word : words) {
         if (n > 0) cout << ", ";
         cout << '"' + word + '"';
         n++;
@@ -133,7 +162,7 @@ void printStats(Set<string>& words, bool player) {
 
     int score = 0;
     if (words.size() > 0) {
-        for (string word : words) {
+        for (const string& word : words) {
             score += word.size() - 3;
         }
     }
@@ -146,6 +175,19 @@ void printStats(Set<string>& words, bool player) {
         COMP_POINTS = score;
     }
     cout << score << endl;
+}
+
+/*
+ * This function prints the current board to the console.
+ */
+void printBoard(Boggle& boggle)
+{
+    for (int r = 0; r < boggle.BOARD_SIZE; r++) {
+        for (int c = 0; c < boggle.BOARD_SIZE; c++) {
+            cout << boggle.getBoard()[r][c];
+        }
+        cout << "" << endl;
+    }
 }
 
 /***

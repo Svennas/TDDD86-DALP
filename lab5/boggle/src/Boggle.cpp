@@ -1,8 +1,10 @@
-// This is the .cpp file you will edit and turn in.
-// We have provided a minimal skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header and replace it with your own
+/*
+ * Gustav Svennas, gussv907
+ * File: Boggle.cpp
+ * --------------
+ * This file implements all the declared functions in Boggle.h.
+ * Implementation comments for each function can be found in Boggle.h.
+ */
 
 #include <sstream>
 #include "Boggle.h"
@@ -10,8 +12,8 @@
 #include "shuffle.h"
 #include "strlib.h"
 
-static const int NUM_CUBES = 16;   // the number of cubes in the game
-static const int CUBE_SIDES = 6;   // the number of sides on each cube
+static const int NUM_CUBES = 16;                // the number of cubes in the game
+static const int CUBE_SIDES = 6;                // the number of sides on each cube
 static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every cube
    "AAEEGN", "ABBJOO", "ACHOPS", "AFFKPS",
    "AOOTTW", "CIMOTU", "DEILRX", "DELRVY",
@@ -24,29 +26,19 @@ Boggle::Boggle() {
     dict.addWordsFromFile(DICTIONARY_FILE);
 }
 
-/*-------------- Part 1 --------------*/
-
-/*
- * This function creates a random playing board using the given "cubes"
- */
 void Boggle::makeRandomBoard() {
     // Uses the shuffle() function from shuffle.h to randomies the cubes order.
     shuffle(CUBES, NUM_CUBES);
     int cubeNum = 0;
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
-            string cube = CUBES[cubeNum];
+            string const cube = CUBES[cubeNum];
             board[r][c] = cube[randomInteger(0, CUBE_SIDES - 1)];
             cubeNum++;
         }
     }
 }
 
-/*
- * This function checks if the input String is of the correct
- * lenght and only contains letters from the english alphabet.
- * Gives the function makeUserBoard() the string if correct.
- */
 bool Boggle::userBoardInput(const string input) {
     // Check lenght
     if (!(input.length() == static_cast<unsigned int>(NUM_CUBES))) {
@@ -56,15 +48,9 @@ bool Boggle::userBoardInput(const string input) {
     for (unsigned int i = 0; i < input.length(); i++) {
         if (ALPHABET.find(input[i]) == string::npos) return false;
     }
-    // Create the board if the input is correct
-    makeUserBoard(input);
     return true;
 }
 
-/*
- * This function takes the string input and creates a board out of it.
- * The function is called from userBoardInput(), which ensures correct input.
- */
 void Boggle::makeUserBoard(const string input) {
     int i = 0;
     for (int r = 0; r < BOARD_SIZE; r++) {
@@ -75,57 +61,26 @@ void Boggle::makeUserBoard(const string input) {
     }
 }
 
-/*
- * This function prints the current board to the console.
- */
-void Boggle::printBoard() const {
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            cout << board[r][c];
-        }
-        cout << "" << endl;
-    }
+Grid<char> Boggle::getBoard() const
+{
+    return board;
 }
 
-/*-------------- Part 2 --------------*/
-
-/*
- * This function checks if the given word has the correct length.
- */
-bool Boggle::checkLength(const string input) {
+bool Boggle::checkLength(const string input) const {
     if (input.size() < MIN_WORD_LENGTH) return false;
     return true;
 }
 
-/*
- * This function checks if the given word is in the dictionary.
- */
-bool Boggle::checkDict(string input) {
+bool Boggle::checkDict(const string input) {
     if (!dict.contains(toLowerCase(input))) return false;
     return true;
 }
 
-/*
- * This function checks if the given word has been used or not
- * by looking through the Set of Strings in userWords.
- */
 bool Boggle::checkUsed(const string input) {
     if (userWords.contains(input)) return false;
     return true;
 }
 
-/*-------------- Part 3 --------------*/
-
-/*
- * This function goes through every letter of the board and
- * compares it to every letter in the given input.
- * Every time one of the letters from the input appears on the
- * board, 1 is added to the counter.
- * If the counter in the end is the same size or bigger
- * than the input length the function returns true.
- * This is to check as early as possible if all the letters
- * in the word can be found on the board.
- */
 bool Boggle::checkBoard(const string input) {
     unsigned int counter = 0;
     Grid<bool> visited (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
@@ -140,141 +95,83 @@ bool Boggle::checkBoard(const string input) {
             }
         }
     }
-    if (counter >= input.size()) return true;
-    cout << "Not all letters can be found on the board!" << endl;
-    return false;
+    return counter >= input.size();
 }
 
-bool Boggle::playerSearch(const string input) {
+void Boggle::initWordSearch(const string& input) {
     playerWord = input;
     wordFound = false;
-
-    Stack<Stack<int>> firstPositions = findLetterPos(input.front());
-
-    firstLetterSearch(firstPositions);
-
-    if (wordFound) {
-        return true;
-    }
-    else {
-        return false;
-    }
-
-}
-//Creates the first struct
-void Boggle::firstLetterSearch(Stack<Stack<int>> firstVisits) {
-    if (!firstVisits.isEmpty()) {
-        status start;
-        start.letters = playerWord.front();
-        start.nextLetter = 1;
-
-        start.posY = firstVisits.top().pop();
-        start.posX = firstVisits.top().pop();
-        firstVisits.pop();
-
-        Grid<bool> initGrid (BOARD_SIZE, BOARD_SIZE); // Keeps track of the letters that has been visited.
-        start.visited = initGrid;
-        start.visited[start.posX][start.posY] = true;
-
-        start.lettersToVisit = findNeighbours(start.posX, start.posY,
-                                playerWord.at(start.nextLetter), start.visited);
-
-        if (!start.lettersToVisit.isEmpty()) {
-            start.letters = start.letters + playerWord.at(start.nextLetter);
-            wordSearch(&start);
+    // Get all the possible positions of the first letter
+    Vector<int> firstPositions;
+    for (int x = 0; x < BOARD_SIZE; x++) {
+        for (int y = 0; y < BOARD_SIZE; y++) {
+            if (board[x][y] == input.at(FIRST_POS)) {
+                firstPositions.add(y);
+                firstPositions.add(x);
+            }   // Pattern(x, y, x, y, ....)
         }
-
-        if (wordFound) {
-            while (!firstVisits.isEmpty()) { //Empty the Stack-Stack
-                firstVisits.pop();
-            }
-        }   //Try a different starting position (if it exist) to try to find the word
-        else firstLetterSearch(firstVisits);
-
     }
+    Grid<bool> visited (BOARD_SIZE, BOARD_SIZE);
+
+    string currStr;
+    currStr.push_back(input.at(FIRST_POS));
+
+    wordSearch(currStr, visited, firstPositions);
 }
 
-void Boggle::wordSearch(status *prev) {
-    while (!prev->lettersToVisit.isEmpty() && !wordFound) {
-        status curr;
-        curr.nextLetter = prev->nextLetter + 1;
-        // Pops the last found neighbour
-        curr.posY = prev->lettersToVisit.top().pop();
-        curr.posX = prev->lettersToVisit.top().pop();
-        prev->lettersToVisit.pop();
+void Boggle::wordSearch(const string& currStr, const Grid<bool>& visited, Vector<int>& currLetterPos)
+{
+    while (!currLetterPos.isEmpty() && !wordFound)
+    {
+        int currPos = currStr.size();   // Position of the next letter looking at playerWord
 
-        curr.visited = prev->visited;
-        curr.visited[curr.posX][curr.posY] = true;
+        int currX = currLetterPos.get(FIRST_POS);
+        cout << currX << endl;
+        currLetterPos.remove(FIRST_POS);
+        int currY = currLetterPos.get(FIRST_POS);
+        cout << currY << endl;
+        currLetterPos.remove(FIRST_POS);
 
-        curr.lettersToVisit = findNeighbours(curr.posX, curr.posY,
-                                playerWord.at(curr.nextLetter), curr.visited);
+        Grid<bool> currVisited = visited;
+        currVisited[currY][currX] = true;
+        Vector<int> newLettersToVisit =
+                findNeighbours(currX, currY, playerWord.at(currPos), currVisited);
 
-        if (!curr.lettersToVisit.isEmpty()) {
+        if (!newLettersToVisit.isEmpty())
+        {
             // Add letter string of letters if the letter was found among neighbours
-            curr.letters = prev->letters + playerWord.at(curr.nextLetter);
-
-            if (curr.letters == playerWord) {
+            string newStr = currStr + playerWord.at(currPos);
+            if (newStr == playerWord)
+            {
                 wordFound = true;
-                while (!curr.lettersToVisit.isEmpty()) { //Empty the Stack-Stack
-                    curr.lettersToVisit.pop();
-                }
+                newLettersToVisit.clear();
             }
-            else wordSearch(&curr);
+            else wordSearch(newStr, currVisited, newLettersToVisit);
         }
-    }
+        if (wordFound) currLetterPos.clear();
 
-    if (wordFound) { //Empty all the structs
-        while (!prev->lettersToVisit.isEmpty()) { //Empty the Stack-Stack
-            prev->lettersToVisit.pop();
-        }
     }
 }
 
-/*
- * This function finds the position or positions for the given letter on the board.
- * Returns the positions in a Stack<Stack<int>>, where yPos (the Col) is at the top.
- */
-Stack<Stack<int>> Boggle::findLetterPos(const char& letter) {
-    Stack<Stack<int>> allPos;
-    Stack<int> letterPos;
-    for (int r = 0; r < BOARD_SIZE; r++) {
-        for (int c = 0; c < BOARD_SIZE; c++) {
-            if (board[r][c] == letter) {
-                //cout << "r " << r << " c " << c << endl;
-                letterPos.push(r); letterPos.push(c);   // c (y) is at the top of the Stack
-                allPos.push(letterPos);
-            }
-        }
-    }
-    return allPos;
-}
-
-Stack<Stack<int>> Boggle::findNeighbours(const int& x, const int& y,
-                                         const char& next, Grid<bool>& visited) { 
-    Stack<Stack<int>> allPos;
+Vector<int> Boggle::findNeighbours(const int& xPos, const int& yPos,
+                                         const char& next, Grid<bool>& visited)
+{
+    Vector<int> allPos;
     for (int r = -1; r <= 1; r++) {
-        for (int c = -1; c <= 1; c++) { // Loop through all the neighbours
-            int nRow = x + r;       // Actual row of the neighbour
-            int nCol = y + c;       // Actual coloumn of the neighbour
+        for (int c = -1; c <= 1; c++) {     // Loop through all the neighbours
+            int nRow = yPos + r;        // Actual row of the neighbour
+            int nCol = xPos + c;        // Actual coloumn of the neighbour
             // Start with checking if in bounds and that it hasn't been visited already
             if (!board.inBounds(nRow, nCol) || visited.get(nRow, nCol)) continue;
-            // Go to next letter if found
             if (board[nRow][nCol] == next) {
-                Stack<int> newPos;
-                newPos.push(nRow);    newPos.push(nCol);    // Put the new letter on top
-                allPos.push(newPos);
+                allPos.add(nCol);
+                allPos.add(nRow);
             }
         }
-    }
+    } // Pattern(r, c, r, c, ....)
     return allPos;
 }
 
-/*-------------- Part 4 --------------*/
-
-/*
- * This function starts the computers turn by initilizing things for
- * the findAllWords() function.
- */
 void Boggle::startCompTurn() {
     Grid<bool> visited(BOARD_SIZE, BOARD_SIZE);
     string word;
@@ -287,12 +184,6 @@ void Boggle::startCompTurn() {
     }
 }
 
-/*
- * This function finds all possible words that are left on the board and adds them to compWords
- * by going through, with the help of startCompTurn(), every possible combination
- * of letters on the board. The function continues to build on a word as long as it's
- * a valid word.
- */
 void Boggle::findAllWords(string& word, Grid<bool>& visited, int& y, int& x) {
     visited.set(y, x, true);
     // Checks word length, if the word exist, and if the word has been found by the user
@@ -319,10 +210,8 @@ void Boggle::findAllWords(string& word, Grid<bool>& visited, int& y, int& x) {
     visited.set(y, x, false);
 }
 
-/*
- * This function resets the game if the player wants to play again without closing the terminal.
- */
-void Boggle::resetGame() {
+void Boggle::resetGame()
+{
     userWords.clear();
     compWords.clear();
 }

@@ -1,8 +1,11 @@
-// This is the .h file you will edit and turn in.
-// We have provided a minimal skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header and replace it with your own
+/*
+ * Gustav Svennas, gussv907
+ * File: Boggle.h
+ * --------------
+ * This file declares required function prototypes that are defined in Boggle.cpp.
+ * Implementation comments for each function can be found in this file, not the cpp-file.
+ * Also contains constants and other variables used in Boggle.cpp and in boggleplay.cpp.
+ */
 
 #ifndef _boggle_h
 #define _boggle_h
@@ -24,54 +27,77 @@ public:
     const unsigned int MIN_WORD_LENGTH = 4;
     const int BOARD_SIZE = 4;
 
-    /*
-     * Struct which contains status information for the player search algorithm
-     */
-    struct status {
-        string letters;
-        int nextLetter;
-        int posX;
-        int posY;
-        Grid<bool> visited;
-        // Save all the positions that this letter can visit. Remove when visited.
-        Stack<Stack<int>> lettersToVisit;
-        // When lettersToVisit is empty, go back to previous letter
-        // When a letter is removed ^, set its position to false in visitedPos
-    };
-
-    Boggle();
-
-    /* Part 1 */
-    void makeRandomBoard();
-    bool userBoardInput(const string input);
-    void makeUserBoard(const string input);
-    void printBoard() const;
-
-    /* Part 2 */
-    bool checkLength(const string input);
-    bool checkDict(string input);
-    bool checkUsed(const string input);
-
+    Set<string> compWords;      // Set of strings for all possible words on the board.
+    bool wordFound;             // Tracks if the word from the player has been found or not
     Set<string> userWords;      // Set of strings for all the words that the player has used.
 
-    /* Part 3 */
+    /*
+     * Constructor
+     */
+    Boggle();
+
+    /*
+     * This function creates a random playing board using the given "cubes"
+     */
+    void makeRandomBoard();
+
+    /*
+     * This function checks if the input String is of the correct
+     * lenght and only contains letters from the english alphabet.
+     * Returns false if any of these are incorrect.
+     */
+    bool userBoardInput(const string input);
+
+    /*
+     * This function takes the string input and creates a board out of it.
+     */
+    void makeUserBoard(const string input);
+
+    /*
+     * Getter for board.
+     */
+    Grid<char> getBoard() const;
+
+    /*
+     * This function checks if the given word has the correct length.
+     */
+    bool checkLength(const string input) const;
+
+    /*
+     * This function checks if the given word is in the dictionary.
+     */
+    bool checkDict(const string input);
+
+    /*
+     * This function checks if the given word has been used or not
+     * by looking through the Set of Strings in userWords.
+     */
+    bool checkUsed(const string input);
+
+    /*
+     * This function goes through every letter of the board and
+     * compares it to every letter in the given input.
+     * Returns false if it can't count to all the letters in the word on the board.
+     */
     bool checkBoard(const string input);
-    bool playerSearch(const string input);
-    void wordSearch(status *status);
-    void firstLetterSearch(Stack<Stack<int>> firstVisits);
-    //bool initSearch(const string input);
-    //void wordSearch(const string& word, char next, Stack<int>& pos, Grid<bool>& visited);
-    Stack<Stack<int>> findLetterPos(const char& letter);
-    //void findNeighbours(const int& y, const int& x, Stack<Stack<int>>& allPos, const char& next, Grid<bool>& visited);
-    Stack<Stack<int>> findNeighbours(const int& y, const int& x, const char& next,
-                                        Grid<bool>& visited);
 
-    /* Part 4 */
+    /*
+     * Initializes the search for the word given by the player.
+     * Finds the positions of the first letters which is then used by wordSearch()
+     * to try to create the rest of the word on the board.
+     */
+    void initWordSearch(const string& input);
+
+    /*
+     * This function starts the computers turn by initilizing things for
+     * the findAllWords() function.
+     */
     void startCompTurn();
-    void findAllWords(string& word, Grid<bool>& visited, int& y, int& x);
-    void resetGame();
 
-    Set<string> compWords;      // Set of strings for all possible words on the board.
+    /*
+     * Resets the game if the player wants to play again without closing the terminal.
+     */
+    void resetGame();
 
 private:  
     /* Used to create a board for the letters of the cubes as a Grid of strings. */
@@ -83,10 +109,42 @@ private:
     /* Keeps check of the letters that has been found in the function wordSearch(). */
     string foundLetters;
 
-    bool wordFound;
-
+    /* Saves the given input from the player so it doesn't have to be passed in functions. */
     string playerWord;
 
+    const int FIRST_POS = 0;    //
+    const int SECOND_POS = 1;
+
+
+    /* ----- Private helpers ----- */
+
+    /*
+     * Help function.
+     * Used to find the given word from the player on the board.
+     * Recursive function that calls on itself until the word has been found or until
+     * there are no more possible ways to create the given word on the board.
+     * Uses findNeighbour() to find the positions for the next letter in the word.
+     */
+    void wordSearch(const string& currStr, const Grid<bool>& visited,
+                     Vector<int>& currLetterPos);
+
+    /*
+     * Help function.
+     * Finds all the positions for a given letter on the board.
+     * Has to be a neighbour to the given position.
+     * Returns a Vector<int> with all found positions.
+     */
+    Vector<int> findNeighbours(const int& xPos, const int& yPos, const char& next,
+                                Grid<bool>& visited);
+
+    /*
+     * Help function.
+     * This function finds all possible words that are left on the board and adds them to compWords
+     * by going through, with the help of startCompTurn(), every possible combination
+     * of letters on the board. The function continues to build on a word as long as it's
+     * a valid word.
+     */
+    void findAllWords(string& word, Grid<bool>& visited, int& y, int& x);
 
 };
 
