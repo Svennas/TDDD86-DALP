@@ -55,6 +55,7 @@ private:
 template<typename T>
 MyVector<T>::MyVector()
 {
+    printf("constructor");
     capacity = 1;
     storage = new T[capacity];
     numberOfElements = 0;
@@ -67,23 +68,41 @@ MyVector<T>::MyVector()
 template<typename T>
 MyVector<T>::~MyVector()
 {
+    printf("destructor");
     delete[] storage;
 }
 
 /*
  * Copy constructor.
- *
+ * Creates a new Vector with the same values as other.
+ * Need to allocate memory
  */
 template<typename T>
 MyVector<T>::MyVector(const MyVector& other)
 {
-
+    printf("copy constructor");
+    storage = new T[other.capacity];
+    for (unsigned i = 0; i < other.capacity; i++)
+    {
+        this->storage[i] = other.storage[i];
+    }
+    this->capacity = other.capacity;
+    this->numberOfElements = other.numberOfElements;
 }
 
+/*
+ * Assignment operator.
+ * Assigns the values of other to this.
+ * Both Vector's already exists, don't need to allocate memory.
+ */
 template<typename T>
 MyVector<T>& MyVector<T>::operator =(const MyVector& other){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+    printf("assignment operator");
+
+    for (unsigned i = 0; i < other.capacity; i++)
+    {
+        storage[i] = other.storage[i];
+    }
 }
 
 template<typename T>
@@ -110,10 +129,13 @@ const T& MyVector<T>::operator[](unsigned i)const{
     MYEXCEPTION("unimplemented method");
 }
 
+/*
+ * Checks if MyVector is empty or not.
+ */
 template<typename T>
-bool MyVector<T>::empty()const{
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+bool MyVector<T>::empty()const
+{
+    return numberOfElements == 0;
 }
 
 template<typename T>
@@ -122,10 +144,13 @@ void MyVector<T>::clear(){
     MYEXCEPTION("unimplemented method");
 }
 
+/*
+ * Returns the number of elements currently in MyVector.
+ */
 template<typename T>
-unsigned MyVector<T>::size()const{
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+unsigned MyVector<T>::size()const
+{
+    return numberOfElements;
 }
 
 template<typename T>
