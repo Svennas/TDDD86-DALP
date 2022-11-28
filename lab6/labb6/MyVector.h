@@ -45,6 +45,9 @@ private:
     T* storage;
     unsigned capacity;
     unsigned numberOfElements;
+
+    void addCapacity();
+    void copy(const MyVector& other);
 };
 
 /*
@@ -80,14 +83,8 @@ MyVector<T>::~MyVector()
 template<typename T>
 MyVector<T>::MyVector(const MyVector& other)
 {
-    printf("copy constructor");
-    storage = new T[other.capacity];
-    for (unsigned i = 0; i < other.capacity; i++)
-    {
-        this->storage[i] = other.storage[i];
-    }
-    this->capacity = other.capacity;
-    this->numberOfElements = other.numberOfElements;
+    printf("copy constructor \n");
+    copy(other);
 }
 
 /*
@@ -97,36 +94,89 @@ MyVector<T>::MyVector(const MyVector& other)
  */
 template<typename T>
 MyVector<T>& MyVector<T>::operator =(const MyVector& other){
-    printf("assignment operator");
+    printf("assignment operator \n");
 
-    for (unsigned i = 0; i < other.capacity; i++)
+    if (this == &other) return *this;
+
+    delete[] storage;
+    copy(other);
+
+    return *this;
+}
+
+template<typename T>
+void MyVector<T>::copy(const MyVector& other)
+{
+    capacity = other.capacity;
+    numberOfElements = other.numberOfElements;
+    storage = new T[capacity];
+
+    for (unsigned i = 0; i < capacity; i++)
     {
         storage[i] = other.storage[i];
     }
 }
 
+/*
+* Adds the element at the end of the container.
+* If there is no more room in the container, also adds capacity (doubles it?).
+*/
 template<typename T>
-void MyVector<T>::push_back(const T& e){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+void MyVector<T>::push_back(const T& e)
+{
+    if (numberOfElements >= capacity) addCapacity();
+
+    if (!(numberOfElements >= capacity)) storage[numberOfElements] = e;
+    numberOfElements++;
 }
 
+/*
+* Doubles the capacity of the container.
+*/
 template<typename T>
-void MyVector<T>::pop_back(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+void MyVector<T>::addCapacity()
+{
+    capacity *= 2;
+
+    T* temp = new T[capacity];
+
+    for (int i = 0; i < numberOfElements; i++)
+    {
+        temp[i] = storage[i];
+    }
+    delete[] storage;
+    /* As the as assignment operator won't be called in the template class,
+    need to delete to avoid memory leaks.*/
+    storage = temp;
 }
 
+/*
+* Adds the given element at the end of the list.
+*/
 template<typename T>
-T& MyVector<T>::operator[](unsigned i){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+void MyVector<T>::pop_back()
+{
+    numberOfElements--;
+    storage[numberOfElements] = NULL;
 }
 
+/*
+* Returns the element at the given index
+*/
 template<typename T>
-const T& MyVector<T>::operator[](unsigned i)const{
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+T& MyVector<T>::operator[](unsigned i)
+{
+    return storage[i];
+}
+
+/*
+* Returns the element at the given index
+*/
+template<typename T>
+const T& MyVector<T>::operator[](unsigned i) const
+{
+    const T value = storage[i];
+    return value;
 }
 
 /*
@@ -139,9 +189,12 @@ bool MyVector<T>::empty()const
 }
 
 template<typename T>
-void MyVector<T>::clear(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+void MyVector<T>::clear()
+{
+    capacity = 1;
+    numberOfElements = 0;
+    delete[] storage;
+    storage = new T[capacity];
 }
 
 /*
@@ -153,16 +206,22 @@ unsigned MyVector<T>::size()const
     return numberOfElements;
 }
 
+/*
+* Returns a T pointer to the adress at the start of the container.
+*/
 template<typename T>
-T* MyVector<T>::begin(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+T* MyVector<T>::begin()
+{
+    return storage;
 }
 
+/*
+* Returns a T pointer to the adress after the last element in the container.
+*/
 template<typename T>
-T* MyVector<T>::end(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
+T* MyVector<T>::end()
+{
+    return storage + capacity;  // Returns the memory adress after the last element
 }
 
 #endif // MY_VECTOR_H

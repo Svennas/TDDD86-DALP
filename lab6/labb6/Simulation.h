@@ -47,7 +47,7 @@ private:
                       EventComparator> eventQueue;
 
 //  MyVector<Fish*> allTheFish;
-  std::vector<Fish*> allTheFish;
+  MyVector<Fish*> allTheFish;
 
 
   unsigned simulationTime;
