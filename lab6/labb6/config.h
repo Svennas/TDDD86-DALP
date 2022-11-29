@@ -3,7 +3,7 @@
 
 //life expectancy
 const unsigned MAX_AGE = 2000;
-const unsigned STARVE_THRESHOLD = 2000;
+const unsigned STARVE_THRESHOLD = 20000;
 const  unsigned HATCH_TM = 40;
 const  unsigned AVG_MATURATION_TM = 500;
 
@@ -18,10 +18,10 @@ const unsigned HARVEST_START = 1000;
 const unsigned HARVEST_PERIOD = 366;
 const unsigned MIN_CATCHABLE_AGE = 550;     // Experiment with these
 const unsigned MIN_KEPT_AGE = 600;
-const unsigned LANDING = 12000;             // Experiment with these
+const unsigned LANDING = 70000;             // Experiment with these
 
 // Simulation: duration and printing
-const unsigned SIMULATION_HORIZON = 1200;
+const unsigned SIMULATION_HORIZON = 8000;
 const unsigned PRINT_PERIOD = 20;
 
 

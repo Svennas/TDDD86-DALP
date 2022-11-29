@@ -30,23 +30,19 @@ public:
 
     bool empty()const;
 
-  unsigned size() const;
+    unsigned size() const;
 
 private:
     // Other private members?
 };
 
 template <typename T, typename C>
-MyPriorityQueue<T,C>::MyPriorityQueue(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
-}
+MyPriorityQueue<T,C>::MyPriorityQueue()
+{}
 
 template <typename T, typename C>
-MyPriorityQueue<T,C>::~MyPriorityQueue(){
-    // TODO: replace the code below with your code for this member
-    MYEXCEPTION("unimplemented method");
-}
+MyPriorityQueue<T,C>::~MyPriorityQueue()
+{}
 
 template <typename T, typename C>
 void MyPriorityQueue<T,C>::push(const T& t){
