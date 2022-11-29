@@ -26,7 +26,7 @@ public:
     GameState();
 
     /*
-     * Constructor.
+     * Type conversion constructor.
      * Creates the given number of Robots for the GameState to use.
      */
     GameState(const int& numberOfRobots);
@@ -76,17 +76,19 @@ public:
     bool anyRobotsLeft () const;
 
     /*
-     * Is hero in same place as robot or junk?
+     * Checks if there is another Unit instance (i.e. Robot or Junk) at
+     * the same position as the Hero instance.
      */
     bool heroDead() const;
 
     /*
-     * Can unit safely reside here?
+     * Checks if one or more Robots or Junks are one position or closer away from the Unit
+     * argument.
      */
     bool isSafe (const Unit& unit) const; // Can unit safely reside here?
 
     /*
-     * Move hero towards dir
+     * Moves Hero towards desired direction based on Unit argument.
      */
     void moveHeroTowards (const Unit& dir);
 
@@ -99,15 +101,23 @@ private:
     std::vector<Robot*> robots;  // the robots and the junks
     Hero hero;                   // the hero
 
-    // private helpers
-    bool isEmpty(const Unit& unit) const;
-    int countRobotsAt(const Unit& unit) const;
+    // private helpers  
+
     /*
      * Used by the copy constructor and the copy assignment operator.
      * Copies all the robots and the hero.
      */
     void copy(const GameState& gamestate);
 
+    /*
+     * Checks if there is zero Robot or Junk instances at the position of the Unit argument.
+     */
+    bool isEmpty(const Unit& unit) const;
+
+    /*
+     * Returns the amount of Robot and Junk instances at the position of the Unit argument.
+     */
+    int countRobotsAt(const Unit& unit) const;
 };
 
 #endif // GAMESTATE_H
