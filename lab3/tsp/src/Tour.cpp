@@ -163,7 +163,7 @@ bool Tour::isTourEmpty(Point p)
     return false;
 }
 
-void Tour::insertNewNode(Point p, Node* node)
+void Tour::insertNewNode(Point p, Node* node) const
 {
     Node* newNode = new Node(p);
     newNode->next = node->next;

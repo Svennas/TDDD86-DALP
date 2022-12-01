@@ -82,7 +82,7 @@ private:
      * Help function.
      * Inserts a new Node in the Tour after the given Node.
      */
-    void insertNewNode(Point p, Node* node);
+    void insertNewNode(Point p, Node* node) const;
 };
 
 #endif // TOUR_H
