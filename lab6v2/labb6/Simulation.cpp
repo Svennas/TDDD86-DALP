@@ -52,8 +52,10 @@ void Simulation::harvestTonnageNow(unsigned target,  mt19937& generator){
             stillAlive.push_back(allTheFish[i]);
         }
     }
+    cout << stillAlive.size() << endl;
     allTheFish.clear();
     shuffle(stillAlive.begin(),stillAlive.end(),generator);
+    cout << stillAlive.size() << endl;
     unsigned landing =0;
     unsigned fish=0;
     for(; fish < stillAlive.size() && landing < target; ++fish){

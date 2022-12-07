@@ -127,6 +127,8 @@ void MyVector<T>::copy(const MyVector& other)
 template<typename T>
 void MyVector<T>::push_back(const T& e)
 {
+    //cout << "push_back" << endl;
+    //std::cout << numberOfElements << std::endl;
     if (numberOfElements >= capacity) addCapacity();
 
     // To make push_back have the amortized time complexity O(N)
@@ -142,6 +144,7 @@ void MyVector<T>::push_back(const T& e)
 template<typename T>
 void MyVector<T>::addCapacity()
 {
+    //cout << "addCapacity" << endl;
     capacity *= 2;
 
     T* temp = new T[capacity];
@@ -172,6 +175,8 @@ void MyVector<T>::pop_back()
 template<typename T>
 T& MyVector<T>::operator[](unsigned i)
 {
+    //cout << "operator[]" << endl;
+    //cout << i << endl;
     return storage[i];
 }
 
@@ -181,6 +186,7 @@ T& MyVector<T>::operator[](unsigned i)
 template<typename T>
 const T& MyVector<T>::operator[](unsigned i) const
 {
+    cout << "const operator[]" << endl;
     const T value = storage[i];
     return value;
 }
@@ -227,7 +233,7 @@ T* MyVector<T>::begin()
 template<typename T>
 T* MyVector<T>::end()
 {
-    return storage + numberOfElements;
+    return storage + numberOfElements;  // Returns the memory adress after the last element
 }
 
 #endif // MY_VECTOR_H

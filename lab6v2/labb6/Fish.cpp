@@ -1,7 +1,6 @@
 #include "Fish.h"
 #include <sstream>
 #include <cassert>
-#include <iostream>
 
 unsigned Fish::counter= 0;
 

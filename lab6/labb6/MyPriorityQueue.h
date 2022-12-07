@@ -144,10 +144,12 @@ findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
 template <typename T, typename C>
 T MyPriorityQueue<T, C>::top() const
 {
-    cout << "top" << endl;
+    //cout << "top" << endl;
     cout << vector_array.size() << endl;
-    cout << vector_array[vector_array.size() - 1] << endl;
-    return vector_array[vector_array.size() - 1];
+    //cout << vector_array[vector_array.size() - 1] << endl;
+    //return vector_array[0];
+    T temp = vector_array[vector_array.size() - 1];
+    return temp;
 }
 
 /*
