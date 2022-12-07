@@ -181,8 +181,7 @@ T& MyVector<T>::operator[](unsigned i)
 template<typename T>
 const T& MyVector<T>::operator[](unsigned i) const
 {
-    const T value = storage[i];
-    return value;
+    return storage[i];
 }
 
 /*

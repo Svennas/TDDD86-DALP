@@ -53,7 +53,6 @@ MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
-    //cout << "push " << endl;
     T temp;
     if (vector_array.empty())
     {
@@ -88,7 +87,6 @@ void MyPriorityQueue<T, C>::push(const T& t)
         }
     }
     else  vector_array.push_back(t);
-    //cout << "end of push" << endl;
 }
 
 /*
@@ -100,15 +98,11 @@ template<typename T, typename C>
 void MyPriorityQueue<T, C>::
 findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
 {
-    //cout << "start of findpos" << endl;
     T compElem = vector_array[currPos];
 
     if (strictly_larger_operator(t, compElem))
     { // Go to left side, t is bigger
-        //cout << "bigger" << endl;
         if (currSize == 1 || currPos == 0) {
-            //currPos -= 1;
-            //cout << "return of bigger" << endl;
             return;
         }
         // Size of the next part of the vector
@@ -116,15 +110,12 @@ findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
         // Next position to compare with in the vector
         currPos = currPos - (currSize / 2 + currSize % 2);
         if (currPos > vector_array.size()) currPos = 0;
-        //cout << "end of bigger" << endl;
         findPosition(currSize, currPos, t);
     }
     else if (strictly_larger_operator(compElem, t))
     { // Go to right side, t is smaller
-        //cout << "smaller" << endl;
         if (currSize == 1 || currPos == vector_array.size() - 1) {
             currPos += 1;
-            //cout << "return of smaller" << endl;
             return;
         }
         // Size of the next part of the vector
@@ -132,7 +123,6 @@ findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
         // Next position to compare with in the vector
         currPos = currPos + (currSize / 2 + currSize % 2);
         if (currPos > vector_array.size() - 1) currPos = vector_array.size() - 1;
-        //cout << "end of smaller" << endl;
         findPosition(currSize, currPos, t);
     }
     else return; // Return if same value
@@ -144,12 +134,7 @@ findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
 template <typename T, typename C>
 T MyPriorityQueue<T, C>::top() const
 {
-    //cout << "top" << endl;
-    cout << vector_array.size() << endl;
-    //cout << vector_array[vector_array.size() - 1] << endl;
-    //return vector_array[0];
-    T temp = vector_array[vector_array.size() - 1];
-    return temp;
+    return vector_array[vector_array.size() - 1];
 }
 
 /*
@@ -158,7 +143,6 @@ T MyPriorityQueue<T, C>::top() const
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::pop()
 {
-    cout << "pop" << endl;
     vector_array.pop_back();
 }
 
@@ -168,7 +152,6 @@ void MyPriorityQueue<T, C>::pop()
 template <typename T, typename C>
 bool MyPriorityQueue<T, C>::empty() const
 {
-    cout << "empty" << endl;
     return vector_array.empty();
 }
 
@@ -178,7 +161,6 @@ bool MyPriorityQueue<T, C>::empty() const
 template <typename T, typename C>
 unsigned MyPriorityQueue<T, C>::size() const
 {
-    cout << "size" << endl;
     return vector_array.size();
 }
 
