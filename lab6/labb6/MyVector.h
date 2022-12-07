@@ -8,6 +8,7 @@
 #define MY_VECTOR_H
 
 #include "MyException.h"
+#include <iostream>
 
 template <typename T>
 class MyVector
@@ -58,7 +59,7 @@ private:
 template<typename T>
 MyVector<T>::MyVector()
 {
-    printf("constructor");
+    std::cout << "My VEctor cohnstructed" << std::endl;
     capacity = 1;
     storage = new T[capacity];
     numberOfElements = 0;
@@ -104,6 +105,10 @@ MyVector<T>& MyVector<T>::operator =(const MyVector& other){
     return *this;
 }
 
+/*
+ * Help function.
+ * Creates a deep copy of other.
+ */
 template<typename T>
 void MyVector<T>::copy(const MyVector& other)
 {
@@ -124,9 +129,13 @@ void MyVector<T>::copy(const MyVector& other)
 template<typename T>
 void MyVector<T>::push_back(const T& e)
 {
+    //std::cout << numberOfElements << std::endl;
     if (numberOfElements >= capacity) addCapacity();
 
-    if (!(numberOfElements >= capacity)) storage[numberOfElements] = e;
+    // To make push_back have the amortized time complexity O(N)
+    //for (unsigned i = 0; i < numberOfElements; i++);
+
+    storage[numberOfElements] = e;
     numberOfElements++;
 }
 
@@ -140,7 +149,7 @@ void MyVector<T>::addCapacity()
 
     T* temp = new T[capacity];
 
-    for (int i = 0; i < numberOfElements; i++)
+    for (unsigned i = 0; i < numberOfElements; i++)
     {
         temp[i] = storage[i];
     }

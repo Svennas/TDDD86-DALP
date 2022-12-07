@@ -25,25 +25,33 @@
 
 
 3. Ett Fish-objekt allokeras dynamiskt i hatchEvent() i Event.cpp. 
-Minnet för Fish-objekt befrias sedan i båda spawnEvent() (processEvent och
-withdrawEvent), båda matureEvent() samt båda deathEvent() i Event.cpp genom
-att köra:
-delete afish;
-afish= nullptr;
-vilket tar bort objektet och befriar det från minnet samt gör pekaren till en
-nullptr för att undvika att det krashar.
+    Minnet för Fish-objekt befrias sedan i båda spawnEvent() (processEvent och
+    withdrawEvent), båda matureEvent() samt båda deathEvent() i Event.cpp genom
+    att köra:
+    delete afish;
+    afish= nullptr;
+    vilket tar bort objektet och befriar det från minnet samt gör pekaren till en
+    nullptr för att undvika att det krashar.
 
-Ett Event-objekt allokeras dynamiskt i och med deathEvent, matureEvent,
-hatchEvent, printEvent och spawnEvent. new används i kombination med dessa i både
-Event.cpp och i main.cpp. I Event.cpp kan de hittas i hatchEvent(), spawnEvent(),
-matureEvent(), harvestEvent() samt printEvent() (alla dessa av typen processEvent).
-I main.cpp kan de hittas i main().
-Minnet för Event-objekt befrias sedan i Simulation.cpp i funktionen run() genom
-att köra:
-delete nextEvent;
-vilket tar bort objektet och befriar det från minnet. Ingen nullptr behöver
-tilldelas här då nextEvent har isolerats.
+    Ett Event-objekt allokeras dynamiskt i och med deathEvent, matureEvent,
+    hatchEvent, printEvent och spawnEvent. new används i kombination med dessa i både
+    Event.cpp och i main.cpp. I Event.cpp kan de hittas i hatchEvent(), spawnEvent(),
+    matureEvent(), harvestEvent() samt printEvent() (alla dessa av typen processEvent).
+    I main.cpp kan de hittas i main().
+    Minnet för Event-objekt befrias sedan i Simulation.cpp i funktionen run() genom
+    att köra:
+    delete nextEvent;
+    vilket tar bort objektet och befriar det från minnet. Ingen nullptr behöver
+    tilldelas här då nextEvent har isolerats.
 
-Valgrind kördes med de nya värderna och inga minnesläckor identifierades. Vad jag
-kan se befrias allt allokerat minne för objektet på korrekt sätt och inget verkar
-förbises i koden.
+    Valgrind kördes med de nya värderna och inga minnesläckor identifierades. Vad jag
+    kan se befrias allt allokerat minne för objektet på korrekt sätt och inget verkar
+    förbises i koden.
+
+
+> Skillnad i tidskomplexitet för MyVector:
+    När push_back har den O(1) amorterad tidskomplexitet tar det 25-28 sekunder för simulationen.
+    När push_back har den O(N) amorterad tidskomplexitet körs det aldrig klart, inte vad jag vet
+    iallafall. Vid en viss punkt tar det så lång tid att kolla igenom alla element i vectorn att
+    simulation i princip stannar upp, vilket är förståeligt med tanke på hur många fiskobjekt som
+    skapas under simulationen.

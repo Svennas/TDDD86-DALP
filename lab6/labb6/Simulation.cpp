@@ -23,8 +23,11 @@ Simulation::~Simulation(){
 
 void Simulation::run (){
     while (! eventQueue.empty ()){
+        cout << "panda" << endl;
         Event * nextEvent = eventQueue.top ();
+        cout << "big elk" << endl;
         eventQueue.pop ();
+        cout << "whale" << endl;
         if(simulationTime < SIMULATION_HORIZON){
             simulationTime = nextEvent->eventTime;
             nextEvent->processEvent(*this);
@@ -42,8 +45,8 @@ void Simulation::scheduleEvent (Event * newEvent){
 
 
 void Simulation::harvestTonnageNow(unsigned target,  mt19937& generator){
-//    MyVector<Fish*> stillAlive;
-    std::vector<Fish*> stillAlive;
+    MyVector<Fish*> stillAlive;
+    //std::vector<Fish*> stillAlive;
     for(unsigned i=0; i < allTheFish.size(); ++i){
         assert(! allTheFish[i]->isCaught());
         if (allTheFish[i]->isDead()){
