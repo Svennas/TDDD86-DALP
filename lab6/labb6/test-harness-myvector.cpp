@@ -27,9 +27,9 @@ using namespace std;
 #define HarderMyVectorTestEnabled         1
 #define MutatingMyVectorTestEnabled       1
 
-#define ConstMyVectorTestEnabled          0
-#define BasicCopyTestEnabled              0
-#define ModerateCopyTestEnabled           0
+#define ConstMyVectorTestEnabled          1
+#define BasicCopyTestEnabled              1
+#define ModerateCopyTestEnabled           1
 
 
 /* Utility function that pauses until the user hits ENTER. */

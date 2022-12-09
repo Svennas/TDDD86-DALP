@@ -9,7 +9,6 @@
 
 #include "MyVector.h"
 #include "MyException.h"
-#include <iostream>
 
 using namespace std;
 
@@ -36,6 +35,10 @@ public:
 
 private:
     void findPosition(unsigned int& currSize, unsigned int& currPos, const T& t);
+
+    void higherPrio(unsigned& top, unsigned& bot, unsigned& index);
+    void lowerPrio(unsigned& top, unsigned& bot, unsigned& index);
+    void insertElem(const T& t, unsigned index);
 };
 
 template <typename T, typename C>
@@ -44,88 +47,86 @@ MyPriorityQueue<T, C>::MyPriorityQueue() = default;
 template <typename T, typename C>
 MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 
-/*
-* Adds an element to the queue after its priority.
-* Highest priority is at the top.
-* Uses the help function findPosition() to at which index to input
-* the new element.
-*/
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
-    T temp;
-    if (vector_array.empty())
+    /*cout << "" << endl;
+    cout << "" << endl;
+    cout << "NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEW" << endl;
+    cout << "" << endl;
+    cout << "" << endl;*/
+    if (!vector_array.empty())
     {
-        vector_array.push_back(t);
-        return;
-    }
-    if (vector_array.size() == 1)
-    {
-        vector_array.push_back(t);
-        if (strictly_larger_operator(t, vector_array[0]))
+        unsigned top = vector_array.size() - 1;
+        unsigned bot = 0;
+        unsigned index = top / 2;
+        T compElem;
+        if (top != bot)
         {
-            temp = vector_array[1];
-            vector_array[1] = vector_array[0];
-            vector_array[0] = temp;
+            while (top != bot)
+            {
+               //cout << "top = " << top << " bot = " << bot << " index = " << index << endl;
+               compElem = vector_array[index];
+               // Go to left side, t has lower prio
+               if (strictly_larger_operator(t, compElem)) lowerPrio(top, bot, index);
+               // Go to right side, t has higher prio
+               else if (strictly_larger_operator(compElem, t)) higherPrio(top, bot, index);
+               // Elem has same prio, end the loop
+               else top = bot;
+            }
+            insertElem(t, index);
         }
-        return;
-    }
-    unsigned vSize = vector_array.size();
-    unsigned vMid = vSize / 2;
-    findPosition(vSize, vMid, t);
-
-    unsigned insertIndex = vMid;
-
-    if (insertIndex != vector_array.size())
-    {
-        vector_array.push_back(t);
-        for (unsigned i = vector_array.size() - 1; i > insertIndex; i--)
-        {
-            temp = vector_array[i];
-            vector_array[i] = vector_array[i - 1];
-            vector_array[i - 1] = temp;
+        else
+        {   // Special case when the vector only contains 1 elem
+            compElem = vector_array[bot];
+            if (strictly_larger_operator(t, compElem)) insertElem(t, bot);
+            else vector_array.push_back(t);
         }
     }
-    else  vector_array.push_back(t);
+    else vector_array.push_back(t);
 }
 
-/*
- * Recursive function which traverses the vector to find the index
- * to where to input the new element t.
- * Uses the idea of a binary tree.
- */
-template<typename T, typename C>
-void MyPriorityQueue<T, C>::
-findPosition(unsigned int& currSize, unsigned int& currPos, const T& t)
-{
-    T compElem = vector_array[currPos];
+template <typename T, typename C>
+void MyPriorityQueue<T, C>::lowerPrio(unsigned& top, unsigned& bot, unsigned& index)
+{ // Go to left side of compared elem, new elem has lower prio (higher number)
+    if (!(top - bot == 1))
+    {
+        top = index;
+        index = bot + ((top - bot) / 2);
+    }
+    else
+    {
+        top = bot;
+        index = bot;
+    }
+}
 
-    if (strictly_larger_operator(t, compElem))
-    { // Go to left side, t is bigger
-        if (currSize == 1 || currPos == 0) {
-            return;
-        }
-        // Size of the next part of the vector
-        currSize = currSize / 2 + currSize % 2;
-        // Next position to compare with in the vector
-        currPos = currPos - (currSize / 2 + currSize % 2);
-        if (currPos > vector_array.size()) currPos = 0;
-        findPosition(currSize, currPos, t);
+template <typename T, typename C>
+void MyPriorityQueue<T, C>::higherPrio(unsigned& top, unsigned& bot, unsigned& index)
+{ // Go to right side of compared elem, new elem has higher prio (lower number)
+    if (!(top - bot == 1))
+    {
+        bot = index;
+        index = bot + ((top - bot) / 2);
     }
-    else if (strictly_larger_operator(compElem, t))
-    { // Go to right side, t is smaller
-        if (currSize == 1 || currPos == vector_array.size() - 1) {
-            currPos += 1;
-            return;
-        }
-        // Size of the next part of the vector
-        currSize = currSize / 2 + currSize % 2;
-        // Next position to compare with in the vector
-        currPos = currPos + (currSize / 2 + currSize % 2);
-        if (currPos > vector_array.size() - 1) currPos = vector_array.size() - 1;
-        findPosition(currSize, currPos, t);
+    else
+    {
+        bot = top;
+        index = top;
     }
-    else return; // Return if same value
+}
+
+template <typename T, typename C>
+void MyPriorityQueue<T, C>::insertElem(const T& t, unsigned index)
+{
+    T temp;
+    vector_array.push_back(t);
+    for (unsigned i = vector_array.size() - 1; i > index; i--)
+    {
+        temp = vector_array[i];
+        vector_array[i] = vector_array[i - 1];
+        vector_array[i - 1] = temp;
+    }
 }
 
 /*
@@ -143,6 +144,7 @@ T MyPriorityQueue<T, C>::top() const
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::pop()
 {
+    //cout << "pop" << endl;
     vector_array.pop_back();
 }
 

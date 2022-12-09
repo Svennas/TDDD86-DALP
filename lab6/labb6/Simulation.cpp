@@ -24,8 +24,11 @@ Simulation::~Simulation(){
 void Simulation::run (){
     while (! eventQueue.empty ()){
         Event * nextEvent = eventQueue.top ();
+        //cout << "eventTime " << nextEvent->eventTime << endl;
         eventQueue.pop ();
+        //cout << eventQueue.size() << " " << simulationTime << " " << SIMULATION_HORIZON << endl;
         if(simulationTime < SIMULATION_HORIZON){
+          //  cout << "nextevent" << endl;
             simulationTime = nextEvent->eventTime;
             nextEvent->processEvent(*this);
         }else{
