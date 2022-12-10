@@ -50,7 +50,8 @@ MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
-    vector_array.push_back();
+    cout << "push" << endl;
+    vector_array.push_back(t);
 
     if (vector_array.empty()) return;
 
@@ -83,6 +84,7 @@ unsigned MyPriorityQueue<T, C>::parent(const unsigned pos) const
 template <typename T, typename C>
 T MyPriorityQueue<T, C>::top() const
 {
+    cout << "top" << endl;
     return vector_array[0];
 }
 
@@ -92,19 +94,34 @@ T MyPriorityQueue<T, C>::top() const
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::pop()
 {
+    cout << "pop" << endl;
     if (vector_array.empty()) return;
 
     unsigned curr = 0;
-    while (hasLeaf(curr))
-    {
-        unsigned left = leftChild(curr);
-        unsigned right = rightChild(curr);
-        // right has higher prio (lower number)
-        if (strictly_larger_operator(left, right)) swapPos(curr, right);
-        // left has higher, or they have the same, prio (lower or same number)
-        else swapPos(curr, left);
+    unsigned left;
+    unsigned right;
 
+    while (hasLeaf(curr))
+    {     
+        left = leftChild(curr);
+        right = rightChild(curr);
+
+        unsigned noChild = -1;
+        if (right == noChild) swapPos(curr, left);
+        else {
+            if (strictly_larger_operator(right, left))
+            { // left has higher prio (lower number)
+                swapPos(curr, left);
+                curr = left;
+            }
+            else
+            { // right has higher, or they have the same, prio (lower or same number)
+                swapPos(curr, right);
+                curr = right;
+            }
+        }
     }
+    vector_array[curr] = NULL;
 }
 
 template <typename T, typename C>
