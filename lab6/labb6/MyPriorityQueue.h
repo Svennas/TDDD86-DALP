@@ -34,11 +34,11 @@ public:
     unsigned size() const;
 
 private:
-    void findPosition(unsigned int& currSize, unsigned int& currPos, const T& t);
-
-    void higherPrio(unsigned& top, unsigned& bot, unsigned& index);
-    void lowerPrio(unsigned& top, unsigned& bot, unsigned& index);
-    void insertElem(const T& t, unsigned index);
+    void swapPos(const unsigned curr, const unsigned parent);
+    unsigned parent(const unsigned pos) const;
+    unsigned leftChild(const unsigned pos) const;
+    unsigned rightChild(const unsigned pos) const;
+    bool hasLeaf(const unsigned pos) const;
 };
 
 template <typename T, typename C>
@@ -50,102 +50,80 @@ MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
-    /*cout << "" << endl;
-    cout << "" << endl;
-    cout << "NEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEW" << endl;
-    cout << "" << endl;
-    cout << "" << endl;*/
-    if (!vector_array.empty())
-    {
-        unsigned top = vector_array.size() - 1;
-        unsigned bot = 0;
-        unsigned index = top / 2;
-        T compElem;
-        if (top != bot)
-        {
-            while (top != bot)
-            {
-               //cout << "top = " << top << " bot = " << bot << " index = " << index << endl;
-               compElem = vector_array[index];
-               // Go to left side, t has lower prio
-               if (strictly_larger_operator(t, compElem)) lowerPrio(top, bot, index);
-               // Go to right side, t has higher prio
-               else if (strictly_larger_operator(compElem, t)) higherPrio(top, bot, index);
-               // Elem has same prio, end the loop
-               else top = bot;
-            }
-            insertElem(t, index);
-        }
-        else
-        {   // Special case when the vector only contains 1 elem
-            compElem = vector_array[bot];
-            if (strictly_larger_operator(t, compElem)) insertElem(t, bot);
-            else vector_array.push_back(t);
-        }
-    }
-    else vector_array.push_back(t);
-}
+    vector_array.push_back();
 
-template <typename T, typename C>
-void MyPriorityQueue<T, C>::lowerPrio(unsigned& top, unsigned& bot, unsigned& index)
-{ // Go to left side of compared elem, new elem has lower prio (higher number)
-    if (!(top - bot == 1))
+    if (vector_array.empty()) return;
+
+    unsigned curr = vector_array.size() - 1;
+
+    while((curr != 0) && strictly_larger_operator(vector_array[parent(curr)], t))
     {
-        top = index;
-        index = bot + ((top - bot) / 2);
-    }
-    else
-    {
-        top = bot;
-        index = bot;
+        swapPos(curr, parent(curr));
+        curr = parent(curr);
     }
 }
 
 template <typename T, typename C>
-void MyPriorityQueue<T, C>::higherPrio(unsigned& top, unsigned& bot, unsigned& index)
-{ // Go to right side of compared elem, new elem has higher prio (lower number)
-    if (!(top - bot == 1))
-    {
-        bot = index;
-        index = bot + ((top - bot) / 2);
-    }
-    else
-    {
-        bot = top;
-        index = top;
-    }
-}
-
-template <typename T, typename C>
-void MyPriorityQueue<T, C>::insertElem(const T& t, unsigned index)
+void MyPriorityQueue<T, C>::swapPos(const unsigned curr, const unsigned parent)
 {
-    T temp;
-    vector_array.push_back(t);
-    for (unsigned i = vector_array.size() - 1; i > index; i--)
-    {
-        temp = vector_array[i];
-        vector_array[i] = vector_array[i - 1];
-        vector_array[i - 1] = temp;
-    }
+    T temp = vector_array[curr];
+    vector_array[curr] = vector_array[parent];
+    vector_array[parent] = temp;
+}
+
+template <typename T, typename C>
+unsigned MyPriorityQueue<T, C>::parent(const unsigned pos) const
+{
+    return (pos - 1) / 2;
 }
 
 /*
- * Returns the element with the highest priority (the last element in the vector).
+ * Returns the element with the highest priority (the first element in the vector).
  */
 template <typename T, typename C>
 T MyPriorityQueue<T, C>::top() const
 {
-    return vector_array[vector_array.size() - 1];
+    return vector_array[0];
 }
 
 /*
- * Removes the element with the highest priority (the last element in the vector).
+ * Removes the element with the highest priority (the first element in the vector).
  */
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::pop()
 {
-    //cout << "pop" << endl;
-    vector_array.pop_back();
+    if (vector_array.empty()) return;
+
+    unsigned curr = 0;
+    while (hasLeaf(curr))
+    {
+        unsigned left = leftChild(curr);
+        unsigned right = rightChild(curr);
+        // right has higher prio (lower number)
+        if (strictly_larger_operator(left, right)) swapPos(curr, right);
+        // left has higher, or they have the same, prio (lower or same number)
+        else swapPos(curr, left);
+
+    }
+}
+
+template <typename T, typename C>
+bool MyPriorityQueue<T, C>::hasLeaf(const unsigned pos) const
+{
+    return ((pos * 2) + 1 <= vector_array.size() - 1);
+}
+
+template <typename T, typename C>
+unsigned MyPriorityQueue<T, C>::leftChild(const unsigned pos) const
+{
+    return (2 * pos) + 1;
+}
+
+template <typename T, typename C>
+unsigned MyPriorityQueue<T, C>::rightChild(const unsigned pos) const
+{
+    if ((2 * pos) + 2 < vector_array.size()) return (2 * pos) + 2;
+    else return -1;
 }
 
 /*
