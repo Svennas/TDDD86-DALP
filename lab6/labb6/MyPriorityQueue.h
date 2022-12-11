@@ -37,8 +37,7 @@ private:
     void swapPos(const unsigned curr, const unsigned parent);
     unsigned parent(const unsigned pos) const;
     unsigned leftChild(const unsigned pos) const;
-    unsigned rightChild(const unsigned pos) const;
-    bool hasLeaf(const unsigned pos) const;
+    bool isLeaf(const unsigned pos) const;
 };
 
 template <typename T, typename C>
@@ -50,7 +49,6 @@ MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
-    cout << "push" << endl;
     vector_array.push_back(t);
 
     if (vector_array.empty()) return;
@@ -70,6 +68,7 @@ void MyPriorityQueue<T, C>::swapPos(const unsigned curr, const unsigned parent)
     T temp = vector_array[curr];
     vector_array[curr] = vector_array[parent];
     vector_array[parent] = temp;
+
 }
 
 template <typename T, typename C>
@@ -84,63 +83,59 @@ unsigned MyPriorityQueue<T, C>::parent(const unsigned pos) const
 template <typename T, typename C>
 T MyPriorityQueue<T, C>::top() const
 {
-    cout << "top" << endl;
     return vector_array[0];
 }
 
 /*
- * Removes the element with the highest priority (the first element in the vector).
+ * Removes the element with the highest priority then rearranges the vector
+ * so that the element with the next highest priority is first.
  */
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::pop()
 {
-    cout << "pop" << endl;
+    if (vector_array.empty()) return;
+    //swap first and last element
+    swapPos(0, vector_array.size() - 1);
+    vector_array.pop_back();
+
     if (vector_array.empty()) return;
 
     unsigned curr = 0;
-    unsigned left;
-    unsigned right;
+    unsigned child;
 
-    while (hasLeaf(curr))
-    {     
-        left = leftChild(curr);
-        right = rightChild(curr);
+    while(!isLeaf(curr))
+    {
+        child = leftChild(curr);
 
-        unsigned noChild = -1;
-        if (right == noChild) swapPos(curr, left);
-        else {
-            if (strictly_larger_operator(right, left))
-            { // left has higher prio (lower number)
-                swapPos(curr, left);
-                curr = left;
-            }
-            else
-            { // right has higher, or they have the same, prio (lower or same number)
-                swapPos(curr, right);
-                curr = right;
-            }
+        if((child < ( vector_array.size() - 1)) &&
+                strictly_larger_operator(vector_array[child], vector_array[child + 1]))
+        {
+            child++;    // Right leaf has higher prio
         }
+        if (strictly_larger_operator(vector_array[child], vector_array[curr])) break;
+
+        swapPos(curr, child);
+        curr = child;
     }
-    vector_array[curr] = NULL;
+
 }
 
+/*
+ * Returns true if the given position is leaf. Otherwise false.
+ */
 template <typename T, typename C>
-bool MyPriorityQueue<T, C>::hasLeaf(const unsigned pos) const
-{
-    return ((pos * 2) + 1 <= vector_array.size() - 1);
+bool MyPriorityQueue<T, C>::isLeaf(const unsigned pos) const
+{   // All leafs are always in the positions that are bigger than the size / 2.
+    return (pos >= vector_array.size() / 2) && (pos < vector_array.size());
 }
 
+/*
+ * Returns the position of the given
+ */
 template <typename T, typename C>
 unsigned MyPriorityQueue<T, C>::leftChild(const unsigned pos) const
 {
     return (2 * pos) + 1;
-}
-
-template <typename T, typename C>
-unsigned MyPriorityQueue<T, C>::rightChild(const unsigned pos) const
-{
-    if ((2 * pos) + 2 < vector_array.size()) return (2 * pos) + 2;
-    else return -1;
 }
 
 /*

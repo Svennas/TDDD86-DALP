@@ -52,8 +52,14 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../labb6/test-harness-myprio.cpp 
-OBJECTS       = test-harness-myprio.o
+SOURCES       = ../labb6/Event.cpp \
+		../labb6/Fish.cpp \
+		../labb6/main.cpp \
+		../labb6/Simulation.cpp 
+OBJECTS       = Event.o \
+		Fish.o \
+		main.o \
+		Simulation.o
 DIST          = ../labb6/answers.txt \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -160,7 +166,10 @@ DIST          = ../labb6/answers.txt \
 		MyException.h \
 		MyPriorityQueue.h \
 		MyVector.h \
-		Simulation.h ../labb6/test-harness-myprio.cpp
+		Simulation.h ../labb6/Event.cpp \
+		../labb6/Fish.cpp \
+		../labb6/main.cpp \
+		../labb6/Simulation.cpp
 QMAKE_TARGET  = fisher
 DESTDIR       = 
 TARGET        = fisher
@@ -416,10 +425,36 @@ compiler_clean:
 
 ####### Compile
 
-test-harness-myprio.o: ../labb6/test-harness-myprio.cpp ../labb6/MyPriorityQueue.h \
+Event.o: ../labb6/Event.cpp ../labb6/Event.h \
+		../labb6/Fish.h \
+		../labb6/config.h \
+		../labb6/Simulation.h \
+		../labb6/MyPriorityQueue.h \
 		../labb6/MyVector.h \
 		../labb6/MyException.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o test-harness-myprio.o ../labb6/test-harness-myprio.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Event.o ../labb6/Event.cpp
+
+Fish.o: ../labb6/Fish.cpp ../labb6/Fish.h \
+		../labb6/config.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Fish.o ../labb6/Fish.cpp
+
+main.o: ../labb6/main.cpp ../labb6/Event.h \
+		../labb6/Fish.h \
+		../labb6/config.h \
+		../labb6/Simulation.h \
+		../labb6/MyPriorityQueue.h \
+		../labb6/MyVector.h \
+		../labb6/MyException.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../labb6/main.cpp
+
+Simulation.o: ../labb6/Simulation.cpp ../labb6/Simulation.h \
+		../labb6/config.h \
+		../labb6/Event.h \
+		../labb6/Fish.h \
+		../labb6/MyPriorityQueue.h \
+		../labb6/MyVector.h \
+		../labb6/MyException.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Simulation.o ../labb6/Simulation.cpp
 
 ####### Install
 

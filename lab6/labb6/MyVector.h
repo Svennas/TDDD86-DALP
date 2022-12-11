@@ -130,7 +130,10 @@ void MyVector<T>::push_back(const T& e)
     if (numberOfElements >= capacity) addCapacity();
 
     // To make push_back have the amortized time complexity O(N)
-    //for (unsigned i = 0; i < numberOfElements; i++);
+    for (unsigned i = 0; i < numberOfElements; i++)
+    {
+
+    }
 
     storage[numberOfElements] = e;
     numberOfElements++;
