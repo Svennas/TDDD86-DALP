@@ -1,8 +1,19 @@
-// This is the first .h file you will edit
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header
+/*
+* Last Updated: 2022-12-08
+* Gustav Svennas, gussv907
+* File: MyVector.h
+* ------------
+* This file contains the template class MyVector.
+* The file contains both declarations and definitions of
+* all the functions for the class template.
+* ------------
+* Sources used for this file:
+* https://en.wikipedia.org/wiki/Time_complexity
+* https://en.wikipedia.org/wiki/Amortized_analysis
+* Youtube, Templates in C++: https://www.youtube.com/watch?v=I-hZkUa9mIs
+* https://www.ida.liu.se/~TDDD86/info/misc/fo09.pdf
+* https://cplusplus.com/doc/tutorial/templates/
+*/
 
 #ifndef MY_VECTOR_H
 #define MY_VECTOR_H
@@ -122,18 +133,12 @@ void MyVector<T>::copy(const MyVector& other)
 
 /*
 * Adds the element at the end of the container.
-* If there is no more room in the container, also adds capacity (doubles it?).
+* If there is no more room in the container, also adds capacity (doubles it).
 */
 template<typename T>
 void MyVector<T>::push_back(const T& e)
 {
     if (numberOfElements >= capacity) addCapacity();
-
-    // To make push_back have the amortized time complexity O(N)
-    for (unsigned i = 0; i < numberOfElements; i++)
-    {
-
-    }
 
     storage[numberOfElements] = e;
     numberOfElements++;
@@ -141,6 +146,8 @@ void MyVector<T>::push_back(const T& e)
 
 /*
 * Doubles the capacity of the container.
+* First part is for O(1) amortized time complexity.
+* Second part is for O(N) amortized time complexity.
 */
 template<typename T>
 void MyVector<T>::addCapacity()
@@ -154,9 +161,20 @@ void MyVector<T>::addCapacity()
         temp[i] = storage[i];
     }
     delete[] storage;
-    /* As the as assignment operator won't be called in the template class,
-    need to delete to avoid memory leaks.*/
     storage = temp;
+
+    /*
+    capacity += 1;
+
+    T* temp = new T[capacity];
+
+    for (unsigned i = 0; i < numberOfElements; i++)
+    {
+        temp[i] = storage[i];
+    }
+    delete[] storage;
+    storage = temp;
+    */
 }
 
 /*

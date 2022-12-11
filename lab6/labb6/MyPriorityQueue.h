@@ -1,8 +1,17 @@
-// This is the second .h file you will edit
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header
+/*
+* Last Updated: 2022-12-11
+* Gustav Svennas, gussv907
+* File: MyPriorityQueue.h
+* ------------
+* This file contains the template class MyPriorityQueue.
+* The file contains both declarations and definitions of
+* all the functions for the class template.
+* ------------
+* Sources used for this file:
+* https://www.ida.liu.se/opendsa/Books/TDDD86F22/html/Heaps.html
+* https://en.wikipedia.org/wiki/Min-max_heap
+* https://en.wikipedia.org/wiki/Heap_(data_structure)
+*/
 
 #ifndef MY_PRIORITY_QUEUE_H
 #define MY_PRIORITY_QUEUE_H
@@ -34,18 +43,29 @@ public:
     unsigned size() const;
 
 private:
+    // Helper functions
     void swapPos(const unsigned curr, const unsigned parent);
     unsigned parent(const unsigned pos) const;
     unsigned leftChild(const unsigned pos) const;
     bool isLeaf(const unsigned pos) const;
 };
 
+/*
+ * Default constructor
+ */
 template <typename T, typename C>
 MyPriorityQueue<T, C>::MyPriorityQueue() = default;
 
+/*
+ * Default destructor
+ */
 template <typename T, typename C>
 MyPriorityQueue<T, C>::~MyPriorityQueue() = default;
 
+/*
+ * Adds a new element at the of the queue, then sifts up
+ * until it's at the correct positions looking at priority.
+ */
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::push(const T& t)
 {
@@ -62,6 +82,10 @@ void MyPriorityQueue<T, C>::push(const T& t)
     }
 }
 
+/*
+ * Help function.
+ * Swaps the positions of the elements at the two given positions.
+ */
 template <typename T, typename C>
 void MyPriorityQueue<T, C>::swapPos(const unsigned curr, const unsigned parent)
 {
@@ -71,6 +95,10 @@ void MyPriorityQueue<T, C>::swapPos(const unsigned curr, const unsigned parent)
 
 }
 
+/*
+ * Help function
+ * Returns the position of the parent for a given position.
+ */
 template <typename T, typename C>
 unsigned MyPriorityQueue<T, C>::parent(const unsigned pos) const
 {
@@ -121,6 +149,7 @@ void MyPriorityQueue<T, C>::pop()
 }
 
 /*
+ * Help function.
  * Returns true if the given position is leaf. Otherwise false.
  */
 template <typename T, typename C>
@@ -130,6 +159,7 @@ bool MyPriorityQueue<T, C>::isLeaf(const unsigned pos) const
 }
 
 /*
+ * Help function
  * Returns the position of the given
  */
 template <typename T, typename C>

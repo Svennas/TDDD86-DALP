@@ -50,8 +50,8 @@
 
 
 > Skillnad i tidskomplexitet för MyVector:
-    När push_back har den O(1) amorterad tidskomplexitet tar det 25-28 sekunder för simulationen.
-    När push_back har den O(N) amorterad tidskomplexitet körs det aldrig klart, inte vad jag vet
-    iallafall. Vid en viss punkt tar det så lång tid att kolla igenom alla element i vectorn att
-    simulation i princip stannar upp, vilket är förståeligt med tanke på hur många fiskobjekt som
+    När push_back har O(1) tidskomplexitet tar det 16-18 sekunder för simulationen.
+    Vid O(N) tidskomplexitet har jag inte låtit köra klart, då det tar det så lång
+    tid att kolla igenom alla element i vectorn att simulation i princip stannar upp,
+    vilket är förståeligt med tanke på hur många fiskobjekt som
     skapas under simulationen.
