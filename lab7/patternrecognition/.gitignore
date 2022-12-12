@@ -1,0 +1,8 @@
+# see https://git-scm.com/docs/gitignore for how to specify untracked
+# files to ignore
+
+*.o
+
+*.pro.user
+*.pro.user.*
+
