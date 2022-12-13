@@ -52,9 +52,9 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../patternrecognition/src/brute.cpp \
+SOURCES       = ../patternrecognition/src/fast.cpp \
 		../patternrecognition/src/Point.cpp 
-OBJECTS       = brute.o \
+OBJECTS       = fast.o \
 		Point.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -161,7 +161,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../patternrecognition/PatternRecognition.pro ../patternrecognition/src/Point.h ../patternrecognition/src/brute.cpp \
+		../patternrecognition/PatternRecognition.pro ../patternrecognition/src/Point.h ../patternrecognition/src/fast.cpp \
 		../patternrecognition/src/Point.cpp
 QMAKE_TARGET  = PatternRecognition
 DESTDIR       = 
@@ -455,7 +455,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../patternrecognition/src/Point.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../patternrecognition/src/brute.cpp ../patternrecognition/src/Point.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../patternrecognition/src/fast.cpp ../patternrecognition/src/Point.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -507,8 +507,8 @@ compiler_clean: compiler_moc_predefs_clean
 
 ####### Compile
 
-brute.o: ../patternrecognition/src/brute.cpp ../patternrecognition/src/Point.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o brute.o ../patternrecognition/src/brute.cpp
+fast.o: ../patternrecognition/src/fast.cpp ../patternrecognition/src/Point.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o fast.o ../patternrecognition/src/fast.cpp
 
 Point.o: ../patternrecognition/src/Point.cpp ../patternrecognition/src/Point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Point.o ../patternrecognition/src/Point.cpp

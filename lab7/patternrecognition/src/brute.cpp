@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     // open file
-    string filename = "input100.txt";
+    string filename = "input800.txt";
     ifstream input;
     input.open(filename);
 
@@ -70,11 +70,16 @@ int main(int argc, char *argv[]) {
 
     // iterate through all combinations of 4 points
     for (int i = 0 ; i < N-3 ; ++i) {
+        // O(n) time complexity. Grows linear with input size.
         for (int j = i+1 ; j < N-2 ; ++j) {
+            // O(n) time complexity. At this point, worst-case is O(n^2).
             for (int k = j+1 ; k < N-1 ; ++k) {
+                // O(n) time complexity. At this point, worst-case is O(n^3).
                 //only consider fourth point if first three are collinear
                 if (points.at(i).slopeTo(points.at(j)) == points.at(i).slopeTo(points.at(k))) {
-                    for (int m{k+1} ; m < N ; ++m) {
+                    for (int m{k+1} ; m < N ; ++m) { // Can iterate N - k times
+                        // Worst-case: O(n) time comlexity. At this point, worst-case is O(n^4).
+                        // Average-case is O(n^3) as it needs to pass the if-statement
                         if (points.at(i).slopeTo(points.at(j)) == points.at(i).slopeTo(points.at(m))) {
                             render_line(scene, points.at(i), points.at(m));
                             a.processEvents(); // show rendered line
