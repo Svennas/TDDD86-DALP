@@ -1,4 +1,4 @@
-/*
+ /*
  * TDDD86 Pattern Recognition
  * This file contains the implementation of the Point class.
  * See Point.h for comments about each member.

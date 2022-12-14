@@ -32,7 +32,7 @@ void render_line(QGraphicsScene* scene, const Point& p1, const Point& p2) {
     p1.lineTo(scene, p2);
 }
 
-void setUpGraphics(vector<Point> points)
+QGraphicsScene* setUpGraphics(vector<Point> points)
 {
     QGraphicsView *view = new QGraphicsView();
     QGraphicsScene *scene = new QGraphicsScene(0, 0, SCENE_WIDTH, SCENE_HEIGHT);
@@ -43,11 +43,48 @@ void setUpGraphics(vector<Point> points)
     view->resize(view->sizeHint());
     view->setWindowTitle("Brute Force Pattern Recognition");
     view->show();
+    return scene;
 }
 
-void sortSlopes(vector<Point>& others, int& p, int& q)
+void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, const int right,
+               const Point& origo)
 {
 
+
+    if (left == right) return;
+
+    int mid = (left + right) / 2;
+
+    // Returns at one element in points, first sort with two elements in points
+    sortSlopes(points, temp, left, mid, origo);
+    sortSlopes(points, temp, (mid+1), right, origo);
+
+    for (int i = left; i <= right; ++i)
+    {
+        temp[i] = points[i];
+    }
+    // Here starts the merge operation back to the original vector.
+    int i1 = left;
+    int i2 = mid + 1;
+    for (int curr = left; curr <= right; ++curr)
+    {
+        if (i1 == i2)           // If the left sublist is empty
+        {
+            points[curr] = temp[i2++];
+        }
+        else if (i2 > right)    // If the right sublist is empty
+        {
+            points[curr] = temp[i1++];
+        }
+        else if (!(origo.slopeTo(temp[i1]) > origo.slopeTo(temp[i2])))  // Get the smaller value
+        {
+            points[curr] = temp[i1++];
+        }
+        else
+        {
+            points[curr] = temp[i2++];
+        }
+    }
 }
 
 int main(int argc, char *argv[])
@@ -55,7 +92,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     // open file
-    string filename = "input800.txt";
+    string filename = "input10.txt";
     ifstream input;
     input.open(filename);
 
@@ -75,7 +112,7 @@ int main(int argc, char *argv[])
     }
     input.close();
 
-    setUpGraphics(points);  // setup graphical window
+    QGraphicsScene *scene = setUpGraphics(points);  // setup graphical window
 
     // sort points by natural order
     // makes finding endpoints of line segments easy
@@ -83,11 +120,42 @@ int main(int argc, char *argv[])
     auto begin = chrono::high_resolution_clock::now();
 
     vector<Point> others;
-    for (int p = 0; p < N-3; ++p)
+    vector<Point> temp;
+    vector<Point> slopes;
+
+    for (int p = 0; p < N; ++p)
     {
         for (int q = p+1; q < N; ++q)
         {
-            sortSlopes(others, p, q);
+            others.push_back(points.at(q));
+        }
+        temp = others;
+        temp.clear();
+        for (int h = 0; h < others.size(); ++h) {
+            cout << others[h] << " ";
+        }
+        cout << "" << endl;
+        sortSlopes(others, temp, 0, others.size()-1, points[p]);
+        for (int h = 0; h < others.size(); ++h) {
+            cout << others[h] << " ";
+        }
+        cout << "" << endl;
+        for (unsigned i = 0; i < others.size()-1; ++i)
+        {
+            if (points[p].slopeTo(others[i]) == points[p].slopeTo(others[i+1]))
+            {
+                cout << "Same slope" << endl;
+                slopes.push_back(others[i]);
+            }
+        }
+        if (temp.size() >= 3)
+        {
+            cout << "panda" << endl;
+            for (Point pointer : slopes)
+            {
+                points[p].lineTo(scene, pointer);
+            }
+
         }
     }
 
