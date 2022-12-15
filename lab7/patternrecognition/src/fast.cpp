@@ -49,8 +49,6 @@ QGraphicsScene* setUpGraphics(vector<Point> points)
 void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, const int right,
                const Point& origo)
 {
-
-
     if (left == right) return;
 
     int mid = (left + right) / 2;
@@ -62,29 +60,50 @@ void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, cons
     for (int i = left; i <= right; ++i)
     {
         temp[i] = points[i];
+        //cout << temp[i] << endl;
     }
+    //cout << "" << endl;
+
     // Here starts the merge operation back to the original vector.
-    int i1 = left;
-    int i2 = mid + 1;
-    for (int curr = left; curr <= right; ++curr)
+    int iLeft = left;       // Get start index for left sublist
+    int iRight = mid + 1;   // Get start index for right sublist
+    cout << "Current part" << endl;
+    for (int h = left; h <= right; ++h) {
+        cout << origo.slopeTo(points.at(h)) << endl;
+    }
+    cout << "iLeft = " << origo.slopeTo(points.at(iLeft)) << endl;
+    cout << "iRight = " << origo.slopeTo(points.at(iRight)) << endl;
+
+    for (int iCurr = left; iCurr <= right; ++iCurr)
     {
-        if (i1 == i2)           // If the left sublist is empty
+        if (iLeft == mid+1)           // If the left sublist is empty
         {
-            points[curr] = temp[i2++];
+            points[iCurr] = temp[iRight];
+            iRight++;
         }
-        else if (i2 > right)    // If the right sublist is empty
-        {
-            points[curr] = temp[i1++];
+        else if (iRight > right)    // If the right sublist is empty
+        {            
+            points[iCurr] = temp[iLeft];
+            iLeft++;
         }
-        else if (!(origo.slopeTo(temp[i1]) > origo.slopeTo(temp[i2])))  // Get the smaller value
-        {
-            points[curr] = temp[i1++];
+        else if (!(origo.slopeTo(temp[iLeft]) > origo.slopeTo(temp[iRight]))) // <=
+        { // iRight is bigger or equal
+            points[iCurr] = temp[iLeft];
+            iLeft++;
         }
         else
-        {
-            points[curr] = temp[i2++];
+        { // iLeft is bigger or equal
+            points[iCurr] = temp[iRight];
+            iRight++;
         }
+
     }
+    cout << "Sorted: current part" << endl;
+    for (int h = left; h <= right; ++h) {
+        cout << origo.slopeTo(points.at(h)) << endl;
+    }
+    cout << "" << endl;
+
 }
 
 int main(int argc, char *argv[])
@@ -92,7 +111,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     // open file
-    string filename = "input10.txt";
+    string filename = "input40.txt";
     ifstream input;
     input.open(filename);
 
@@ -119,42 +138,44 @@ int main(int argc, char *argv[])
     sort(points.begin(), points.end());
     auto begin = chrono::high_resolution_clock::now();
 
-    vector<Point> others;
-    vector<Point> temp;
-    vector<Point> slopes;
+    vector<Point> others;       // Vector with points that is not p. Gets sorted.
+    vector<Point> temp;         // Temp vector. Only used for mergesort
+    vector<Point> slopes;       // Contains points with the same slope
 
-    for (int p = 0; p < N; ++p)
+    for (int p = 0; p < N-1; ++p)
     {
+        others.clear();
         for (int q = p+1; q < N; ++q)
         {
             others.push_back(points.at(q));
         }
         temp = others;
         temp.clear();
-        for (int h = 0; h < others.size(); ++h) {
-            cout << others[h] << " ";
-        }
+        cout << N << endl;
+
+        cout << others.size() << endl;
         cout << "" << endl;
         sortSlopes(others, temp, 0, others.size()-1, points[p]);
-        for (int h = 0; h < others.size(); ++h) {
-            cout << others[h] << " ";
+
+        /*cout << "" << endl;
+        for (unsigned h = 0; h < others.size(); ++h) {
+            cout << points[p].slopeTo(others[h]) << endl;
         }
-        cout << "" << endl;
+        cout << "" << endl;*/
         for (unsigned i = 0; i < others.size()-1; ++i)
         {
             if (points[p].slopeTo(others[i]) == points[p].slopeTo(others[i+1]))
             {
-                cout << "Same slope" << endl;
+                //cout << "Same slope" << endl;
                 slopes.push_back(others[i]);
             }
         }
-        if (temp.size() >= 3)
+        if (slopes.size() >= 3)
         {
-            cout << "panda" << endl;
-            for (Point pointer : slopes)
-            {
-                points[p].lineTo(scene, pointer);
-            }
+            //cout << "panda" << endl;
+
+            points[p].lineTo(scene, slopes.back());
+
 
         }
     }
