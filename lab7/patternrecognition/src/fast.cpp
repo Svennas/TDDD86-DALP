@@ -3,9 +3,18 @@
 * Gustav Svennas, gussv907
 * File: fast.cpp
 * ------------
-* This file contains ...
+* This file takes an input file in .txt format (assumes in contains expected values)
+* and creates graphic window which paints all the Points that are given in the file
+* and then draws lines between all the lines with the same slope.
+*
+* This file uses merge sort to sort all the Points in the given file.
 * ------------
 * Sources used for this file:
+* https://www.ida.liu.se/opendsa/Books/TDDD86F22/html/MergesortImpl.html
+* https://www.ida.liu.se/~TDDD86/info/misc/fo19.pdf
+* https://en.wikipedia.org/wiki/Time_complexity
+* https://en.wikipedia.org/wiki/Amortized_analysis
+* https://adrianmejia.com/how-to-find-time-complexity-of-an-algorithm-code-big-o-notation/
 */
 
 #include <QApplication>
@@ -41,11 +50,15 @@ QGraphicsScene* setUpGraphics(vector<Point> points)
     render_points(scene, points);
     view->scale(1, -1); //screen y-axis is inverted
     view->resize(view->sizeHint());
-    view->setWindowTitle("Brute Force Pattern Recognition");
+    view->setWindowTitle("Fast Pattern Recognition");
     view->show();
     return scene;
 }
 
+/*
+ * Uses mergesort to sort the points in the given vector 'points' after the
+ * value given for their slope to the Point origo.
+ */
 void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, const int right,
                const Point& origo)
 {
@@ -60,19 +73,10 @@ void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, cons
     for (int i = left; i <= right; ++i)
     {
         temp[i] = points[i];
-        //cout << temp[i] << endl;
     }
-    //cout << "" << endl;
-
     // Here starts the merge operation back to the original vector.
     int iLeft = left;       // Get start index for left sublist
     int iRight = mid + 1;   // Get start index for right sublist
-    cout << "Current part" << endl;
-    for (int h = left; h <= right; ++h) {
-        cout << origo.slopeTo(points.at(h)) << endl;
-    }
-    cout << "iLeft = " << origo.slopeTo(points.at(iLeft)) << endl;
-    cout << "iRight = " << origo.slopeTo(points.at(iRight)) << endl;
 
     for (int iCurr = left; iCurr <= right; ++iCurr)
     {
@@ -81,7 +85,7 @@ void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, cons
             points[iCurr] = temp[iRight];
             iRight++;
         }
-        else if (iRight > right)    // If the right sublist is empty
+        else if (iRight > right)      // If the right sublist is empty
         {            
             points[iCurr] = temp[iLeft];
             iLeft++;
@@ -98,12 +102,6 @@ void sortSlopes(vector<Point>& points, vector<Point>& temp, const int left, cons
         }
 
     }
-    cout << "Sorted: current part" << endl;
-    for (int h = left; h <= right; ++h) {
-        cout << origo.slopeTo(points.at(h)) << endl;
-    }
-    cout << "" << endl;
-
 }
 
 int main(int argc, char *argv[])
@@ -111,7 +109,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     // open file
-    string filename = "input40.txt";
+    string filename = "mystery10089.txt";
     ifstream input;
     input.open(filename);
 
@@ -124,7 +122,6 @@ int main(int argc, char *argv[])
     int y;
 
     input >> N;
-
     for (int i = 0; i < N; ++i) {
         input >> x >> y;
         points.push_back(Point(x, y));
@@ -142,44 +139,36 @@ int main(int argc, char *argv[])
     vector<Point> temp;         // Temp vector. Only used for mergesort
     vector<Point> slopes;       // Contains points with the same slope
 
-    for (int p = 0; p < N-1; ++p)
-    {
-        others.clear();
-        for (int q = p+1; q < N; ++q)
-        {
-            others.push_back(points.at(q));
+    for (int p = 0; p < N; ++p)
+    { // O(n) time complexity. Grows linear with input size.
+        others.clear(); // Clear others for every new p
+        for (int q = 0; q < N; ++q)
+        { // O(n) time complexity. At this point, worst-case is O(n^2).
+            if (q != p) others.push_back(points.at(q));
         }
         temp = others;
-        temp.clear();
-        cout << N << endl;
-
-        cout << others.size() << endl;
-        cout << "" << endl;
+        // Sorting the vector takes O(n log n)
         sortSlopes(others, temp, 0, others.size()-1, points[p]);
 
-        /*cout << "" << endl;
-        for (unsigned h = 0; h < others.size(); ++h) {
-            cout << points[p].slopeTo(others[h]) << endl;
-        }
-        cout << "" << endl;*/
-        for (unsigned i = 0; i < others.size()-1; ++i)
+        for (unsigned i = 2; i < others.size()-1; ++i)
         {
-            if (points[p].slopeTo(others[i]) == points[p].slopeTo(others[i+1]))
+            if (points[p].slopeTo(others[i]) == points[p].slopeTo(others[i-2]))
             {
-                //cout << "Same slope" << endl;
                 slopes.push_back(others[i]);
+                if (i == 2)
+                {
+                    slopes.push_back(others[i-1]);
+                    slopes.push_back(others[i-2]);
+                }
             }
         }
-        if (slopes.size() >= 3)
+        for(const Point& point : slopes)
         {
-            //cout << "panda" << endl;
-
-            points[p].lineTo(scene, slopes.back());
-
-
+            render_line(scene, points[p], point);
+            a.processEvents(); // show rendered line
         }
+        slopes.clear();
     }
-
 
     auto end = chrono::high_resolution_clock::now();
     cout << "Computing line segments took "
