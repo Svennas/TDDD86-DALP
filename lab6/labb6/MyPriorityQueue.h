@@ -140,6 +140,7 @@ void MyPriorityQueue<T, C>::pop()
         {
             child++;    // Right leaf has higher prio
         }
+        // Stop as soon as the child is bigger than curr
         if (strictly_larger_operator(vector_array[child], vector_array[curr])) break;
 
         swapPos(curr, child);
