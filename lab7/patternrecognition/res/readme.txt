@@ -39,4 +39,10 @@ O(N^4) beror på att alla loopar är beroende på N, så antalet iterationer
 växer linjärt med N.
 
 Sortering:
-Värstafallstiden blir O(N^3 log N)
+Värstafallstiden blir O(N^2 log N).
+Den första näslade for-loopen har en tidskomplexitet på O(N), linjärt beroende av input.
+sortSlopes (mergesort) har en tidskomplexitet på O(N log N).
+For-loopen efter sortSlopes är också linjärt beroende av input, vilket ger O(N).
+O(N log N) blir därmed den som växer snabbast bland de som är i den första for-loopen.
+Då den första loopen har en tidkomplexitet på O(N) blir värstafallstiden O(N^2 log N).
+(O(N log N) + O(N) + O(N)) * O(N) --> O(N^2 log N)

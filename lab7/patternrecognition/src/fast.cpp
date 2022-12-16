@@ -143,15 +143,15 @@ int main(int argc, char *argv[])
     { // O(n) time complexity. Grows linear with input size.
         others.clear(); // Clear others for every new p
         for (int q = 0; q < N; ++q)
-        { // O(n) time complexity. At this point, worst-case is O(n^2).
+        { // O(n) time complexity. Here the worst-case is O(n^2).
             if (q != p) others.push_back(points.at(q));
         }
         temp = others;
-        // Sorting the vector takes O(n log n)
+        // Sorting the vector takes O(n log n). Here the worst-case is O(n^2 log n).
         sortSlopes(others, temp, 0, others.size()-1, points[p]);
 
         for (unsigned i = 2; i < others.size()-1; ++i)
-        {
+        {   // O(n) time complexity. Grows linear with input size. Here the worst-case is O(n^2).
             if (points[p].slopeTo(others[i]) == points[p].slopeTo(others[i-2]))
             {
                 slopes.push_back(others[i]);
