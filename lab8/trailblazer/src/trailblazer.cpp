@@ -10,12 +10,25 @@ using namespace std;
 
 vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
-    start->visited = true;
-    vector<Node> neighbours;
-
-
-
     vector<Vertex*> path;
+
+    if (start == nullptr) return path;
+
+    start->visited = true;
+    vector<Vertex*> neighbours;
+
+    //for (int i = 0; i < 5; ++i)
+    //{
+    cout << "---> " << start->toString()<< endl;
+    cout << "Arcs" << start->arcs.toString() << endl;
+    cout << "---> " << end->toString()<< endl;
+    cout << "Arcs" << end->arcs.toString() << endl;
+    //}
+
+    Node* next = start->arcs.first()->start;
+
+
+
     return path;
 }
 

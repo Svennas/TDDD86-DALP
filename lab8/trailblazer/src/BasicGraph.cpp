@@ -22,7 +22,8 @@
  */
 
 Grid<double>* Node::s_world = nullptr;
-double (* Node::s_heuristicFunction)(Node* const from, Node* const to, const Grid<double>& world) = nullptr;
+double (* Node::s_heuristicFunction)(Node* const from, Node* const to,
+                                     const Grid<double>& world) = nullptr;
 
 Node::Node(string name, int row, int col, double gridValue) {
     this->name = name;
