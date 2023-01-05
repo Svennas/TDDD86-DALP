@@ -12,24 +12,37 @@ vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
     vector<Vertex*> path;
 
-    if (start == nullptr) return path;
+    if (start == nullptr || path.back() == end) return path;
 
-    start->visited = true;
-    vector<Vertex*> neighbours;
-
+    //vector<Vertex*> neighbours;
     //for (int i = 0; i < 5; ++i)
     //{
-    cout << "---> " << start->toString()<< endl;
-    cout << "Arcs" << start->arcs.toString() << endl;
-    cout << "---> " << end->toString()<< endl;
-    cout << "Arcs" << end->arcs.toString() << endl;
+    cout << "Start vertex " << start->toString()<< endl;
+    //cout << "Arcs" << start->arcs.toString() << endl;
+    //cout << "---> " << end->toString()<< endl;
+    //cout << "Arcs" << end->arcs.toString() << endl;
     //}
+    //Node* next = start->arcs.first()->start;
+    dFSRecursive(graph, start, end, path);
 
-    Node* next = start->arcs.first()->start;
 
-
+    start->visited = true;
 
     return path;
+}
+
+void dFSRecursive(BasicGraph& graph, Node* start, Node* end, vector<Vertex*>& path)
+{
+    if (path.back() == end) return;
+
+    for (Node* near : graph.getNeighbors(start))
+    {
+        if (!near->visited)
+        {
+            path.push_back(near);
+            dFSRecursive(graph, near, end, path);
+        }
+    }
 }
 
 vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end) {
