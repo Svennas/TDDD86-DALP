@@ -10,39 +10,36 @@ using namespace std;
 
 vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
+    graph.resetData();
     vector<Vertex*> path;
 
-    if (start == nullptr || path.back() == end) return path;
+    if (start == nullptr) return path;
 
-    //vector<Vertex*> neighbours;
-    //for (int i = 0; i < 5; ++i)
-    //{
-    cout << "Start vertex " << start->toString()<< endl;
-    //cout << "Arcs" << start->arcs.toString() << endl;
-    //cout << "---> " << end->toString()<< endl;
-    //cout << "Arcs" << end->arcs.toString() << endl;
-    //}
-    //Node* next = start->arcs.first()->start;
+    //cout << "---Current vertex--> " << start->toString()<< endl;
+
+    path.push_back(start);
     dFSRecursive(graph, start, end, path);
-
-
-    start->visited = true;
 
     return path;
 }
 
-void dFSRecursive(BasicGraph& graph, Node* start, Node* end, vector<Vertex*>& path)
+void dFSRecursive(BasicGraph& graph, Vertex* curr, Vertex* end, vector<Vertex*>& path)
 {
+    curr->visited = true;
+    curr->setColor(GREEN);
     if (path.back() == end) return;
 
-    for (Node* near : graph.getNeighbors(start))
+    for (Vertex* near : graph.getNeighbors(curr))
     {
         if (!near->visited)
         {
-            path.push_back(near);
+            path.push_back(near);           // Add node to the recursion stack
             dFSRecursive(graph, near, end, path);
         }
+        if (path.back() == end) return;
     }
+    path.pop_back();
+    curr->setColor(GRAY);
 }
 
 vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end) {
