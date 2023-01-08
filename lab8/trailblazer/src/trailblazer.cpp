@@ -11,6 +11,9 @@
 
 using namespace std;
 
+/*
+* Help function
+*/
 void dFSRecursive(BasicGraph& graph, Vertex* curr, Vertex* end, vector<Vertex*>& path)
 {
     curr->visited = true;
@@ -30,6 +33,10 @@ void dFSRecursive(BasicGraph& graph, Vertex* curr, Vertex* end, vector<Vertex*>&
     curr->setColor(GRAY);
 }
 
+/*
+*
+* https://www.ida.liu.se/opendsa/Books/TDDD86F22/html/GraphTraversal.html
+*/
 vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
     graph.resetData();
@@ -37,16 +44,16 @@ vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 
     if (start == nullptr) return path;
 
-    //cout << "---Current vertex--> " << start->toString()<< endl;
-
     path.push_back(start);
     dFSRecursive(graph, start, end, path);
 
     return path;
 }
 
-
-
+/*
+*
+* https://www.ida.liu.se/opendsa/Books/TDDD86F22/html/GraphTraversal.html
+*/
 vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
     graph.resetData();
@@ -84,7 +91,29 @@ vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
     return path;
 }
 
-vector<Vertex*> createPath(Vertex* &start, Vertex* &end)
+/*
+* Help function
+*/
+PriorityQueue<Vertex*> setup(BasicGraph& graph, Vertex* &start)
+{
+    PriorityQueue<Vertex*> costPrio;
+
+    for (Vertex* v : graph.getNodeSet())
+    {
+        v->cost = POSITIVE_INFINITY;
+        //costPrio.enqueue(v, v->cost);
+    }
+    start->cost = 0;
+    costPrio.enqueue(start, start->cost);
+    //costPrio.changePriority(start, start->cost);
+
+    return costPrio;
+}
+
+/*
+* Help function
+*/
+vector<Vertex*> createPath(Vertex* const start, Vertex* const end)
 {
     vector<Vertex*> path;
     Vertex* temp = end;
@@ -97,31 +126,30 @@ vector<Vertex*> createPath(Vertex* &start, Vertex* &end)
         temp = prev;
         prev = temp->previous;
     }
+    vector<Vertex*> tempPath = path;
+    path.clear();
+    for (unsigned i = tempPath.size(); i > 0; --i)
+    {
+        path.push_back(tempPath[i-1]);
+    }
     return path;
 }
 
+/*
+ *
+ * https://www.ida.liu.se/opendsa/Books/TDDD86F22/html/GraphShortest.html
+ * https://www.ida.liu.se/~TDDD86/info/misc/fo21.pdf
+ */
 vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
 {
-    //vector<Vertex*> path;
+    graph.resetData();
 
-    //Map<Vertex*, double> costMap;
+    PriorityQueue<Vertex*> costPrio = setup(graph, start);
 
-    //costMap.put(start, 0);*/
-
-    PriorityQueue<Vertex*> costPrio;
-    //costPrio.enqueue(start, 0);
-
-    for (Vertex* v : graph.getNodeSet())
-    {
-        v->cost = POSITIVE_INFINITY;
-        costPrio.enqueue(v, v->cost);
-    }
-    start->cost = 0;
-    costPrio.changePriority(start, start->cost);
 
     Vertex* curr = start;
 
-    while (costPrio.size() > 0)
+    while (!costPrio.isEmpty())
     {
         curr = costPrio.dequeue();
         curr->setColor(GREEN);
@@ -129,6 +157,54 @@ vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
 
         if (curr == end) break;
 
+        for (Vertex* near : graph.getNeighbors(curr))
+        {
+            if (!near->visited)
+            {
+                double costToNear = curr->cost + graph.getEdge(curr, near)->cost;
+                if (near->cost > costToNear)
+                {   // Check if cost to 'near' needs to be updated
+                    near->cost = costToNear;
+
+                    if (near->previous == nullptr) costPrio.enqueue(near, costToNear);
+                    else costPrio.changePriority(near, costToNear);
+
+                    near->setColor(YELLOW);
+                    near->previous = curr;
+                }
+            }
+        }
+    }
+    return createPath(start, end);
+}
+
+/*
+* Help function
+*/
+double getHeuristic(Vertex* const &curr, Vertex* const &other)
+{
+    return  curr->heuristic(other) + curr->cost;
+}
+
+/*
+ *
+ * https://www.ida.liu.se/~TDDD86/info/misc/fo21.pdf
+ */
+vector<Node *> aStar(BasicGraph& graph, Vertex* start, Vertex* end)
+{
+    graph.resetData();
+
+    PriorityQueue<Vertex*> costPrio = setup(graph, start);
+
+    Vertex* curr = start;
+
+    while (!costPrio.isEmpty())
+    {
+        curr = costPrio.dequeue();
+        curr->setColor(GREEN);
+        curr->visited = true;
+
+        if (curr == end) break;
 
         for (Vertex* near : graph.getNeighbors(curr))
         {
@@ -136,35 +212,16 @@ vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
             {
                 double costToNear = curr->cost + graph.getEdge(curr, near)->cost;
                 if (near->cost > costToNear)
-                {
+                {   // Check if cost to 'near' needs to be updated
                     near->cost = costToNear;
-                    costPrio.changePriority(near, (costToNear));
+                    if (near->previous == nullptr) costPrio.enqueue(near, getHeuristic(near, end));
+                    else costPrio.changePriority(near, getHeuristic(near, end));
+
                     near->setColor(YELLOW);
                     near->previous = curr;
                 }
-                /*if (costMap.get(near) != POSITIVE_INFINITY)
-                {
-                    costPrio.changePriority(near, (near->cost + curr->cost));
-                }*/
-                //else {
-                    //costPrio.enqueue(near, (near->cost + curr->cost));
-                  //  costPrio.enqueue(near, costToNear);
-                    //near->setColor(YELLOW);
-                //}
-                //costMap.put(near, (near->cost + curr->cost));
-                //near->previous = curr;
             }
         }
     }
-
     return createPath(start, end);
-}
-
-vector<Node *> aStar(BasicGraph& graph, Vertex* start, Vertex* end) {
-    // TODO: implement this function; remove these comments
-    //       (The function body code provided below is just a stub that returns
-    //        an empty vector so that the overall project will compile.
-    //        You should remove that code and replace it with your implementation.)
-    vector<Vertex*> path;
-    return path;
 }
