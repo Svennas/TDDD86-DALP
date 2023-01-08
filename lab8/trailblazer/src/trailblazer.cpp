@@ -11,21 +11,6 @@
 
 using namespace std;
 
-vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
-{
-    graph.resetData();
-    vector<Vertex*> path;
-
-    if (start == nullptr) return path;
-
-    //cout << "---Current vertex--> " << start->toString()<< endl;
-
-    path.push_back(start);
-    dFSRecursive(graph, start, end, path);
-
-    return path;
-}
-
 void dFSRecursive(BasicGraph& graph, Vertex* curr, Vertex* end, vector<Vertex*>& path)
 {
     curr->visited = true;
@@ -44,6 +29,23 @@ void dFSRecursive(BasicGraph& graph, Vertex* curr, Vertex* end, vector<Vertex*>&
     path.pop_back();
     curr->setColor(GRAY);
 }
+
+vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
+{
+    graph.resetData();
+    vector<Vertex*> path;
+
+    if (start == nullptr) return path;
+
+    //cout << "---Current vertex--> " << start->toString()<< endl;
+
+    path.push_back(start);
+    dFSRecursive(graph, start, end, path);
+
+    return path;
+}
+
+
 
 vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 {
@@ -82,27 +84,40 @@ vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
     return path;
 }
 
+vector<Vertex*> createPath(Vertex* &start, Vertex* &end)
+{
+    vector<Vertex*> path;
+    Vertex* temp = end;
+    Vertex* prev = end->previous;
+    path.push_back(end);
+
+    while (temp != start)
+    {
+        path.push_back(prev);
+        temp = prev;
+        prev = temp->previous;
+    }
+    return path;
+}
+
 vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
 {
-    /*
-     * Map: put(), get(), remove(), containsKey(), keys(), values()
-     *
-     */
-    vector<Vertex*> path;
+    //vector<Vertex*> path;
 
-    Map<Vertex*, double> costMap;
-    for (Vertex* v : graph.getNodeSet())
-    {
-        costMap.put(v, POSITIVE_INFINITY);
-    }
-    costMap.put(start, 0);
-    // ^
-    // |
-    // | HEEEEEEEEEEEEEEERE
+    //Map<Vertex*, double> costMap;
 
+    //costMap.put(start, 0);*/
 
     PriorityQueue<Vertex*> costPrio;
-    costPrio.enqueue(start, 0);
+    //costPrio.enqueue(start, 0);
+
+    for (Vertex* v : graph.getNodeSet())
+    {
+        v->cost = POSITIVE_INFINITY;
+        costPrio.enqueue(v, v->cost);
+    }
+    start->cost = 0;
+    costPrio.changePriority(start, start->cost);
 
     Vertex* curr = start;
 
@@ -111,18 +126,38 @@ vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
         curr = costPrio.dequeue();
         curr->setColor(GREEN);
         curr->visited = true;
+
+        if (curr == end) break;
+
+
         for (Vertex* near : graph.getNeighbors(curr))
         {
             if (!near->visited)
             {
-                near->setColor(YELLOW);
-                costMap.put(near, (near->cost + curr->cost));
-
+                double costToNear = curr->cost + graph.getEdge(curr, near)->cost;
+                if (near->cost > costToNear)
+                {
+                    near->cost = costToNear;
+                    costPrio.changePriority(near, (costToNear));
+                    near->setColor(YELLOW);
+                    near->previous = curr;
+                }
+                /*if (costMap.get(near) != POSITIVE_INFINITY)
+                {
+                    costPrio.changePriority(near, (near->cost + curr->cost));
+                }*/
+                //else {
+                    //costPrio.enqueue(near, (near->cost + curr->cost));
+                  //  costPrio.enqueue(near, costToNear);
+                    //near->setColor(YELLOW);
+                //}
+                //costMap.put(near, (near->cost + curr->cost));
+                //near->previous = curr;
             }
         }
     }
 
-    return path;
+    return createPath(start, end);
 }
 
 vector<Node *> aStar(BasicGraph& graph, Vertex* start, Vertex* end) {
