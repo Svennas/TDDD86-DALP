@@ -6,7 +6,9 @@
 #include "costs.h"
 #include "trailblazer.h"
 #include "queue.h"
-// TODO: include any other headers you need; remove this comment
+#include "map.h"
+#include "pqueue.h"
+
 using namespace std;
 
 vector<Node *> depthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
@@ -80,12 +82,46 @@ vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
     return path;
 }
 
-vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end) {
-    // TODO: implement this function; remove these comments
-    //       (The function body code provided below is just a stub that returns
-    //        an empty vector so that the overall project will compile.
-    //        You should remove that code and replace it with your implementation.)
+vector<Node *> dijkstrasAlgorithm(BasicGraph& graph, Vertex* start, Vertex* end)
+{
+    /*
+     * Map: put(), get(), remove(), containsKey(), keys(), values()
+     *
+     */
     vector<Vertex*> path;
+
+    Map<Vertex*, double> costMap;
+    for (Vertex* v : graph.getNodeSet())
+    {
+        costMap.put(v, POSITIVE_INFINITY);
+    }
+    costMap.put(start, 0);
+    // ^
+    // |
+    // | HEEEEEEEEEEEEEEERE
+
+
+    PriorityQueue<Vertex*> costPrio;
+    costPrio.enqueue(start, 0);
+
+    Vertex* curr = start;
+
+    while (costPrio.size() > 0)
+    {
+        curr = costPrio.dequeue();
+        curr->setColor(GREEN);
+        curr->visited = true;
+        for (Vertex* near : graph.getNeighbors(curr))
+        {
+            if (!near->visited)
+            {
+                near->setColor(YELLOW);
+                costMap.put(near, (near->cost + curr->cost));
+
+            }
+        }
+    }
+
     return path;
 }
 
