@@ -50,39 +50,33 @@ vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
 
     if (start == nullptr) return path;
 
-    Queue<Vertex*> vertexQ;
+    Queue<vector<Vertex*>> pathQueue;
 
     start->visited = true;
     path.push_back(start);
-    vertexQ.enqueue(start);
+    pathQueue.enqueue(path);
 
-    cout << "Start: " << start->name << endl;
-
-    while (path.back() != end)
+    while (pathQueue.size() > 0)
     {
-        Vertex* curr = vertexQ.dequeue();
+        path  = pathQueue.dequeue();
+        Vertex* curr = path.back();
         curr->setColor(GREEN);
-        path.push_back(curr);
 
-        cout << "Current: " << curr->name << endl;
+        if (path.back() == end) break;
 
         for (Vertex* near : graph.getNeighbors(curr))
         {
             if (!near->visited)
-            {   // Add all the neighbors not visited to the queue
-                cout << "Neighbors: " << near->name << endl;
-                near->visited = true;
-                near->setColor(YELLOW); // Node is in queue
-                vertexQ.enqueue(near);
+            {   // Add all the neighbors not visited with a new path to the queue
+                near->visited = true;          // Mark Vertex 'near'
+                near->setColor(YELLOW);
+                vector<Vertex*> newPath = path;
+                newPath.push_back(near);       // Add the edge to path
+                pathQueue.enqueue(newPath);    // Enqueue the new path
             }
-
         }
 
-
-
-
     }
-
     return path;
 }
 
