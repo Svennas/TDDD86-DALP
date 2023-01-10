@@ -88,8 +88,6 @@ vector<Node *> breadthFirstSearch(BasicGraph& graph, Vertex* start, Vertex* end)
     graph.resetData();
     vector<Vertex*> path;
 
-    if (start == nullptr) return path;
-
     Queue<vector<Vertex*>> pathQueue;
 
     start->visited = true;
