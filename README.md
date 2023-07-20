@@ -1,4 +1,4 @@
-#DALP, Datastrukturer, algoritmer och programmeringsparadigm (Data Structures, Algorithms and Programming Paradigms)
+# DALP, Datastrukturer, algoritmer och programmeringsparadigm (Data Structures, Algorithms and Programming Paradigms)
 
 Project for laborations in the course TDDD86 for the autumn of 2022.
 
